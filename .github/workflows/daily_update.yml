@@ -1,0 +1,35 @@
+name: Auto Update Top 50 Stocks
+
+on:
+  schedule:
+    - cron: '30 22 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. 讀取專案檔案
+        uses: actions/checkout@v4
+
+      - name: 2. 設定 Python 3.11 環境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 3. 安裝套件清單 (requirements.txt)
+        run: pip install -r requirements.txt
+
+      - name: 4. 執行 Python 腳本抓取最新 Top 50
+        run: python update_top50.py
+
+      - name: 5. 自動儲存並更新 top50.json
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add top50.json
+          git diff --staged --quiet || (git commit -m "chore: auto update top50.json" && git push)

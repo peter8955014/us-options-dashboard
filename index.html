@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Firstrade 美股期權戰略中心 v3.0 - 策略Greeks二合一 · Top50本益比 · 期權百科 · Gemini AI</title>
+  <title>美股期權- 策略 · Top50本益比 · 期權百科 </title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -76,8 +76,7 @@
       <div class="flex items-center gap-3">
         <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v3.0</span>
         <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略 & Greeks 整合精算系統</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">策略與Greeks二合一 · Top 50 本益比(P/E) & IV Rank · 期權教學百科 </p>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略</h1>
         </div>
       </div>
 
@@ -103,11 +102,6 @@
           <span id="headerIvBadge" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">IV: 52% (IVR 64%)</span>
         </div>
 
-        <!-- 詢問 Gemini AI 按鈕 -->
-        <button onclick="toggleGeminiDrawer(true)" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-bold shadow-md transition flex items-center gap-1">
-          ✨ 詢問 Gemini AI
-        </button>
-
         <!-- 本頁說明與深淺色切換 -->
         <button onclick="togglePageGuide()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
           📖 說明
@@ -121,8 +115,7 @@
     <!-- 熱門標的 0ms 瞬時切換列 -->
     <div class="max-w-7xl mx-auto mt-2 pt-2 border-t border-slate-100 dark:border-notionBorder/60 flex flex-wrap items-center gap-1.5 text-xs">
       <span class="text-slate-400">0ms 瞬時帶入：</span>
-      <button onclick="quickLoadTicker('SOXL', true)" class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 hover:bg-blue-500/25 font-semibold">SOXL ($90 教學基準)</button>
-      <button onclick="quickLoadTicker('NVDA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">NVDA (P/E 40.2)</button>
+      <button onclick="quickLoadTicker('NVDA')" class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 hover:bg-blue-500/25 font-semibold">SOXL ($90 教學基準)</button>
       <button onclick="quickLoadTicker('TSLA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">TSLA (P/E 88.5)</button>
       <button onclick="quickLoadTicker('AMD')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AMD (P/E 42.6)</button>
       <button onclick="quickLoadTicker('AAPL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AAPL (P/E 31.2)</button>
@@ -130,7 +123,6 @@
       <button onclick="quickLoadTicker('JPM')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">JPM (P/E 13.4)</button>
       <button onclick="quickLoadTicker('KO')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">KO (P/E 23.5)</button>
       <button onclick="quickLoadTicker('QQQ')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">QQQ</button>
-      <span id="quoteStatus" class="ml-auto text-[11px] text-emerald-400 font-medium">⚡ v3.0 快取引擎就緒</span>
     </div>
   </header>
 
@@ -138,16 +130,16 @@
   <div class="max-w-7xl mx-auto px-4 pt-3">
     <div class="flex space-x-6 border-b border-slate-200 dark:border-notionBorder text-xs sm:text-sm overflow-x-auto">
       <button onclick="switchTab('simulator')" id="tab-simulator" class="pb-2.5 whitespace-nowrap tab-active">
-        🎯 1. 10大策略模擬 & Greeks 權利金精算 (二合一整合頁)
+        🎯 10大策略模擬
       </button>
       <button onclick="switchTab('top50')" id="tab-top50" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
-        🏆 2. 市值 Top 50 · 本益比 (P/E) & IV Rank 雷達
+        🏆 Top 50 Rank 雷達
       </button>
       <button onclick="switchTab('portfolio')" id="tab-portfolio" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
-        🛡️ 3. $22,000 風險配置 & 複利成長模擬
+        🛡️ 風險配置 & 複利成長模擬
       </button>
       <button onclick="switchTab('academy')" id="tab-academy" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
-        📚 4. 選擇權全攻略教學百科 (從新手到實戰)
+        📚 選擇權全攻略教學百科
       </button>
     </div>
   </div>

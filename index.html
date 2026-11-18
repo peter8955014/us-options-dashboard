@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>美股期權 - 策略模擬 · Top50本益比 · 期權百科</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -372,7 +372,7 @@
                 <div class="text-[10px] text-slate-500 dark:text-slate-400">Gamma (Γ) 加速度</div>
                 <div id="uContribGamma" class="font-bold text-sm text-cyan-600 dark:text-cyan-400">+$0</div>
               </div>
-              <div class="p-2 rounded-lg bg-white dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+              <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
                 <div class="text-[10px] text-slate-500 dark:text-slate-400">Theta (Θ) 時間價值收支</div>
                 <div id="uContribTheta" class="font-bold text-sm text-rose-600 dark:text-rose-400">+$0</div>
               </div>
@@ -662,11 +662,11 @@
             <p>• <b>1 口合約 = 100 股正股</b>：報價顯示 $2.50 時，實際收付金額為 <code>$2.50 × 100 = $250 美元</code>。</p>
             <p>• <b>Call (買權) vs Put (賣權)</b>：Call 代表「在到期日前以履約價買進股票的權利」；Put 代表「以履約價賣出股票的權利」。</p>
             <p>• <b>權利金總價 ＝ 內含價值 (Intrinsic) ＋ 時間價值 (Extrinsic)</b>：<br>
-              - <b>內含價值</b>：立即行權能賺到的價差（例如股價 $100，履約價 $90 Call 的內含價值為 $10）。<br>
-              - <b>時間價值</b>：為未來波動支付的溢價，隨到期日逼近會加速歸零（Theta 衰減）。</p>
+- <b>內含價值</b>：立即行權能賺到的價差（例如股價 $100，履約價 $90 Call 的內含價值為 $10）。<br>
+- <b>時間價值</b>：為未來波動支付的溢價，隨到期日逼近會加速歸零（Theta 衰減）。</p>
             <p>• <b>價內 (ITM) / 價平 (ATM) / 價外 (OTM)</b>：<br>
-              - <b>ITM (In-The-Money)</b>：具內含價值（Call 履約價 &lt; 現價；Put 履約價 &gt; 現價）。<br>
-              - <b>OTM (Out-of-The-Money)</b>：內含價值為 0，100% 都是時間價值，賣方收租最愛賣 OTM 合約讓時間價值歸零。</p>
+- <b>ITM (In-The-Money)</b>：具內含價值（Call 履約價 &lt; 現價；Put 履約價 &gt; 現價）。<br>
+- <b>OTM (Out-of-The-Money)</b>：內含價值為 0，100% 都是時間價值，賣方收租最愛賣 OTM 合約讓時間價值歸零。</p>
           </div>
         </div>
 
@@ -678,11 +678,11 @@
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
             <p>• <b>買方流派（先付錢買進，後賣出平倉）</b>：<br>
-              1. <b>Buy to Open (BTO 買進開倉)</b>：付出權利金 (Debit) 建立新買方部位，風險鎖定在投入成本，免保證金。<br>
-              2. <b>Sell to Close (STC 賣出平倉)</b>：把手上的買方合約賣掉獲利了結或停損。</p>
+1. <b>Buy to Open (BTO 買進開倉)</b>：付出權利金 (Debit) 建立新買方部位，風險鎖定在投入成本，免保證金。<br>
+2. <b>Sell to Close (STC 賣出平倉)</b>：把手上的買方合約賣掉獲利了結或停損。</p>
             <p>• <b>賣方包租公流派（先收錢開倉，後買回平倉）</b>：<br>
-              1. <b>Sell to Open (STO 賣出開倉)</b>：簽發合約賣給市場，立即收到權利金現金 (Credit)，但需圈存現金擔保 (CSP) 或正股抵押 (Covered Call)。<br>
-              2. <b>Buy to Close (BTC 買進平倉)</b>：當權利金跌掉 50%~70% 時，花小錢把合約買回來銷毀，釋放保證金並鎖定獲利。</p>
+1. <b>Sell to Open (STO 賣出開倉)</b>：簽發合約賣給市場，立即收到權利金現金 (Credit)，但需圈存現金擔保 (CSP) 或正股抵押 (Covered Call)。<br>
+2. <b>Buy to Close (BTC 買進平倉)</b>：當權利金跌掉 50%~70% 時，花小錢把合約買回來銷毀，釋放保證金並鎖定獲利。</p>
           </div>
         </div>
 
@@ -710,8 +710,8 @@
             <p>• <b>為什麼不能只看 IV 絕對值？</b> TSLA 的 IV 常年在 55%，KO 常年在 15%。要知道現在權利金貴不貴，必須看該股票跟自己過去一年比較的位階——也就是 <b>IV Rank (IVR)</b>。</p>
             <p>• <b>IV Rank 計算公式</b>：<code>(當前 IV - 52週最低 IV) ÷ (52週最高 IV - 52週最低 IV) × 100%</code>。</p>
             <p>• <b>黃金分水嶺法則</b>：<br>
-              - <b>當 IV Rank ≥ 50%</b>：權利金處於歷史昂貴區，未來均值回歸下跌機率大 $\to$ <b>做賣方 (CSP、Covered Call、Iron Condor)</b> 同時賺 Theta 與 Vega。<br>
-              - <b>當 IV Rank &lt; 30%</b>：權利金極度便宜 $\to$ <b>做買方 (PMCC 長腿、Bull Call Spread)</b> 成本最低。</p>
+- <b>當 IV Rank ≥ 50%</b>：權利金處於歷史昂貴區，未來均值回歸下跌機率大 → <b>做賣方 (CSP、Covered Call、Iron Condor)</b> 同時賺 Theta 與 Vega。<br>
+- <b>當 IV Rank &lt; 30%</b>：權利金極度便宜 → <b>做買方 (PMCC 長腿、Bull Call Spread)</b> 成本最低。</p>
           </div>
         </div>
 
@@ -743,95 +743,87 @@
   </main>
 
   <script>
-// ==================== 1. 動態美股市值 Top 50 資料引擎 ====================
-// 保留少數核心標的作為斷網時的 Fallback 保底資料
-const FALLBACK_STOCKS = [
-  { rank: 1, sym: 'AAPL', name: 'Apple Inc. (蘋果)', mcap: '3.45T', price: 228.50, pe: 31.2, iv: 24, ivLow: 16, ivHigh: 38 },
-  { rank: 2, sym: 'NVDA', name: 'NVIDIA Corp. (輝達)', mcap: '3.38T', price: 138.50, pe: 40.2, iv: 52, ivLow: 34, ivHigh: 80 },
-  { rank: 3, sym: 'MSFT', name: 'Microsoft (微軟)', mcap: '3.15T', price: 425.00, pe: 35.8, iv: 23, ivLow: 17, ivHigh: 36 },
-  { rank: 51, sym: 'SPY', name: 'SPDR S&P 500 ETF', mcap: 'ETF', price: 595.00, pe: 26.5, iv: 14, ivLow: 10, ivHigh: 28 },
-  { rank: 52, sym: 'QQQ', name: 'Invesco QQQ ETF', mcap: 'ETF', price: 512.00, pe: 33.8, iv: 19, ivLow: 13, ivHigh: 34 },
-  { rank: 53, sym: 'SOXL', name: '3倍做多半導體 ETF (教學基準)', mcap: 'ETF', price: 90.00, pe: 38.0, iv: 95, ivLow: 65, ivHigh: 145 }
-];
+    // ==================== 1. 動態美股市值 Top 50 資料引擎 ====================
+    const FALLBACK_STOCKS = [
+      { rank: 1, sym: 'AAPL', name: 'Apple Inc. (蘋果)', mcap: '3.45T', price: 228.50, pe: 31.2, iv: 24, ivLow: 16, ivHigh: 38 },
+      { rank: 2, sym: 'NVDA', name: 'NVIDIA Corp. (輝達)', mcap: '3.38T', price: 138.50, pe: 40.2, iv: 52, ivLow: 34, ivHigh: 80 },
+      { rank: 3, sym: 'MSFT', name: 'Microsoft (微軟)', mcap: '3.15T', price: 425.00, pe: 35.8, iv: 23, ivLow: 17, ivHigh: 36 },
+      { rank: 51, sym: 'SPY', name: 'SPDR S&P 500 ETF', mcap: 'ETF', price: 595.00, pe: 26.5, iv: 14, ivLow: 10, ivHigh: 28 },
+      { rank: 52, sym: 'QQQ', name: 'Invesco QQQ ETF', mcap: 'ETF', price: 512.00, pe: 33.8, iv: 19, ivLow: 13, ivHigh: 34 },
+      { rank: 53, sym: 'SOXL', name: '3倍做多半導體 ETF (教學基準)', mcap: 'ETF', price: 90.00, pe: 38.0, iv: 95, ivLow: 65, ivHigh: 145 }
+    ];
 
-// 改用 let 宣告，允許動態覆寫
-let TOP50_STOCKS = [...FALLBACK_STOCKS];
-
-// 統一計算 IV Rank 與確保欄位完整
-function normalizeStockList(rawList) {
-  return rawList.map((s, idx) => {
-    const iv = Number(s.iv) || 30;
-    const ivLow = Number(s.ivLow) || Math.round(iv * 0.65);
-    const ivHigh = Number(s.ivHigh) || Math.round(iv * 1.55);
-    const ivr = Math.min(100, Math.max(0, Math.round(((iv - ivLow) / Math.max(1, ivHigh - ivLow)) * 100)));
-    return {
-      rank: s.rank || (idx + 1),
-      sym: String(s.sym || s.symbol).toUpperCase(),
-      name: s.name || s.companyName || s.sym,
-      mcap: s.mcap || formatMarketCap(s.marketCap),
-      price: Number(s.price) || 100,
-      pe: Number(s.pe) || 25.0,
-      iv, ivLow, ivHigh, ivr
-    };
-  });
-}
-
-function formatMarketCap(num) {
-  if (!num || isNaN(num)) return 'N/A';
-  if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
-  if (num >= 1e9) return Math.round(num / 1e9) + 'B';
-  return num.toString();
-}
-
-// 動態載入 Top 50（支援遠端 top50.json 或 FMP API）
-async function loadDynamicTop50(forceRefresh = false) {
-  const CACHE_KEY = 'DYNAMIC_TOP50_CACHE_V1';
-  const CACHE_TTL = 6 * 60 * 60 * 1000; // 快取 6 小時
-
-  // 1. 優先讀取有效的本地快取
-  if (!forceRefresh) {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        if (Date.now() - parsed.timestamp < CACHE_TTL && Array.isArray(parsed.data)) {
-          TOP50_STOCKS = normalizeStockList(parsed.data);
-          refreshAllStockUI();
-          return;
-        }
-      } catch (e) { console.warn('Cache parse error:', e); }
+    function formatMarketCap(num) {
+      if (!num || isNaN(num)) return 'N/A';
+      if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+      if (num >= 1e9) return Math.round(num / 1e9) + 'B';
+      return num.toString();
     }
-  }
 
-  // 2. 向你的自動更新 JSON 或後端 API 請求最新前 50 大名單
-  try {
-    // 若使用 GitHub Actions 自動產出，只需放同目錄下的 './top50.json'
-    // 若使用本地 Python API，可改為 'http://localhost:8000/api/top50'
-    const res = await fetch('./top50.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const remoteData = await res.json();
+    function normalizeStockList(rawList) {
+      return rawList.map((s, idx) => {
+        const iv = Number(s.iv) || 30;
+        const ivLow = Number(s.ivLow) || Math.round(iv * 0.65);
+        const ivHigh = Number(s.ivHigh) || Math.round(iv * 1.55);
+        const ivr = Math.min(100, Math.max(0, Math.round(((iv - ivLow) / Math.max(1, ivHigh - ivLow)) * 100)));
+        return {
+          rank: s.rank || (idx + 1),
+          sym: String(s.sym || s.symbol).toUpperCase(),
+          name: s.name || s.companyName || s.sym,
+          mcap: s.mcap || formatMarketCap(s.marketCap),
+          price: Number(s.price) || 100,
+          pe: Number(s.pe) || 25.0,
+          iv, ivLow, ivHigh, ivr
+        };
+      });
+    }
 
-    TOP50_STOCKS = normalizeStockList(remoteData);
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
-      timestamp: Date.now(),
-      data: TOP50_STOCKS
-    }));
-  } catch (err) {
-    console.warn('無法載入遠端 Top50，使用預設保底清單:', err.message);
-    TOP50_STOCKS = normalizeStockList(FALLBACK_STOCKS);
-  }
+    let TOP50_STOCKS = normalizeStockList(FALLBACK_STOCKS);
 
-  refreshAllStockUI();
-}
+    async function loadDynamicTop50(forceRefresh = false) {
+      const CACHE_KEY = 'DYNAMIC_TOP50_CACHE_V1';
+      const CACHE_TTL = 6 * 60 * 60 * 1000;
 
-// 當清單更新後，同步刷新 Datalist 下拉選單與 Top 50 表格
-function refreshAllStockUI() {
-  populateDatalist();
-  renderTop50Table();
-  // 確保預設教學基準 SOXL 存在
-  const soxl = TOP50_STOCKS.find(s => s.sym === 'SOXL') || TOP50_STOCKS[0];
-  if (!hasUserSelectedStock) currentStock = soxl;
-}
+      if (!forceRefresh) {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < CACHE_TTL && Array.isArray(parsed.data) && parsed.data.length > 0) {
+              TOP50_STOCKS = normalizeStockList(parsed.data);
+              refreshAllStockUI();
+              return;
+            }
+          } catch (e) { console.warn('Cache parse error:', e); }
+        }
+      }
+
+      try {
+        const res = await fetch('./top50.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const remoteData = await res.json();
+
+        if (Array.isArray(remoteData) && remoteData.length > 0) {
+          TOP50_STOCKS = normalizeStockList(remoteData);
+          localStorage.setItem(CACHE_KEY, JSON.stringify({
+            timestamp: Date.now(),
+            data: TOP50_STOCKS
+          }));
+        }
+      } catch (err) {
+        console.warn('無法載入遠端 Top50，使用預設保底清單:', err.message);
+        TOP50_STOCKS = normalizeStockList(FALLBACK_STOCKS);
+      }
+
+      refreshAllStockUI();
+    }
+
+    function refreshAllStockUI() {
+      populateDatalist();
+      renderTop50Table();
+      const soxl = TOP50_STOCKS.find(s => s.sym === 'SOXL') || TOP50_STOCKS[0];
+      if (!hasUserSelectedStock) currentStock = soxl;
+    }
 
     // ==================== 2. 各分頁說明資料庫 ====================
     const PAGE_GUIDES = {
@@ -1029,8 +1021,8 @@ function refreshAllStockUI() {
       }
     };
 
-    // ==================== 5. 全域狀態與股票選取引擎 (選完股票才顯示資訊) ====================
-    let currentStock = TOP50_STOCKS.find(s => s.sym === 'SOXL') || TOP50_STOCKS[0]; // 內部預設基準為 SOXL $90，直到使用者選擇股票
+    // ==================== 5. 全域狀態與股票選取引擎 ====================
+    let currentStock = TOP50_STOCKS.find(s => s.sym === 'SOXL') || TOP50_STOCKS[0];
     let hasUserSelectedStock = false;
     let isSoxlBenchmarkMode = true;
     let unifiedGreeksMode = 'auto';
@@ -1053,7 +1045,7 @@ function refreshAllStockUI() {
     function resetToSoxlBenchmark() {
       isSoxlBenchmarkMode = true;
       customStrikeOverride = null;
-      currentStock = TOP50_STOCKS[52];
+      currentStock = TOP50_STOCKS.find(s => s.sym === 'SOXL') || TOP50_STOCKS[0];
       document.getElementById('uSpot').value = 90;
       document.getElementById('uIv').value = 65;
       document.getElementById('uDte').value = 30;
@@ -1466,7 +1458,7 @@ function refreshAllStockUI() {
       }).join('');
     }
 
-    // ==================== 7. 第2頁：美股市值 Top 50 表格渲染 (醒目顯示本益比 P/E) ====================
+    // ==================== 7. 第2頁：美股市值 Top 50 表格渲染 ====================
     function renderTop50Table() {
       const q = (document.getElementById('top50FilterInput').value || '').trim().toUpperCase();
       const peFilter = document.getElementById('top50PeFilter').value;
@@ -1753,15 +1745,15 @@ function refreshAllStockUI() {
       document.documentElement.classList.toggle('dark');
     });
 
-window.addEventListener('DOMContentLoaded', async () => {
-  await loadDynamicTop50(); // 自動抓取最新市值 Top 50 並建立 <datalist>
-  renderStrategyTable();
-  runStrategyFinder();
-  updatePageGuide('simulator');
-  onUnifiedStrategyChange();
-  renderPortfolioAllocation();
-  updateCompoundChart();
-});
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadDynamicTop50();
+      renderStrategyTable();
+      runStrategyFinder();
+      updatePageGuide('simulator');
+      onUnifiedStrategyChange();
+      renderPortfolioAllocation();
+      updateCompoundChart();
+    });
   </script>
 </body>
 </html>

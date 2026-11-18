@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Firstrade 期權戰略指揮中心 Pro - 10大策略 Greeks 整合模擬 & Top 50 本益比雷達</title>
+  <title>Firstrade 美股期權戰略中心 v3.0 - 策略Greeks二合一 · Top50本益比 · 期權百科 · Gemini AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -29,7 +29,7 @@
       cursor: pointer;
     }
     .tab-active {
-      border-bottom: 2px solid #3b82f6;
+      border-bottom: 3px solid #3b82f6;
       color: #3b82f6;
       font-weight: 700;
     }
@@ -74,40 +74,45 @@
   <header class="sticky top-0 z-40 bg-white/95 dark:bg-notionCard/95 backdrop-blur border-b border-slate-200 dark:border-notionBorder px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE PRO</span>
+        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v3.0</span>
         <div>
           <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略 & Greeks 整合精算系統</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">0ms 極速選股 · 策略多腿 Greeks 合成 · Top 50 本益比 & IV Rank · $22k 複利配置</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">策略與Greeks二合一 · Top 50 本益比(P/E) & IV Rank · 期權教學百科 · Gemini AI 顧問</p>
         </div>
       </div>
 
-      <!-- 極速股票搜尋框 -->
+      <!-- 極速股票搜尋框與即時數據徽章 -->
       <div class="flex flex-wrap items-center gap-2">
         <div class="flex items-center bg-slate-100 dark:bg-notionDark rounded-xl p-1 border border-slate-300 dark:border-notionBorder">
           <span class="pl-2 text-xs text-slate-400">⚡</span>
-          <input id="globalTickerInput" type="text" value="NVDA" list="top50Datalist" 
-                 placeholder="輸入代號 (如 NVDA)"
+          <input id="globalTickerInput" type="text" value="NVDA" list="top50Datalist"
+                 placeholder="搜尋代號 (如 NVDA)"
                  onkeydown="if(event.key==='Enter') searchAndLoadStock()"
-                 class="bg-transparent px-2 py-1 text-xs sm:text-sm font-bold uppercase w-32 sm:w-40 focus:outline-none" />
+                 class="bg-transparent px-2 py-1 text-xs sm:text-sm font-bold uppercase w-28 sm:w-36 focus:outline-none" />
           <datalist id="top50Datalist"></datalist>
-          <button onclick="searchAndLoadStock()" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition">
+          <button onclick="searchAndLoadStock()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition">
             極速帶入
           </button>
         </div>
 
-        <!-- 當前股票即時資訊徽章 (含現價、本益比 P/E、IV、IVR) -->
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs">
+        <!-- 當前股票資訊徽章 (醒目顯示現價、本益比 P/E、IV、IVR) -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs">
           <span id="headerSymbol" class="font-bold text-blue-500">NVDA</span>
           <span id="headerPrice" class="font-bold text-sm">$138.50</span>
-          <span id="headerPeBadge" class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-medium">P/E: 40.2x</span>
-          <span id="headerIvBadge" class="px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-400 font-medium">IV: 52% (IVR 64%)</span>
+          <span id="headerPeBadge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">本益比 P/E: 40.2x</span>
+          <span id="headerIvBadge" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">IV: 52% (IVR 64%)</span>
         </div>
 
-        <!-- 本頁說明與深淺色切換 -->
-        <button onclick="togglePageGuide()" class="px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
-          📖 本頁說明
+        <!-- 詢問 Gemini AI 按鈕 -->
+        <button onclick="toggleGeminiDrawer(true)" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-bold shadow-md transition flex items-center gap-1">
+          ✨ 詢問 Gemini AI
         </button>
-        <button id="themeBtn" class="p-2 rounded-xl border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 text-xs">
+
+        <!-- 本頁說明與深淺色切換 -->
+        <button onclick="togglePageGuide()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
+          📖 說明
+        </button>
+        <button id="themeBtn" class="p-1.5 rounded-xl border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 text-xs">
           🌓
         </button>
       </div>
@@ -115,32 +120,34 @@
 
     <!-- 熱門標的 0ms 瞬時切換列 -->
     <div class="max-w-7xl mx-auto mt-2 pt-2 border-t border-slate-100 dark:border-notionBorder/60 flex flex-wrap items-center gap-1.5 text-xs">
-      <span class="text-slate-400">瞬時帶入標的：</span>
+      <span class="text-slate-400">0ms 瞬時帶入：</span>
       <button onclick="quickLoadTicker('SOXL', true)" class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 hover:bg-blue-500/25 font-semibold">SOXL ($90 教學基準)</button>
-      <button onclick="quickLoadTicker('NVDA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">NVDA</button>
-      <button onclick="quickLoadTicker('TSLA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">TSLA</button>
-      <button onclick="quickLoadTicker('AMD')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AMD</button>
-      <button onclick="quickLoadTicker('AAPL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AAPL</button>
-      <button onclick="quickLoadTicker('MSFT')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">MSFT</button>
-      <button onclick="quickLoadTicker('GOOGL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">GOOGL</button>
+      <button onclick="quickLoadTicker('NVDA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">NVDA (P/E 40.2)</button>
+      <button onclick="quickLoadTicker('TSLA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">TSLA (P/E 88.5)</button>
+      <button onclick="quickLoadTicker('AMD')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AMD (P/E 42.6)</button>
+      <button onclick="quickLoadTicker('AAPL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AAPL (P/E 31.2)</button>
+      <button onclick="quickLoadTicker('GOOGL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">GOOGL (P/E 23.2)</button>
+      <button onclick="quickLoadTicker('JPM')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">JPM (P/E 13.4)</button>
+      <button onclick="quickLoadTicker('KO')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">KO (P/E 23.5)</button>
       <button onclick="quickLoadTicker('QQQ')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">QQQ</button>
-      <button onclick="quickLoadTicker('SPY')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">SPY</button>
-      <button onclick="quickLoadTicker('KO')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">KO</button>
-      <span id="quoteStatus" class="ml-auto text-[11px] text-emerald-400 font-medium">⚡ 0ms 瞬時引擎就緒</span>
+      <span id="quoteStatus" class="ml-auto text-[11px] text-emerald-400 font-medium">⚡ v3.0 快取引擎就緒</span>
     </div>
   </header>
 
-  <!-- ==================== 3 大核心功能分頁選單 ==================== -->
+  <!-- ==================== 4 大核心分頁選單 (已刪除第5頁，並將1、3頁完全合併為第1頁) ==================== -->
   <div class="max-w-7xl mx-auto px-4 pt-3">
     <div class="flex space-x-6 border-b border-slate-200 dark:border-notionBorder text-xs sm:text-sm overflow-x-auto">
       <button onclick="switchTab('simulator')" id="tab-simulator" class="pb-2.5 whitespace-nowrap tab-active">
-        🎯 1. 10大策略 & Greeks 權利金整合模擬器
+        🎯 1. 10大策略模擬 & Greeks 權利金精算 (二合一整合頁)
       </button>
       <button onclick="switchTab('top50')" id="tab-top50" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
-        🏆 2. 美股市值 Top 50 (含本益比 P/E & IV Rank 雷達)
+        🏆 2. 市值 Top 50 · 本益比 (P/E) & IV Rank 雷達
       </button>
       <button onclick="switchTab('portfolio')" id="tab-portfolio" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
         🛡️ 3. $22,000 風險配置 & 複利成長模擬
+      </button>
+      <button onclick="switchTab('academy')" id="tab-academy" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
+        📚 4. 選擇權全攻略教學百科 (從新手到實戰)
       </button>
     </div>
   </div>
@@ -161,27 +168,27 @@
   <!-- ==================== 主要內容區 ==================== -->
   <main class="max-w-7xl mx-auto p-4 space-y-6">
 
-    <!-- ==================== 分頁 1：10大策略 & Greeks 權利金整合模擬器 ==================== -->
+    <!-- ==================== 分頁 1：10大策略模擬 & Greeks 權利金精算 (完全二合一) ==================== -->
     <section id="panel-simulator" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- 左側控制台：策略選擇 + Greeks 合成參數 + 動態滑桿 (5欄) -->
+        <!-- 左側：策略選擇 + 合約設定 + 四大 Greeks (Delta/Gamma/Theta/Vega/IV) 精算面板 (5欄) -->
         <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
           
-          <!-- 策略選擇與基準切換 -->
+          <!-- 區塊 1：選擇 10 大期權策略 -->
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="font-bold text-base flex items-center gap-1.5">
-              1️⃣ 選擇期權策略
+              1️⃣ 選擇期權策略 (自動合成多腿 Greeks)
               <span class="has-tooltip text-xs px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">?
-                <span class="tooltip-box">切換任一策略時，下方會自動根據 Black-Scholes 模型計算該策略所有腿數合成後的總和 Greeks (Net Delta/Gamma/Theta/Vega) 與權利金收支！</span>
+                <span class="tooltip-box">本頁已將「Greeks 權利金精算」與「10 大策略損益模擬」完全合併！切換策略時，系統會以 Black-Scholes 模型自動算出整組策略的 Net Delta、Gamma、Theta、Vega 與權利金。</span>
               </span>
             </h2>
-            <div class="flex gap-1.5">
-              <button onclick="quickLoadTicker('SOXL', true)" class="px-2.5 py-1 text-xs rounded-lg bg-blue-600/15 text-blue-400 hover:bg-blue-600/25 font-semibold">
-                還原 SOXL $90 案例
+            <div class="flex gap-1">
+              <button onclick="quickLoadTicker('SOXL', true)" class="px-2 py-1 text-xs rounded-lg bg-blue-600/15 text-blue-400 hover:bg-blue-600/25 font-semibold">
+                SOXL $90 範例
               </button>
-              <button onclick="syncStrategyToActiveStock()" class="px-2.5 py-1 text-xs rounded-lg bg-emerald-600/15 text-emerald-400 hover:bg-emerald-600/25 font-semibold">
-                套用當前股價與IV
+              <button onclick="syncStrategyToActiveStock()" class="px-2 py-1 text-xs rounded-lg bg-emerald-600/15 text-emerald-400 hover:bg-emerald-600/25 font-semibold">
+                套用當前股票
               </button>
             </div>
           </div>
@@ -189,7 +196,7 @@
           <select id="strategySelect" onchange="onUnifiedStrategyChange()" 
                   class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             <optgroup label="Firstrade 7 大原生結構單">
-              <option value="single">1. Single (單腿買權 - Buy OTM Call)</option>
+              <option value="single">1. Single (單腿期權 - Buy Call / 單腿精算)</option>
               <option value="spread">2. Spread (垂直牛市價差 - Bull Call Spread)</option>
               <option value="straddle">3. Straddle (跨式買方 - 同價買 Call + Put)</option>
               <option value="butterfly">4. Butterfly (蝶式價差 - 3腿區間精準打擊)</option>
@@ -197,113 +204,116 @@
               <option value="condor">6. Condor (禿鷹價差 - 4腿平頂獲利區間)</option>
               <option value="iron_condor">7. Iron Condor (鐵鷹價差 - 4腿雙向價外收租)</option>
             </optgroup>
-            <optgroup label="高勝率收租與現貨替代策略">
+            <optgroup label="高勝率實戰收租與現貨替代策略">
               <option value="csp">8. Cash-Secured Put (CSP 現金擔保賣權收租)</option>
               <option value="cc">9. Covered Call (持股掩護性買權收租)</option>
               <option value="pmcc">10. PMCC (窮人掩護性買權 - Deep ITM 替代現貨)</option>
             </optgroup>
           </select>
 
-          <!-- 策略組合明細卡 -->
+          <!-- 策略腿數明細與解說 -->
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/80 dark:border-notionBorder space-y-2 text-xs">
             <div class="flex items-center justify-between">
               <span id="stratBadge" class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold"></span>
-              <span id="stratWinRate" class="text-slate-400"></span>
+              <span id="stratWinRate" class="text-slate-400 font-medium"></span>
             </div>
             <p id="stratEssence" class="text-slate-600 dark:text-slate-300 leading-relaxed"></p>
             <div class="pt-2 border-t border-slate-200 dark:border-notionBorder">
-              <div class="font-semibold text-slate-700 dark:text-slate-200 mb-1">📋 當前套用之合約腿數與履約價組合：</div>
+              <div class="font-semibold text-slate-700 dark:text-slate-200 mb-1">📋 策略具體下單腿數與履約價組合：</div>
               <div id="stratLegsText" class="text-slate-600 dark:text-slate-300 space-y-0.5 font-mono text-[11px]"></div>
             </div>
           </div>
 
-          <!-- 基礎參數與 Greeks 精算面板 (支援自動與手動覆寫) -->
+          <!-- 區塊 2：Greeks (Delta / Gamma / Theta / Vega / IV) 權利金精算控制台 -->
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/80 dark:border-notionBorder space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold flex items-center gap-1">
-                2️⃣ 策略合成 Greeks 與權利金參數
+                2️⃣ Greeks & IV 權利金精算參數
                 <span class="has-tooltip text-[10px] px-1.5 py-0.2 rounded-full bg-slate-700 text-white">?
-                  <span class="tooltip-box">預設由系統自動計算該策略所有腿數加總後的「淨 Greeks (Net Greeks)」；你也可以直接點擊下方數字手動修改為你在 Firstrade 看到的數值！</span>
+                  <span class="tooltip-box">可選擇「BSM 自動精算」由現價與 IV 自動算出精確 Greeks；也可點選「手動輸入 Greeks」直接填入你在 Firstrade 期權鏈看到的 Delta、Gamma、Theta、Vega！</span>
                 </span>
               </span>
               <div class="flex gap-1 text-[11px]">
-                <button id="btnAutoGreeks" onclick="setUnifiedGreeksMode('auto')" class="px-2 py-0.5 rounded bg-blue-600 text-white font-semibold">自動合成</button>
-                <button id="btnManualGreeks" onclick="setUnifiedGreeksMode('manual')" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-400">手動輸入</button>
+                <button id="btnAutoGreeks" onclick="setUnifiedGreeksMode('auto')" class="px-2 py-0.5 rounded bg-blue-600 text-white font-semibold">BSM 自動精算</button>
+                <button id="btnManualGreeks" onclick="setUnifiedGreeksMode('manual')" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-400">手動輸入 Greeks</button>
               </div>
             </div>
 
-            <!-- 現價 / DTE / IV / 單口淨權利金 -->
-            <div class="grid grid-cols-4 gap-2 text-xs">
+            <!-- 現價 S / 主行權價 K / 到期天數 DTE / 隱含波動率 IV / 口數 -->
+            <div class="grid grid-cols-5 gap-2 text-xs">
               <div>
-                <label class="text-[11px] text-slate-400">標的現價($)</label>
+                <label class="text-[10px] text-slate-400">標的現價($)</label>
                 <input id="uSpot" type="number" step="0.5" value="90" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-blue-400" />
               </div>
               <div>
-                <label class="text-[11px] text-slate-400">到期天數</label>
+                <label class="text-[10px] text-slate-400">基準行權價($)</label>
+                <input id="uStrike" type="number" step="1" value="100" oninput="onStrikeManualChange()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400">天數(DTE)</label>
                 <input id="uDte" type="number" min="1" max="365" value="30" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold" />
               </div>
               <div>
-                <label class="text-[11px] text-slate-400">IV 波動率(%)</label>
+                <label class="text-[10px] text-slate-400">IV波動率(%)</label>
                 <input id="uIv" type="number" min="5" max="250" value="65" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-purple-400" />
               </div>
               <div>
-                <label class="text-[11px] text-slate-400">交易口數</label>
+                <label class="text-[10px] text-slate-400">交易口數</label>
                 <input id="uQty" type="number" min="1" max="50" value="1" oninput="updateUnifiedSimulation()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-center" />
               </div>
             </div>
 
-            <!-- 5 格 Net Greeks + 淨權利金單價 -->
+            <!-- Delta / Gamma / Theta / Vega / 每股淨權利金 -->
             <div class="grid grid-cols-5 gap-2 text-xs pt-1">
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
                 <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>Net Δ</span>
-                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Net Delta</b>：股價每漲 $1，整組策略每股淨賺賠的金額。正值代表偏多，負值代表偏空，接近 0 代表方向中性（如鐵蝴蝶/鐵鷹）。</span></span>
+                  <span>Delta (Δ)</span>
+                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Delta (方向敏感度)</b>：股價每漲 $1，權利金變動的金額。</span></span>
                 </div>
                 <input id="uDelta" type="number" step="0.01" value="0.42" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-blue-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
                 <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>Net Γ</span>
-                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Net Gamma</b>：股價每變動 $1 時 Net Delta 的加速度。買方為正 Gamma（越漲賺越快），賣方為負 Gamma。</span></span>
+                  <span>Gamma (Γ)</span>
+                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Gamma (加速度)</b>：股價每動 $1 時 Delta 的變化量。</span></span>
                 </div>
                 <input id="uGamma" type="number" step="0.005" value="0.018" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-cyan-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
                 <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>Net Θ</span>
-                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Net Theta (每日時間價值)</b>：正值代表每天睡覺自動收租入袋（如 CSP、鐵鷹）；負值代表買方每天流失的時間成本。</span></span>
+                  <span>Theta (Θ)</span>
+                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Theta (時間收支)</b>：每過 1 天權利金的時間價值變化（正值代表賣方每天收租，負值代表買方每天耗損）。</span></span>
                 </div>
                 <input id="uTheta" type="number" step="0.01" value="-0.08" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-rose-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
                 <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>Net ν</span>
-                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Net Vega</b>：隱含波動率 (IV) 每變動 1% 對整組策略的影響。正值喜愛波動放大，負值喜愛波動率萎縮 (IV Crush)。</span></span>
+                  <span>Vega (ν)</span>
+                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Vega (波動敏感度)</b>：IV 每升降 1% 對權利金的增減金額。</span></span>
                 </div>
                 <input id="uVega" type="number" step="0.01" value="0.11" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-amber-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
                 <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>每股淨價$</span>
-                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box">整組策略每股淨權利金（負數代表買方淨支出 Debit，正數代表賣方淨收取 Credit）。</span></span>
+                  <span>權利金單價</span>
+                  <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box">每股淨權利金（負數代表買方支出 Debit，正數代表賣方收租 Credit）。</span></span>
                 </div>
                 <input id="uNetPrem" type="number" step="0.1" value="-4.50" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-emerald-400 focus:outline-none mt-0.5" />
               </div>
             </div>
           </div>
 
-          <!-- 3 大動態情境推演滑桿 -->
+          <!-- 區塊 3：動態情境推演滑桿 (股價、天數、IV) -->
           <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/25 space-y-3 text-xs">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-sm text-blue-400">3️⃣ 拖動滑桿模擬持倉與到期損益</span>
-              <button onclick="resetSimSliders()" class="text-[11px] text-slate-400 hover:text-white underline">重設滑桿</button>
+              <span class="font-bold text-sm text-blue-400">3️⃣ 拖動滑桿即時推演權利金與到期損益</span>
+              <button onclick="resetSimSliders()" class="text-[11px] text-slate-400 hover:text-white underline">歸零重設</button>
             </div>
 
-            <!-- 滑桿 A：目標股價 -->
             <div>
               <div class="flex justify-between mb-1">
                 <span>🔍 模擬目標股價 (S + ΔS)：</span>
@@ -317,19 +327,17 @@
               </div>
             </div>
 
-            <!-- 滑桿 B：經過持倉天數 -->
             <div>
               <div class="flex justify-between mb-1">
-                <span>⏳ 模擬經過持倉天數 (Δt，觀察 Theta 效應)：</span>
+                <span>⏳ 模擬經過持倉天數 (Δt，計算 Theta 時間折舊/收租)：</span>
                 <span id="lblDaysPassed" class="font-bold text-rose-400">經過 15 天 (剩餘 15 DTE)</span>
               </div>
               <input id="sliderDaysPassed" type="range" min="0" max="30" step="1" value="15" oninput="updateUnifiedSimulation()" class="w-full h-2 rounded-lg" />
             </div>
 
-            <!-- 滑桿 C：IV 波動率變化 -->
             <div>
               <div class="flex justify-between mb-1">
-                <span>⚡ 模擬 IV 隱含波動率升降 (ΔIV，觀察 Vega 效應)：</span>
+                <span>⚡ 模擬 IV 隱含波動率變化 (ΔIV，計算 Vega 效應)：</span>
                 <span id="lblIvChange" class="font-bold text-amber-400">0% (維持原 IV)</span>
               </div>
               <input id="sliderIvChange" type="range" min="-30" max="30" step="1" value="0" oninput="updateUnifiedSimulation()" class="w-full h-2 rounded-lg" />
@@ -338,20 +346,20 @@
 
         </div>
 
-        <!-- 右側：雙軌損益曲線圖 (T+n 持倉曲線 vs 到期結算線) + Greeks 拆解明細 (7欄) -->
+        <!-- 右側：權利金精算結果 + 四大 Greeks 拆解 + 雙軌損益曲線圖 (7欄) -->
         <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder flex flex-col justify-between space-y-4">
           
-          <!-- 頂部 4 格核心財務與損益指標 -->
+          <!-- 頂部 4 格核心財務與權利金精算指標 -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
-              <div class="text-[11px] text-slate-400">開倉收付與保證金</div>
+              <div class="text-[11px] text-slate-400">開倉權利金與保證金</div>
               <div id="uMetricCost" class="text-sm font-bold mt-0.5 text-amber-400"></div>
               <div id="uMetricMargin" class="text-[11px] text-slate-400 mt-0.5"></div>
             </div>
             <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30">
               <div class="text-[11px] text-blue-400 font-semibold">持倉中途 (T+Δt) 預估損益</div>
               <div id="uMetricMidPnL" class="text-base font-bold mt-0.5 text-blue-400"></div>
-              <div id="uMetricMidNote" class="text-[11px] text-slate-400 mt-0.5">含 Greeks 時間與波動影響</div>
+              <div id="uMetricNewPrem" class="text-[11px] text-slate-400 mt-0.5"></div>
             </div>
             <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
               <div class="text-[11px] text-emerald-400 font-semibold">到期結算 (0 DTE) 淨損益</div>
@@ -365,11 +373,11 @@
             </div>
           </div>
 
-          <!-- 四大 Greeks 損益貢獻拆解列 -->
+          <!-- 四大 Greeks 權利金貢獻度拆解列 -->
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2 text-xs">
             <div class="flex flex-wrap items-center justify-between gap-1">
-              <span class="font-bold text-slate-600 dark:text-slate-200">🔬 持倉中途 (T+Δt) 四大 Greeks 損益貢獻拆解 (依目前滑桿位置計算)：</span>
-              <span class="font-mono text-[11px] text-slate-400">總變動 ≈ Δ方向 + Γ加速 + Θ時間 + ν波動</span>
+              <span class="font-bold text-slate-600 dark:text-slate-200">🔬 權利金變動四大 Greeks 拆解公式：</span>
+              <span class="font-mono text-[11px] text-slate-400">ΔP ≈ (Δ×dS) + (½×Γ×dS²) + (Θ×dt) + (ν×dIV)</span>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
@@ -380,8 +388,8 @@
                 <div class="text-[10px] text-slate-400">Gamma (Γ) 加速度</div>
                 <div id="uContribGamma" class="font-bold text-sm text-cyan-400">+$0</div>
               </div>
-              <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="text-[10px] text-slate-400">Theta (Θ) 時間收支</div>
+              <div class="p-2 rounded-lg bg-white dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+                <div class="text-[10px] text-slate-400">Theta (Θ) 時間價值收支</div>
                 <div id="uContribTheta" class="font-bold text-sm text-rose-400">+$0</div>
               </div>
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
@@ -391,24 +399,27 @@
             </div>
           </div>
 
-          <!-- 整合雙軌損益圖：實線=到期結算損益，虛線=T+Δt 持倉中途理論損益 -->
-          <div class="relative w-full h-[290px] sm:h-[320px] p-2 rounded-xl bg-slate-50/60 dark:bg-notionDark border border-slate-200/60 dark:border-notionBorder">
+          <!-- 雙軌損益曲線圖 (實線=到期結算損益，虛線=T+Δt 持倉中途 Greeks 損益) -->
+          <div class="relative w-full h-[300px] sm:h-[330px] p-2 rounded-xl bg-slate-50/60 dark:bg-notionDark border border-slate-200/60 dark:border-notionBorder">
             <canvas id="unifiedPayoffChart"></canvas>
           </div>
 
-          <!-- 情境結果對照卡 -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div id="uWinBox" class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300"></div>
-            <div id="uLossBox" class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-300"></div>
+          <!-- 情境結果對照卡 + AI 一鍵診斷按鈕 -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs items-center">
+            <div id="uWinBox" class="sm:col-span-5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300"></div>
+            <div id="uLossBox" class="sm:col-span-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-300"></div>
+            <button onclick="askGeminiAboutCurrentSetup()" class="sm:col-span-2 h-full p-3 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-center shadow transition">
+              ✨ 請 Gemini 診斷此部位
+            </button>
           </div>
 
         </div>
       </div>
 
-      <!-- 下方 Firstrade 7+3 策略快速點擊對照表 -->
+      <!-- 下方 Firstrade 10 大策略對照總表 (點擊任一列直接載入上方模擬器) -->
       <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h3 class="font-bold text-sm sm:text-base">📊 Firstrade 10 大期權策略全景對照表 (點擊任一列即可立即載入上方 Greeks 模擬器)</h3>
+          <h3 class="font-bold text-sm sm:text-base">📊 Firstrade 10 大期權策略全景對照表 (點擊任一列直接載入上方模擬器)</h3>
           <span class="text-xs text-slate-400">基準案例：SOXL 現價 $90 · 30天期 · 1口=100股</span>
         </div>
         <div class="overflow-x-auto">
@@ -416,7 +427,7 @@
             <thead>
               <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-400">
                 <th class="py-2.5 px-3">#</th>
-                <th class="py-2.5 px-3">策略名稱</th>
+                <th class="py-2.5 px-3">Firstrade 策略名稱</th>
                 <th class="py-2.5 px-3">腿數與方向本質</th>
                 <th class="py-2.5 px-3">SOXL 具體下單組合 ($90現價)</th>
                 <th class="py-2.5 px-3">資金收付與保證金</th>
@@ -429,7 +440,7 @@
       </div>
     </section>
 
-    <!-- ==================== 分頁 2：美股市值 Top 50 (含本益比 P/E & IV Rank 雷達) ==================== -->
+    <!-- ==================== 分頁 2：市值 Top 50 · 本益比 (P/E) & IV Rank 雷達 ==================== -->
     <section id="panel-top50" class="hidden space-y-6">
       <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
         
@@ -437,73 +448,75 @@
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-notionBorder">
           <div>
             <h2 class="font-bold text-base flex items-center gap-2">
-              🏆 美國上市市值排名前 50 大公司 · 本益比 (P/E) & IV Rank 策略雷達
+              🏆 美國上市市值排名前 50 大公司 · 本益比 (P/E Ratio) & IV Rank 策略雷達
               <span class="has-tooltip text-xs px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">?
-                <span class="tooltip-box"><b>本益比 (P/E) + IV Rank 雙重選股法</b>：<br>• <b>低本益比 (P/E < 25) + 高 IVR</b>：下檔有紮實獲利支撐，最適合做 <b>Cash-Secured Put (CSP) 打折接刀收租</b>。<br>• <b>高本益比 (P/E > 35) + 低/中 IVR</b>：高成長科技股動能強，適合用 <b>PMCC 或 Bull Call Spread</b> 鎖定風險博取波段。</span>
+                <span class="tooltip-box"><b>本益比 (P/E) + IV Rank 雙因子選股</b>：<br>• <b>低本益比 (P/E &lt; 22x) + 高 IVR</b>：公司估值便宜且權利金肥美，最適合賣出 Cash-Secured Put 打折接刀收租。<br>• <b>高本益比 (P/E &gt; 35x)</b>：高成長科技股波動大，適合用價差單 (Spread) 或 PMCC 鎖定下檔風險。</span>
               </span>
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">點擊任一公司右側「⚡ 極速帶入」即可 0 毫秒載入該股現價、IV 與 Greeks 至整合模擬器</p>
+            <p class="text-xs text-slate-400 mt-0.5">表格第 5 欄已醒目標示各公司目前「本益比 (P/E Ratio)」，可依本益比高低或 IV Rank 進行篩選與排序</p>
           </div>
 
           <div class="flex flex-wrap items-center gap-2 text-xs">
-            <input id="top50FilterInput" type="text" placeholder="搜尋代號或公司名稱..." oninput="renderTop50Table()"
+            <input id="top50FilterInput" type="text" placeholder="搜尋代號或名稱..." oninput="renderTop50Table()"
                    class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder focus:outline-none" />
+            <select id="top50PeFilter" onchange="renderTop50Table()"
+                    class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+              <option value="all">📊 全部本益比 (P/E) 區間</option>
+              <option value="low_pe">🟢 低本益比價值股 (P/E &lt; 22x)</option>
+              <option value="mid_pe">🔵 合理成長股 (P/E 22x ~ 35x)</option>
+              <option value="high_pe">🟠 高本益比動能股 (P/E &gt; 35x)</option>
+            </select>
             <select id="top50IvrFilter" onchange="renderTop50Table()"
                     class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-semibold">
-              <option value="all">全部波動率位階</option>
-              <option value="high">🔥 高 IV Rank (≥50% 賣方收租首選)</option>
-              <option value="mid">⚖️ 中立 IV Rank (30%~49% 價差策略)</option>
-              <option value="low">💎 低 IV Rank (<30% 買方長約首選)</option>
+              <option value="all">全部 IV Rank 位階</option>
+              <option value="high">🔥 高 IV Rank (≥50% 賣方收租)</option>
+              <option value="mid">⚖️ 中立 IV Rank (30%~49% 價差)</option>
+              <option value="low">💎 低 IV Rank (&lt;30% 買方長約)</option>
             </select>
             <select id="top50SortBy" onchange="renderTop50Table()"
                     class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-semibold">
-              <option value="rank">依市值排名 (1 → 50)</option>
-              <option value="pe_asc">依本益比 P/E 由低到高 (價值防禦)</option>
-              <option value="pe_desc">依本益比 P/E 由高到低 (成長動能)</option>
-              <option value="ivr_desc">依 IV Rank 由高到低 (權利金最肥)</option>
-              <option value="ivr_asc">依 IV Rank 由低到高 (權利金最便宜)</option>
+              <option value="rank">排序：依市值排名 (1 → 50)</option>
+              <option value="pe_asc">排序：本益比 P/E 由低到高</option>
+              <option value="pe_desc">排序：本益比 P/E 由高到低</option>
+              <option value="ivr_desc">排序：IV Rank 由高到低</option>
+              <option value="ivr_asc">排序：IV Rank 由低到高</option>
             </select>
           </div>
         </div>
 
         <!-- 3 格選股策略提示卡 -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30">
-            <div class="text-rose-400 font-bold">🔥 高 IV Rank (≥50%) · 賣方收租首選</div>
-            <div class="text-slate-600 dark:text-slate-300 mt-1">NVDA, TSLA, AMD, AVGO, ORCL, QCOM... 權利金昂貴，賣 Put 收租回報極高</div>
-          </div>
           <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-            <div class="text-emerald-400 font-bold">🛡️ 低本益比 (P/E < 22x) · 安全接刀價值股</div>
-            <div class="text-slate-600 dark:text-slate-300 mt-1">JPM, BAC, XOM, CVX, MRK, VZ, PFE... 估值低廉，萬一接刀長抱也安心領息</div>
+            <div class="text-emerald-400 font-bold">🟢 低本益比價值防禦 (P/E &lt; 22x)</div>
+            <div class="text-slate-600 dark:text-slate-300 mt-1">JPM (13.4x), BAC (13.8x), XOM (14.2x), QCOM (16.4x), VZ (9.4x)... 獲利紮實，賣 Put 接刀最安全</div>
+          </div>
+          <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30">
+            <div class="text-rose-400 font-bold">🔥 高 IV Rank 收租王 (IVR ≥ 50%)</div>
+            <div class="text-slate-600 dark:text-slate-300 mt-1">NVDA (P/E 40.2x | IVR 64%), TSLA (P/E 88.5x | IVR 52%), AMD (P/E 42.6x | IVR 43%)... 權利金最肥美</div>
           </div>
           <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30">
-            <div class="text-blue-400 font-bold">💎 低 IV Rank (<30%) · 買方 PMCC 首選</div>
-            <div class="text-slate-600 dark:text-slate-300 mt-1">KO, PG, WMT, V, MA, SPY, QQQ... 時間價值折舊極慢，適合買 Deep ITM Call</div>
+            <div class="text-blue-400 font-bold">💎 低 IV Rank 買方首選 (IVR &lt; 30%)</div>
+            <div class="text-slate-600 dark:text-slate-300 mt-1">KO (P/E 23.5x), PG (P/E 26.4x), WMT (P/E 34.1x), SPY, QQQ... 時間價值便宜，適合買方長約</div>
           </div>
         </div>
 
-        <!-- Top 50 表格 (含本益比 P/E 專欄) -->
-        <div class="overflow-x-auto max-h-[580px]">
+        <!-- Top 50 表格 (第5欄醒目顯示目前本益比 P/E) -->
+        <div class="overflow-x-auto max-h-[600px]">
           <table class="w-full text-left border-collapse text-xs">
-            <thead class="sticky top-0 bg-white dark:bg-notionCard border-b border-slate-200 dark:border-notionBorder text-slate-400 z-10">
+            <thead class="sticky top-0 bg-white dark:bg-notionCard border-b-2 border-slate-200 dark:border-notionBorder text-slate-400 z-10">
               <tr>
-                <th class="py-3 px-2.5">排名</th>
+                <th class="py-3 px-2.5">市值排名</th>
                 <th class="py-3 px-2.5">代號 / 公司名稱</th>
-                <th class="py-3 px-2.5">市值</th>
-                <th class="py-3 px-2.5">現價 ($)</th>
-                <th class="py-3 px-2.5">
-                  <span class="flex items-center gap-1">
-                    本益比 (P/E)
-                    <span class="has-tooltip text-[10px] px-1 rounded bg-slate-700 text-white">?
-                      <span class="tooltip-box"><b>Price-to-Earnings Ratio (本益比)</b>：股價除以每股盈餘 (EPS)。<br>• 綠色 (<22x)：價值型防禦股<br>• 藍色 (22x~35x)：核心穩健成長股<br>• 琥珀色 (>35x)：高本益比高動能股</span>
-                    </span>
-                  </span>
+                <th class="py-3 px-2.5">總市值</th>
+                <th class="py-3 px-2.5">目前股價</th>
+                <th class="py-3 px-3 bg-emerald-500/10 text-emerald-400 font-bold border-x border-emerald-500/20">
+                  📊 目前本益比 (P/E Ratio)
                 </th>
                 <th class="py-3 px-2.5">當前 IV</th>
-                <th class="py-3 px-2.5">52週 IV 區間</th>
-                <th class="py-3 px-2.5 w-40">IV Rank (IVR 位階)</th>
-                <th class="py-3 px-2.5">系統推薦期權策略</th>
-                <th class="py-3 px-2.5 text-right">一鍵帶入</th>
+                <th class="py-3 px-2.5">52週 IV 高低</th>
+                <th class="py-3 px-2.5 w-40">IV Rank (位階)</th>
+                <th class="py-3 px-2.5">推薦期權策略</th>
+                <th class="py-3 px-2.5 text-right">操作</th>
               </tr>
             </thead>
             <tbody id="top50TableBody" class="divide-y divide-slate-200/60 dark:divide-notionBorder"></tbody>
@@ -624,7 +637,210 @@
       </div>
     </section>
 
+    <!-- ==================== 分頁 4：選擇權全攻略教學百科 (全新建立！涵蓋所有期權核心知識) ==================== -->
+    <section id="panel-academy" class="hidden space-y-6">
+      
+      <!-- 頂部互動式「3秒策略決策幫手」 -->
+      <div class="bg-gradient-to-r from-blue-950/60 to-indigo-950/60 rounded-2xl p-5 border border-blue-500/30 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="font-bold text-base sm:text-lg text-blue-400">🧭 互動式期權策略決策導航（不知道該選哪個策略？點選你的看法）</h2>
+            <p class="text-xs text-slate-300">根據你對「股價方向」與「隱含波動率位階 (IV Rank)」的判斷，自動配對最佳策略：</p>
+          </div>
+          <button onclick="toggleGeminiDrawer(true)" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold">
+            ✨ 直接問 Gemini 教練
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label class="text-slate-400">1. 你對未來 30 天股價方向的看法：</label>
+            <select id="finderDir" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-900 border border-slate-700 font-bold text-white">
+              <option value="bull">📈 看漲 / 偏多 (Bullish)</option>
+              <option value="neutral">↔️ 橫盤震盪 / 不大跌即可 (Neutral)</option>
+              <option value="volatile">💥 即將大噴發但不確定方向 (Volatile)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400">2. 目前該股票的 IV Rank (權利金貴不貴)：</label>
+            <select id="finderIvr" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-900 border border-slate-700 font-bold text-white">
+              <option value="high">🔥 高 IV Rank (≥50% 權利金昂貴)</option>
+              <option value="low">💎 低 IV Rank (&lt;30% 權利金便宜)</option>
+            </select>
+          </div>
+          <div id="finderResultCard" class="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 flex flex-col justify-center"></div>
+        </div>
+      </div>
+
+      <!-- 六大核心知識模組網格 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+
+        <!-- 模組 1：期權基礎與價值結構 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
+            <h3 class="font-bold text-base text-blue-400">📘 一、期權本質、價值拆解與價內外 (ITM/ATM/OTM)</h3>
+            <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 text-xs font-bold">基礎核心</span>
+          </div>
+          <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+            <p>• <b>1 口合約 = 100 股正股</b>：報價顯示 $2.50 時，實際收付金額為 <code>$2.50 × 100 = $250 美元</code>。</p>
+            <p>• <b>Call (買權) vs Put (賣權)</b>：Call 代表「在到期日前以履約價買進股票的權利」；Put 代表「以履約價賣出股票的權利」。</p>
+            <p>• <b>權利金總價 ＝ 內含價值 (Intrinsic) ＋ 時間價值 (Extrinsic)</b>：<br>
+              - <b>內含價值</b>：立即行權能賺到的價差（例如股價 $100，履約價 $90 Call 的內含價值為 $10）。<br>
+              - <b>時間價值</b>：為未來波動支付的溢價，隨到期日逼近會加速歸零（Theta 衰減）。</p>
+            <p>• <b>價內 (ITM) / 價平 (ATM) / 價外 (OTM)</b>：<br>
+              - <b>ITM (In-The-Money)</b>：具內含價值（Call 履約價 &lt; 現價；Put 履約價 &gt; 現價）。<br>
+              - <b>OTM (Out-of-The-Money)</b>：內含價值為 0，100% 都是時間價值，賣方收租最愛賣 OTM 合約讓時間價值歸零。</p>
+          </div>
+        </div>
+
+        <!-- 模組 2：Firstrade 四大交易動作 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
+            <h3 class="font-bold text-base text-emerald-400">📗 二、Firstrade 四大期權指令與配對鐵律</h3>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-xs font-bold">必考操作</span>
+          </div>
+          <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+            <p>• <b>買方流派（先付錢買進，後賣出平倉）</b>：<br>
+              1. <b>Buy to Open (BTO 買進開倉)</b>：付出權利金 (Debit) 建立新買方部位，風險鎖定在投入成本，免保證金。<br>
+              2. <b>Sell to Close (STC 賣出平倉)</b>：把手上的買方合約賣掉獲利了結或停損。</p>
+            <p>• <b>賣方包租公流派（先收錢開倉，後買回平倉）</b>：<br>
+              1. <b>Sell to Open (STO 賣出開倉)</b>：無中生有簽發合約賣給市場，立即收到權利金現金 (Credit)，但需圈存現金擔保 (CSP) 或正股抵押 (Covered Call)。<br>
+              2. <b>Buy to Close (BTC 買進平倉)</b>：當權利金跌掉 50%~70% 時，花小錢把合約買回來銷毀，釋放保證金並鎖定獲利。</p>
+          </div>
+        </div>
+
+        <!-- 模組 3：五大希臘字母 (Greeks) 全解析 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
+            <h3 class="font-bold text-base text-purple-400">🔬 三、五大希臘字母 (Greeks) 實戰速查指南</h3>
+            <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 text-xs font-bold">精算核心</span>
+          </div>
+          <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+            <p>• <b>Delta (Δ 方向與勝率指標)</b>：股價每漲 $1 權利金的變動量。實戰中 <code>|Delta|</code> 可直接當作「到期進入價內的機率」——例如賣出 Delta 0.20 的 Put，代表到期有約 80% 機率安全歸零收租！</p>
+            <p>• <b>Gamma (Γ 加速度與末日風險)</b>：股價每動 $1 時 Delta 的變化量。到期前最後 7 天價平合約 Gamma 會暴增，因此賣方務必在到期前 14~21 天提早平倉或展期，避開 Gamma 爆炸。</p>
+            <p>• <b>Theta (Θ 時間價值衰減)</b>：每過 1 天蒸發的金額。時間價值在<b>到期前 30~45 天進入加速衰減黃金期</b>，這是賣方開倉的最佳週期。</p>
+            <p>• <b>Vega (ν 隱含波動率敏感度)</b>：IV 每升降 1% 對權利金的影響。財報公布瞬間 IV 會暴跌（<b>IV Crush 波動率坍塌</b>），買方就算猜對方向也會因 Vega 大賠，賣方則能瞬間獲利。</p>
+          </div>
+        </div>
+
+        <!-- 模組 4：IV 與 IV Rank (IVR) 交易法則 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
+            <h3 class="font-bold text-base text-amber-400">📊 四、隱含波動率 (IV) 與 IV Rank 選股鐵律</h3>
+            <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 text-xs font-bold">勝率關鍵</span>
+          </div>
+          <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+            <p>• <b>為什麼不能只看 IV 絕對值？</b> TSLA 的 IV 常年在 55%，KO 常年在 15%。要知道現在權利金貴不貴，必須看該股票跟自己過去一年比較的位階——也就是 <b>IV Rank (IVR)</b>。</p>
+            <p>• <b>IV Rank 計算公式</b>：<code>(當前 IV - 52週最低 IV) ÷ (52週最高 IV - 52週最低 IV) × 100%</code>。</p>
+            <p>• <b>黃金分水嶺法則</b>：<br>
+              - <b>當 IV Rank ≥ 50%</b>：權利金處於歷史昂貴區，未來均值回歸下跌機率大 $\to$ <b>做賣方 (CSP、Covered Call、Iron Condor)</b> 同時賺 Theta 與 Vega。<br>
+              - <b>當 IV Rank &lt; 30%</b>：權利金極度便宜 $\to$ <b>做買方 (PMCC 長腿、Bull Call Spread)</b> 成本最低。</p>
+          </div>
+        </div>
+
+        <!-- 模組 5：Rollover 展期保住股票與自救聖經 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 md:col-span-2">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
+            <h3 class="font-bold text-base text-rose-400">🔄 五、Rollover (展期) 永久保住正股 SOP 與除息日防提前行權公式</h3>
+            <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 text-xs font-bold">進階風控</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+              <div class="font-bold text-blue-400 mb-1">1. Covered Call 被漲破：Roll Up & Out</div>
+              當正股大漲觸及 Call 行權價（Delta 達 0.70、剩餘 14~21 天）且不想賣出股票時，在持倉點擊「Roll」：<b>買回近月 Call (BTC) ＋ 賣出往後 30~60 天、更高行權價的 Call (STO)</b>。用遠月豐厚的時間價值換取更高的履約天花板，確保整筆為 <b>Net Credit (淨收錢)</b>。
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+              <div class="font-bold text-emerald-400 mb-1">2. CSP 被跌破：Roll Down & Out</div>
+              當賣出的 Put 遭遇回檔跌破履約價時，絕不驚慌認賠。在 21 DTE 時執行：<b>買回近月 Put (BTC) ＋ 賣出下個月更低履約價的 Put (STO)</b>，一邊降低接刀成本、一邊繼續收取額外權利金等待反彈。
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+              <div class="font-bold text-amber-400 mb-1">3. 除息日防提前行權 (Early Assignment)</div>
+              若你的 Covered Call 深入價內，在正股<b>除息日 (Ex-Dividend Date) 前 2 天</b>務必檢查：若 <code>Call 剩餘時間價值 &lt; 即將配發的每股股息</code>，對手會提前行權搶股息。此時必須立即向上展期 (Roll Out) 補厚時間價值。
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
+
+  <!-- ==================== 右下角懸浮「✨ 詢問 Gemini AI」按鈕 ==================== -->
+  <button onclick="toggleGeminiDrawer(true)" 
+          class="fixed bottom-5 right-5 z-40 px-4 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-2xl border border-white/20 flex items-center gap-2 transition transform hover:scale-105">
+    <span>✨ 詢問 Gemini AI 期權顧問</span>
+  </button>
+
+  <!-- ==================== Gemini AI 智慧期權顧問側邊抽屜視窗 ==================== -->
+  <div id="geminiDrawerBackdrop" onclick="toggleGeminiDrawer(false)" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden"></div>
+  <aside id="geminiDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[460px] bg-white dark:bg-notionCard border-l border-slate-200 dark:border-notionBorder z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-5">
+    
+    <!-- 頂部標題與 API Key 設定 -->
+    <div class="space-y-3 border-b border-slate-200 dark:border-notionBorder pb-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold text-xs">GEMINI AI</span>
+          <h3 class="font-bold text-base">智慧期權策略與風險顧問</h3>
+        </div>
+        <button onclick="toggleGeminiDrawer(false)" class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold">✕ 關閉</button>
+      </div>
+
+      <!-- 當前自動綁定的盤面參數摘要 -->
+      <div id="geminiContextBanner" class="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-[11px] text-blue-300 leading-relaxed"></div>
+
+      <!-- 選填 Gemini API Key 連線設定 -->
+      <details class="text-xs bg-slate-100 dark:bg-notionDark p-2.5 rounded-xl border border-slate-200 dark:border-notionBorder">
+        <summary class="cursor-pointer font-semibold text-slate-500 dark:text-slate-300">🔑 設定 Google Gemini API Key (選填，未填亦可使用內建專家引擎)</summary>
+        <div class="mt-2 space-y-2">
+          <input id="geminiApiKeyInput" type="password" placeholder="貼上 AIzaSy... 開頭的 Gemini API Key" 
+                 class="w-full p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder text-xs" />
+          <div class="flex justify-between items-center text-[11px] text-slate-400">
+            <span>金鑰僅保存在你的瀏覽器本機端</span>
+            <button onclick="saveGeminiApiKey()" class="px-2.5 py-1 rounded bg-blue-600 text-white font-semibold">儲存金鑰</button>
+          </div>
+        </div>
+      </details>
+
+      <!-- 一鍵快速提問晶片 -->
+      <div class="flex flex-wrap gap-1.5 text-[11px]">
+        <button onclick="runQuickGeminiPrompt('diagnose')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
+          📊 診斷目前股票本益比與 IVR 適合策略
+        </button>
+        <button onclick="runQuickGeminiPrompt('sizing')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
+          🛡️ $22,000 本金安全口數與保證金計算
+        </button>
+        <button onclick="runQuickGeminiPrompt('rollover')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
+          🔄 若股價穿價該如何 Rollover 展期？
+        </button>
+        <button onclick="runQuickGeminiPrompt('greeks')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
+          🔬 解讀目前部位的 Greeks 時間與波動風險
+        </button>
+      </div>
+    </div>
+
+    <!-- 中間對話歷史紀錄區 -->
+    <div id="geminiChatHistory" class="flex-1 overflow-y-auto my-3 space-y-3 pr-1 text-xs leading-relaxed">
+      <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+        <div class="font-bold text-blue-400 mb-1">✨ Gemini 期權顧問已就緒！</div>
+        <p class="text-slate-600 dark:text-slate-300">我已經自動讀取你目前畫面上選擇的股票代號、本益比 (P/E)、IV Rank、策略組合與 Greeks 參數。你可以直接點擊上方快速提問，或在下方輸入任何選擇權問題！</p>
+      </div>
+    </div>
+
+    <!-- 底部輸入框與外部跳轉按鈕 -->
+    <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-notionBorder">
+      <div class="flex gap-2">
+        <input id="geminiUserPrompt" type="text" placeholder="輸入你的期權問題 (例如：現在適合賣 NVDA Put 嗎？)"
+               onkeydown="if(event.key==='Enter') sendGeminiMessage()"
+               class="flex-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <button onclick="sendGeminiMessage()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs whitespace-nowrap">
+          發送提問
+        </button>
+      </div>
+      <button onclick="copyPromptAndOpenGeminiWeb()" class="w-full py-1.5 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-medium border border-slate-200 dark:border-notionBorder">
+        📋 一鍵複製完整盤面參數並開啟 Google Gemini 網頁版深聊
+      </button>
+    </div>
+
+  </aside>
 
   <script>
     // ==================== 1. 美股市值 Top 50 資料庫 (含本益比 P/E、IV、52週高低點) ====================
@@ -691,20 +907,24 @@
     // ==================== 2. 各分頁說明資料庫 ====================
     const PAGE_GUIDES = {
       simulator: {
-        title: '📖 本頁功能說明：10 大策略 & Greeks 權利金整合模擬器',
-        content: '1. <b>策略與 Greeks 完全整合</b>：切換任一策略（Single、Spread、Iron Condor、CSP、PMCC 等）時，系統會自動計算該策略所有腿數加總後的 <b>Net Delta、Net Gamma、Net Theta、Net Vega</b> 與開倉淨權利金。<br>2. <b>雙軌損益圖</b>：實線代表「到期結算日 (0 DTE) 損益」，藍色虛線代表「持倉中途 (T+Δt) 動態理論損益」。拖動左下方的股價、天數與 IV 滑桿，即可即時觀察時間流逝與波動率變化對策略的影響！'
+        title: '📖 本頁功能說明：10 大策略模擬 & Greeks 權利金精算（1、3頁完全二合一）',
+        content: '1. <b>策略與 Greeks 完全整合</b>：在同一頁面中，你可以自由切換 10 大期權策略，並同時調整現價、基準行權價、到期天數與 IV，系統會透過 Black-Scholes 模型即時算出 <b>Delta、Gamma、Theta、Vega</b> 與權利金變化。<br>2. <b>雙軌損益曲線圖</b>：右側圖表同時呈現「到期結算損益線 (0 DTE)」與「持倉中途動態損益線 (T+Δt)」，還可點擊右下角「✨ 請 Gemini 診斷此部位」取得 AI 分析。'
       },
       top50: {
-        title: '📖 本頁功能說明：美股市值 Top 50 · 本益比 (P/E) & IV Rank 策略雷達',
-        content: '1. <b>新增本益比 (P/E) 欄位與排序</b>：結合「本益比估值」與「IV Rank 波動率位階」雙重篩選。低本益比 (<22x) 且高 IV Rank (≥50%) 的標的最適合做賣方 Cash-Secured Put 收租；低 IV Rank (<30%) 的標的則適合做買方長約或垂直價差。<br>2. 點擊右側 <b>「⚡ 極速帶入」</b> 即可在 0 毫秒內將該股數據載入模擬器。'
+        title: '📖 本頁功能說明：美股市值 Top 50 · 本益比 (P/E Ratio) & IV Rank 選股雷達',
+        content: '1. <b>醒目本益比 (P/E) 欄位</b>：表格第 5 欄已專門標示每家公司的目前本益比，並支援依本益比篩選（低於 22x 價值股、22~35x 穩健股、高於 35x 動能股）與高低排序。<br>2. 點擊任一列右側「⚡ 極速帶入」，0 毫秒將該股現價、P/E 與 IV 載入模擬器。'
       },
       portfolio: {
-        title: '📖 本頁功能說明：$22,000 風險配置藍圖 & 長期複利成長模擬器',
-        content: '1. 上方提供「進攻型年化 40%」、「穩健雙引擎 20%」與「30 天純買方 50% 利用率」三種配置，並依據目前選中的股票現價自動試算安全開倉口數。<br>2. 下方複利模擬器可自由拖動滑桿測試每月提領生活費或複利滾動 1~15 年的資產成長曲線。'
+        title: '📖 本頁功能說明：$22,000 風險配置藍圖 & 長期複利模擬器',
+        content: '提供年化 40% 進攻型、20% 穩健雙引擎與 50% 買方架構三種配置，並可拖動下方複利滑桿模擬每月提領生活費或 1~15 年資產成長軌跡。'
+      },
+      academy: {
+        title: '📖 本頁功能說明：選擇權全攻略教學百科（從基礎、Greeks 到 Rollover 展期）',
+        content: '完整收錄選擇權交易必備的 6 大知識體系，上方並附有「互動式期權策略決策導航」，只要選擇你對方向與 IV Rank 的看法，系統就會自動推薦最適合的期權策略！'
       }
     };
 
-    // ==================== 3. Black-Scholes (BSM) 定價與多腿 Greeks 合成引擎 ====================
+    // ==================== 3. Black-Scholes 定價與多腿 Greeks 合成引擎 ====================
     function normPDF(x) {
       return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
     }
@@ -750,74 +970,83 @@
       };
     }
 
-    // ==================== 4. 10 大期權策略定義 (支援 SOXL $90 經典案例 & 任意股票動態多腿 BSM 合成) ====================
+    // ==================== 4. 10 大期權策略定義 ====================
     const STRATEGIES = {
       single: {
         num: 1, name: 'Single (單腿期權)', badge: '1 腿 · 純買方 (Long Call)', winRate: '~35% (需大漲突破)',
         essence: '單純買進單一買權合約，承擔純粹的方向與時間風險。最大虧損完全鎖定在權利金，上檔獲利無限。',
         soxlLegsDesc: ['• 買進 (BTO) 1 口 $100 Call (付 $4.50)'],
-        soxlNetPrem: -4.50, soxlMargin: 0,
-        soxlMaxProfit: '無限 ($150時 +$4,550)', soxlMaxLoss: '-$450', soxlBreakeven: '$104.50',
+        soxlNetPrem: -4.50, soxlMargin: 0, soxlBreakeven: '$104.50',
         winScenario: '🟢 暴漲至 $150：淨賺 +$4,550', lossScenario: '🔴 跌破 $100：最大虧損鎖定 -$450',
-        buildLegs: (S) => [{ type: 'call', dir: 1, strike: Math.round(S * (100 / 90)), dteMult: 1 }]
+        buildLegs: (S, customK) => [{ type: 'call', dir: 1, strike: customK || Math.round(S * (100 / 90)), dteMult: 1 }]
       },
       spread: {
         num: 2, name: 'Spread (垂直牛市價差)', badge: '2 腿 · 買方價差 (Bull Call Spread)', winRate: '~55% (溫和上漲即賺)',
         essence: '同月買低履約價 Call、賣高履約價 Call，用賣方租金補貼買方成本並抵銷大部分 Theta 時間耗損。',
         soxlLegsDesc: ['• 買進 $100 Call (付 $4.50)', '• 賣出 $120 Call (收 $1.50)'],
-        soxlNetPrem: -3.00, soxlMargin: 0,
-        soxlMaxProfit: '+$1,700', soxlMaxLoss: '-$300', soxlBreakeven: '$103.00',
+        soxlNetPrem: -3.00, soxlMargin: 0, soxlBreakeven: '$103.00',
         winScenario: '🟢 漲破 $120：拿滿最大利潤 +$1,700', lossScenario: '🔴 跌破 $100：最大虧損鎖定 -$300',
-        buildLegs: (S) => [
-          { type: 'call', dir: 1, strike: Math.round(S * (100 / 90)), dteMult: 1 },
-          { type: 'call', dir: -1, strike: Math.round(S * (120 / 90)), dteMult: 1 }
-        ]
+        buildLegs: (S, customK) => {
+          const k1 = customK || Math.round(S * (100 / 90));
+          const width = Math.max(2, Math.round(S * (20 / 90)));
+          return [
+            { type: 'call', dir: 1, strike: k1, dteMult: 1 },
+            { type: 'call', dir: -1, strike: k1 + width, dteMult: 1 }
+          ];
+        }
       },
       straddle: {
         num: 3, name: 'Straddle (跨式買方)', badge: '2 腿 · 雙向突破 (Long Straddle)', winRate: '~40% (賭單邊大波動)',
         essence: '同時買進相同履約價的 Call 與 Put，不在乎漲跌方向，專賭重大事件引發股價單邊劇烈噴出。',
         soxlLegsDesc: ['• 買進 $90 Call (付 $8.00)', '• 買進 $90 Put (付 $8.00)'],
-        soxlNetPrem: -16.00, soxlMargin: 0,
-        soxlMaxProfit: '雙向無限 ($150賺+$4,400)', soxlMaxLoss: '-$1,600', soxlBreakeven: '$74.00 或 $106.00',
+        soxlNetPrem: -16.00, soxlMargin: 0, soxlBreakeven: '$74.00 或 $106.00',
         winScenario: '🟢 飆漲至 $150 淨賺 +$4,400；崩跌至 $50 淨賺 +$2,400', lossScenario: '🔴 橫盤停在 $90：淨虧 -$1,600',
-        buildLegs: (S) => [
-          { type: 'call', dir: 1, strike: Math.round(S), dteMult: 1 },
-          { type: 'put', dir: 1, strike: Math.round(S), dteMult: 1 }
-        ]
+        buildLegs: (S, customK) => {
+          const k = customK || Math.round(S);
+          return [
+            { type: 'call', dir: 1, strike: k, dteMult: 1 },
+            { type: 'put', dir: 1, strike: k, dteMult: 1 }
+          ];
+        }
       },
       butterfly: {
         num: 4, name: 'Butterfly (蝶式價差)', badge: '3 腿 · 低成本區間狙擊', winRate: '~45% (高賠率區間)',
         essence: '買兩側翅膀（低/高履約價）、賣出中間 2 口身體，以極低成本鎖定特定目標收盤價位。',
         soxlLegsDesc: ['• 買 1 口 $80 Call / 賣 2 口 $90 Call / 買 1 口 $100 Call'],
-        soxlNetPrem: -3.50, soxlMargin: 0,
-        soxlMaxProfit: '+$650 (+185%)', soxlMaxLoss: '-$350', soxlBreakeven: '$83.50 ～ $96.50',
+        soxlNetPrem: -3.50, soxlMargin: 0, soxlBreakeven: '$83.50 ～ $96.50',
         winScenario: '🟢 精準收在 $90：拿滿最大利潤 +$650', lossScenario: '🔴 漲破 $100 或跌破 $80：最大虧損 -$350',
-        buildLegs: (S) => [
-          { type: 'call', dir: 1, strike: Math.round(S * (80 / 90)), dteMult: 1 },
-          { type: 'call', dir: -2, strike: Math.round(S), dteMult: 1 },
-          { type: 'call', dir: 1, strike: Math.round(S * (100 / 90)), dteMult: 1 }
-        ]
+        buildLegs: (S, customK) => {
+          const mid = customK || Math.round(S);
+          const wing = Math.max(2, Math.round(S * (10 / 90)));
+          return [
+            { type: 'call', dir: 1, strike: mid - wing, dteMult: 1 },
+            { type: 'call', dir: -2, strike: mid, dteMult: 1 },
+            { type: 'call', dir: 1, strike: mid + wing, dteMult: 1 }
+          ];
+        }
       },
       iron_butterfly: {
         num: 5, name: 'Iron Butterfly (鐵蝴蝶)', badge: '4 腿 · 賣跨式收租 + 雙翼保護', winRate: '~55% (收租型區間)',
         essence: '賣出中間價平 Call 與 Put 收取巨額租金，同時買進兩側價外合約當保險鎖死最大風險。',
         soxlLegsDesc: ['• 賣 $90 Put + 賣 $90 Call (共收 $16.00)', '• 買 $80 Put + 買 $100 Call (共付 $7.50)'],
-        soxlNetPrem: 8.50, soxlMargin: 150,
-        soxlMaxProfit: '+$850', soxlMaxLoss: '-$150', soxlBreakeven: '$81.50 ～ $98.50',
+        soxlNetPrem: 8.50, soxlMargin: 150, soxlBreakeven: '$81.50 ～ $98.50',
         winScenario: '🟢 剛好停在 $90：拿滿最大利潤 +$850', lossScenario: '🔴 暴衝大跌或大漲：最大虧損鎖在 -$150',
-        buildLegs: (S) => [
-          { type: 'put', dir: 1, strike: Math.round(S * (80 / 90)), dteMult: 1 },
-          { type: 'put', dir: -1, strike: Math.round(S), dteMult: 1 },
-          { type: 'call', dir: -1, strike: Math.round(S), dteMult: 1 },
-          { type: 'call', dir: 1, strike: Math.round(S * (100 / 90)), dteMult: 1 }
-        ]
+        buildLegs: (S, customK) => {
+          const mid = customK || Math.round(S);
+          const wing = Math.max(2, Math.round(S * (10 / 90)));
+          return [
+            { type: 'put', dir: 1, strike: mid - wing, dteMult: 1 },
+            { type: 'put', dir: -1, strike: mid, dteMult: 1 },
+            { type: 'call', dir: -1, strike: mid, dteMult: 1 },
+            { type: 'call', dir: 1, strike: mid + wing, dteMult: 1 }
+          ];
+        }
       },
       condor: {
         num: 6, name: 'Condor (禿鷹價差)', badge: '4 腿 · 平頂寬區間獲利', winRate: '~60% (寬幅平台)',
         essence: '買外側、賣內側，將蝶式的尖頂拉寬成「平頂獲利平台」，落入區間內即拿滿最大利潤。',
         soxlLegsDesc: ['• 買 $75 Call / 賣 $85 Call / 賣 $95 Call / 買 $105 Call'],
-        soxlNetPrem: -2.50, soxlMargin: 0,
-        soxlMaxProfit: '+$750', soxlMaxLoss: '-$250', soxlBreakeven: '$77.50 ～ $102.50',
+        soxlNetPrem: -2.50, soxlMargin: 0, soxlBreakeven: '$77.50 ～ $102.50',
         winScenario: '🟢 結算落在 $85 ～ $95 之間：拿滿 +$750', lossScenario: '🔴 脫離區間：最大損失固定 -$250',
         buildLegs: (S) => [
           { type: 'call', dir: 1, strike: Math.round(S * (75 / 90)), dteMult: 1 },
@@ -830,8 +1059,7 @@
         num: 7, name: 'Iron Condor (鐵鷹價差)', badge: '4 腿 · 雙向價外包租公', winRate: '~75% (高勝率寬幅收租)',
         essence: '左邊做 Bull Put Spread、右邊做 Bear Call Spread，在現價上下築起寬闊護城河雙向賺取時間價值。',
         soxlLegsDesc: ['• 賣 $80 Put / 買 $70 Put (淨收 $2.00)', '• 賣 $105 Call / 買 $115 Call (淨收 $1.50)'],
-        soxlNetPrem: 3.50, soxlMargin: 650,
-        soxlMaxProfit: '+$350', soxlMaxLoss: '-$650', soxlBreakeven: '$76.50 ～ $108.50',
+        soxlNetPrem: 3.50, soxlMargin: 650, soxlBreakeven: '$76.50 ～ $108.50',
         winScenario: '🟢 在 $80 ～ $105 寬幅區間震盪：淨利 +$350 全拿', lossScenario: '🔴 單邊突破極限：最大損失封頂 -$650',
         buildLegs: (S) => [
           { type: 'put', dir: 1, strike: Math.round(S * (70 / 90)), dteMult: 1 },
@@ -844,43 +1072,41 @@
         num: 8, name: 'Cash-Secured Put (現金擔保賣權)', badge: '1 腿 · 打折接刀收租主力', winRate: '~80% (正 Theta 收租)',
         essence: '賣出價外 Put 收取權利金，沒跌破白賺現金流，跌破則以打折價承接 100 股優質現貨或展期。',
         soxlLegsDesc: ['• 賣出 (STO) 1 口 $80 Put (Delta ~0.20，收 $2.40)'],
-        soxlNetPrem: 2.40, soxlMargin: 8000,
-        soxlMaxProfit: '+$240', soxlMaxLoss: '跌破轉現貨折價承接', soxlBreakeven: '$77.60',
+        soxlNetPrem: 2.40, soxlMargin: 8000, soxlBreakeven: '$77.60',
         winScenario: '🟢 維持 $80 以上：全賺 +$240 租金', lossScenario: '🔴 跌破 $80：執行 Roll Down & Out 展期或接現貨',
-        buildLegs: (S) => [{ type: 'put', dir: -1, strike: Math.round(S * (80 / 90)), dteMult: 1 }]
+        buildLegs: (S, customK) => [{ type: 'put', dir: -1, strike: customK || Math.round(S * (80 / 90)), dteMult: 1 }]
       },
       cc: {
         num: 9, name: 'Covered Call (掩護性買權)', badge: '100股現貨 + 賣價外 Call', winRate: '~80% (持股包租公)',
         essence: '持有 100 股現貨，每月賣出上方價外 Call 收租。若漲破可透過 Roll Up & Out 向上展期保住股票。',
         soxlLegsDesc: ['• 持有 100 股現貨 ($90) + 賣出 $100 Call (收 $2.50)'],
-        soxlNetPrem: 2.50, soxlMargin: 9000,
-        soxlMaxProfit: '+$1,250', soxlMaxLoss: '同現貨波動 (有租金緩衝)', soxlBreakeven: '$87.50',
+        soxlNetPrem: 2.50, soxlMargin: 9000, soxlBreakeven: '$87.50',
         winScenario: '🟢 漲至 $100：賺價差 +$1,000 與租金 +$250', lossScenario: '🔴 回檔：+$250 權利金降低持股成本',
-        buildLegs: (S) => [
+        buildLegs: (S, customK) => [
           { type: 'stock', dir: 1, strike: S, dteMult: 1 },
-          { type: 'call', dir: -1, strike: Math.round(S * (100 / 90)), dteMult: 1 }
+          { type: 'call', dir: -1, strike: customK || Math.round(S * (100 / 90)), dteMult: 1 }
         ]
       },
       pmcc: {
         num: 10, name: 'PMCC (窮人掩護性買權)', badge: '2 腿跨月 · 3倍資金效率收租', winRate: '~72% (年化 40% 利器)',
         essence: '買進 90 天期 Delta 0.85 Deep ITM Call 替代現貨，同時賣出 30 天期 OTM Call 收租，省下 70% 資金。',
         soxlLegsDesc: ['• 買 90天 $65 Call (付 $28.00) + 賣 30天 $100 Call (收 $2.50)'],
-        soxlNetPrem: -25.50, soxlMargin: 0,
-        soxlMaxProfit: '+$1,100 / 月', soxlMaxLoss: '-$2,550 (鎖定於淨支出)', soxlBreakeven: '$87.50',
+        soxlNetPrem: -25.50, soxlMargin: 0, soxlBreakeven: '$87.50',
         winScenario: '🟢 漲至 $100：底層長約增值 + 收租，單月賺 +$1,100', lossScenario: '🔴 橫盤：實拿 +$250 近月租金補貼',
-        buildLegs: (S) => [
+        buildLegs: (S, customK) => [
           { type: 'call', dir: 1, strike: Math.round(S * (65 / 90)), dteMult: 3 },
-          { type: 'call', dir: -1, strike: Math.round(S * (100 / 90)), dteMult: 1 }
+          { type: 'call', dir: -1, strike: customK || Math.round(S * (100 / 90)), dteMult: 1 }
         ]
       }
     };
 
     // ==================== 5. 全域狀態與 0ms 極速選股快取引擎 ====================
-    let currentStock = TOP50_STOCKS[52]; // 預設載入 SOXL $90 教學基準
+    let currentStock = TOP50_STOCKS[52]; // 預設 SOXL
     let isSoxlBenchmarkMode = true;
-    let unifiedGreeksMode = 'auto'; // 'auto' | 'manual'
+    let unifiedGreeksMode = 'auto';
+    let customStrikeOverride = null;
     let unifiedChartInstance = null;
-    const liveQuoteCache = {}; // 記憶體快取，確保重複切換 0ms
+    const liveQuoteCache = {};
 
     function populateDatalist() {
       document.getElementById('top50Datalist').innerHTML = TOP50_STOCKS.map(
@@ -894,13 +1120,12 @@
       quickLoadTicker(sym, sym === 'SOXL');
     }
 
-    // 0 毫秒瞬時更新 UI + 背景非阻塞同步
     function quickLoadTicker(sym, useSoxlBenchmark = false) {
       const cleanSym = sym.trim().toUpperCase();
       isSoxlBenchmarkMode = useSoxlBenchmark;
+      customStrikeOverride = null;
       document.getElementById('globalTickerInput').value = cleanSym;
 
-      // 1. 立即從本地 Top 50 資料庫或快取取得數據 (0ms 零延遲)
       let found = TOP50_STOCKS.find(item => item.sym === cleanSym);
       if (!found) {
         found = { rank: 99, sym: cleanSym, name: cleanSym, mcap: 'N/A', price: liveQuoteCache[cleanSym] || 100.00, pe: 25.0, iv: 35, ivLow: 20, ivHigh: 55, ivr: 43 };
@@ -909,9 +1134,8 @@
       }
 
       currentStock = found;
-      applyStockToHeaderAndSimulator(found, '⚡ 0ms 瞬時載入完成');
+      applyStockToHeaderAndSimulator(found, `⚡ 0ms 已載入 ${cleanSym} (P/E ${found.pe}x | IVR ${found.ivr}%)`);
 
-      // 2. यदि非 SOXL 基準教學模式，啟動背景非阻塞極速查價 (限時 1.8 秒，絕不卡畫面)
       if (!useSoxlBenchmark && !liveQuoteCache[cleanSym]) {
         fetchLivePriceBackground(cleanSym, found);
       }
@@ -920,7 +1144,7 @@
     function applyStockToHeaderAndSimulator(stock, statusMsg) {
       document.getElementById('headerSymbol').textContent = stock.sym;
       document.getElementById('headerPrice').textContent = `$${stock.price.toFixed(2)}`;
-      document.getElementById('headerPeBadge').textContent = `P/E: ${stock.pe.toFixed(1)}x`;
+      document.getElementById('headerPeBadge').textContent = `本益比 P/E: ${stock.pe.toFixed(1)}x`;
       document.getElementById('headerIvBadge').textContent = `IV: ${stock.iv}% (IVR ${stock.ivr}%)`;
       document.getElementById('quoteStatus').textContent = statusMsg;
 
@@ -932,6 +1156,7 @@
       updateGreeksModeButtons();
       onUnifiedStrategyChange();
       renderPortfolioAllocation();
+      updateGeminiContextBanner();
     }
 
     async function fetchLivePriceBackground(sym, stockRef) {
@@ -949,7 +1174,7 @@
           liveQuoteCache[sym] = rounded;
           stockRef.price = rounded;
           if (currentStock.sym === sym && !isSoxlBenchmarkMode) {
-            applyStockToHeaderAndSimulator(stockRef, `✅ 已同步 ${sym} 最新盤中報價 ($${rounded})`);
+            applyStockToHeaderAndSimulator(stockRef, `✅ 已同步 ${sym} 最新報價 ($${rounded})`);
             renderTop50Table();
           }
         }
@@ -960,10 +1185,11 @@
 
     function syncStrategyToActiveStock() {
       isSoxlBenchmarkMode = false;
+      customStrikeOverride = null;
       applyStockToHeaderAndSimulator(currentStock, `✅ 已套用 ${currentStock.sym} ($${currentStock.price}) 動態履約價與 Greeks`);
     }
 
-    // ==================== 6. 整合模擬器：多腿 Greeks 合成與雙軌損益計算 ====================
+    // ==================== 6. 第1頁：10大策略 & Greeks 整合計算核心 ====================
     function setUnifiedGreeksMode(mode) {
       unifiedGreeksMode = mode;
       updateGreeksModeButtons();
@@ -986,16 +1212,23 @@
       onUnifiedStrategyChange();
     }
 
+    function onStrikeManualChange() {
+      isSoxlBenchmarkMode = false;
+      customStrikeOverride = Number(document.getElementById('uStrike').value) || null;
+      unifiedGreeksMode = 'auto';
+      updateGreeksModeButtons();
+      onUnifiedStrategyChange();
+    }
+
     function onManualOverride() {
       unifiedGreeksMode = 'manual';
       updateGreeksModeButtons();
       updateUnifiedSimulation();
     }
 
-    // 合成整組策略的 Net Greeks 與單口權利金
     function computeStrategyBSM(stratKey, S, dte, iv) {
       const strat = STRATEGIES[stratKey];
-      const legs = strat.buildLegs(S);
+      const legs = strat.buildLegs(S, customStrikeOverride);
       let netDelta = 0, netGamma = 0, netTheta = 0, netVega = 0, netOptionFlow = 0;
 
       legs.forEach(leg => {
@@ -1006,21 +1239,19 @@
         netTheta += leg.dir * bsm.theta;
         netVega += leg.dir * bsm.vega;
         if (leg.type !== 'stock') {
-          // 買方 dir > 0 代表支出 (負現金流)，賣方 dir < 0 代表收取權利金 (正現金流)
           netOptionFlow += (-leg.dir) * bsm.price;
         }
       });
 
-      return { legs, netDelta, netGamma, netTheta, netVega, netOptionFlow };
+      const primaryStrike = legs.find(l => l.type !== 'stock')?.strike || Math.round(S);
+      return { legs, primaryStrike, netDelta, netGamma, netTheta, netVega, netOptionFlow };
     }
 
-    // 計算整組策略在任意未來股價 targetS、剩餘天數 remDte、新波動率 newIv 下的每股損益
-    function evaluateStrategyPnLPerShare(stratKey, entrySpot, targetS, entryDte, remDte, entryIv, newIv, entryOptionFlow) {
+    function evaluateStrategyPnLPerShare(stratKey, entrySpot, targetS, entryDte, remDte, entryIv, newIv) {
       const strat = STRATEGIES[stratKey];
-      const legs = strat.buildLegs(entrySpot);
+      const legs = strat.buildLegs(entrySpot, customStrikeOverride);
 
-      // 若為 SOXL $90 經典案例且處於到期日 (remDte === 0)，精準對齊使用者表格數字
-      if (isSoxlBenchmarkMode && Math.abs(entrySpot - 90) < 0.5 && remDte <= 0.05) {
+      if (isSoxlBenchmarkMode && !customStrikeOverride && Math.abs(entrySpot - 90) < 0.5 && remDte <= 0.05) {
         if (stratKey === 'single') return Math.max(0, targetS - 100) - 4.50;
         if (stratKey === 'spread') return Math.max(0, targetS - 100) - Math.max(0, targetS - 120) - 3.00;
         if (stratKey === 'straddle') return Math.max(0, targetS - 90) + Math.max(0, 90 - targetS) - 16.00;
@@ -1033,9 +1264,7 @@
         if (stratKey === 'pmcc') return (Math.max(0, targetS - 65) + (targetS > 65 ? 1.50 : 0.30)) - Math.max(0, targetS - 100) - 25.50;
       }
 
-      // 一般動態 BSM 多腿損益計算
-      let currentVal = 0;
-      let initVal = 0;
+      let currentVal = 0, initVal = 0;
       const elapsed = Math.max(0, entryDte - remDte);
 
       legs.forEach(leg => {
@@ -1067,7 +1296,6 @@
       const dte = Math.max(1, Number(document.getElementById('uDte').value) || 30);
       const iv = Math.max(5, Number(document.getElementById('uIv').value) || 50);
 
-      // 設定滑桿範圍
       const pSlider = document.getElementById('sliderTargetPrice');
       pSlider.min = Math.max(5, Math.round(S * 0.5));
       pSlider.max = Math.round(S * 1.75);
@@ -1077,23 +1305,25 @@
       document.getElementById('sMaxTxt').textContent = `$${pSlider.max}`;
       document.getElementById('sliderDaysPassed').max = dte;
 
-      // 合成 Greeks
       const synth = computeStrategyBSM(stratKey, S, dte, iv);
+      if (!customStrikeOverride) {
+        document.getElementById('uStrike').value = synth.primaryStrike;
+      }
+
       if (unifiedGreeksMode === 'auto') {
         document.getElementById('uDelta').value = synth.netDelta.toFixed(2);
         document.getElementById('uGamma').value = synth.netGamma.toFixed(3);
         document.getElementById('uTheta').value = synth.netTheta.toFixed(2);
         document.getElementById('uVega').value = synth.netVega.toFixed(2);
-        const premToUse = (isSoxlBenchmarkMode && Math.abs(S - 90) < 0.5) ? strat.soxlNetPrem : synth.netOptionFlow;
+        const premToUse = (isSoxlBenchmarkMode && !customStrikeOverride && Math.abs(S - 90) < 0.5) ? strat.soxlNetPrem : synth.netOptionFlow;
         document.getElementById('uNetPrem').value = premToUse.toFixed(2);
       }
 
-      // 更新策略卡片與腿數說明
       document.getElementById('stratBadge').textContent = strat.badge;
       document.getElementById('stratWinRate').textContent = `參考勝率: ${strat.winRate}`;
       document.getElementById('stratEssence').textContent = strat.essence;
 
-      if (isSoxlBenchmarkMode && Math.abs(S - 90) < 0.5) {
+      if (isSoxlBenchmarkMode && !customStrikeOverride && Math.abs(S - 90) < 0.5) {
         document.getElementById('stratLegsText').innerHTML = strat.soxlLegsDesc.map(l => `<div>${l}</div>`).join('');
       } else {
         document.getElementById('stratLegsText').innerHTML = synth.legs.map(l => {
@@ -1108,6 +1338,7 @@
       document.getElementById('uLossBox').textContent = strat.lossScenario;
 
       updateUnifiedSimulation();
+      updateGeminiContextBanner();
     }
 
     function resetSimSliders() {
@@ -1140,12 +1371,10 @@
       const remDte = Math.max(0, dte - daysPassed);
       const newIv = Math.max(5, iv + dIv);
 
-      // 更新滑桿標籤
       document.getElementById('lblTargetStock').textContent = `$${targetS.toFixed(2)} (${dS >= 0 ? '+' : ''}$${dS.toFixed(2)})`;
       document.getElementById('lblDaysPassed').textContent = `經過 ${daysPassed} 天 (剩餘 ${remDte} DTE)`;
       document.getElementById('lblIvChange').textContent = `${dIv >= 0 ? '+' : ''}${dIv}% (新 IV ${newIv}%)`;
 
-      // 1. 計算四大 Greeks 拆解貢獻 (美元總額 = 每股貢獻 × 100 × 口數)
       const cDeltaDollar = Math.round(netDelta * dS * 100 * qty);
       const cGammaDollar = Math.round(0.5 * netGamma * dS * dS * 100 * qty);
       const cThetaDollar = Math.round(netTheta * daysPassed * 100 * qty);
@@ -1157,36 +1386,35 @@
       document.getElementById('uContribTheta').textContent = fmtD(cThetaDollar);
       document.getElementById('uContribVega').textContent = fmtD(cVegaDollar);
 
-      // 2. 計算 T+Δt 持倉中途損益 & 0 DTE 到期損益
       let midPnLDollar, expPnLDollar;
       if (unifiedGreeksMode === 'manual') {
         midPnLDollar = cDeltaDollar + cGammaDollar + cThetaDollar + cVegaDollar;
       } else {
-        const midPerShare = evaluateStrategyPnLPerShare(stratKey, S, targetS, dte, remDte, iv, newIv, netPrem);
+        const midPerShare = evaluateStrategyPnLPerShare(stratKey, S, targetS, dte, remDte, iv, newIv);
         midPnLDollar = Math.round(midPerShare * 100 * qty);
       }
-      const expPerShare = evaluateStrategyPnLPerShare(stratKey, S, targetS, dte, 0, iv, newIv, netPrem);
+      const expPerShare = evaluateStrategyPnLPerShare(stratKey, S, targetS, dte, 0, iv, newIv);
       expPnLDollar = Math.round(expPerShare * 100 * qty);
 
-      // 3. 更新頂部 4 格指標卡
       const totalPremDollar = Math.round(netPrem * 100 * qty);
       document.getElementById('uMetricCost').textContent = totalPremDollar >= 0
         ? `淨收取 +$${totalPremDollar.toLocaleString()} (Credit)`
         : `淨支出 -$${Math.abs(totalPremDollar).toLocaleString()} (Debit)`;
-      document.getElementById('uMetricMargin').textContent = (isSoxlBenchmarkMode && Math.abs(S - 90) < 0.5)
-        ? (strat.soxlMargin > 0 ? `擔保/保證金 $${(strat.soxlMargin * qty).toLocaleString()}` : '免額外保證金')
-        : (totalPremDollar >= 0 ? '賣方需圈存價差或現貨擔保' : '買方風險鎖定免保證金');
+      document.getElementById('uMetricMargin').textContent = totalPremDollar >= 0
+        ? '賣方收租 (需圈存保證金/擔保)'
+        : '買方部位 (免額外保證金)';
 
       const midEl = document.getElementById('uMetricMidPnL');
-      midEl.textContent = `${ fmtD(midPnLDollar) } USD`;
+      midEl.textContent = `${fmtD(midPnLDollar)} USD`;
       midEl.className = `text-base font-bold mt-0.5 ${midPnLDollar >= 0 ? 'text-blue-400' : 'text-rose-400'}`;
+      const estNewPrem = Math.abs(netPrem) + (midPnLDollar / (100 * qty));
+      document.getElementById('uMetricNewPrem').textContent = `推算新權利金價值: $${Math.max(0, estNewPrem).toFixed(2)}/股`;
 
       const expEl = document.getElementById('uMetricExpPnL');
-      expEl.textContent = `${ fmtD(expPnLDollar) } USD`;
+      expEl.textContent = `${fmtD(expPnLDollar)} USD`;
       expEl.className = `text-base font-bold mt-0.5 ${expPnLDollar >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
       document.getElementById('uMetricBreakeven').textContent = `兩平參考: ${strat.soxlBreakeven}`;
 
-      // 4. 繪製雙軌曲線 (到期線 vs T+Δt 動態線)
       const minP = Number(document.getElementById('sliderTargetPrice').min);
       const maxP = Number(document.getElementById('sliderTargetPrice').max);
       const step = Math.max(1, Math.round((maxP - minP) / 55));
@@ -1195,8 +1423,8 @@
 
       for (let p = minP; p <= maxP; p += step) {
         labels.push(p);
-        const eVal = Math.round(evaluateStrategyPnLPerShare(stratKey, S, p, dte, 0, iv, newIv, netPrem) * 100 * qty);
-        const mVal = Math.round(evaluateStrategyPnLPerShare(stratKey, S, p, dte, remDte, iv, newIv, netPrem) * 100 * qty);
+        const eVal = Math.round(evaluateStrategyPnLPerShare(stratKey, S, p, dte, 0, iv, newIv) * 100 * qty);
+        const mVal = Math.round(evaluateStrategyPnLPerShare(stratKey, S, p, dte, remDte, iv, newIv) * 100 * qty);
         expData.push(eVal);
         midData.push(mVal);
         if (eVal > maxProfitTrack) maxProfitTrack = eVal;
@@ -1283,19 +1511,24 @@
       }).join('');
     }
 
-    // ==================== 7. 美股市值 Top 50 表格渲染 (含本益比 P/E 專欄與排序) ====================
+    // ==================== 7. 第2頁：美股市值 Top 50 表格渲染 (醒目顯示本益比 P/E) ====================
     function renderTop50Table() {
       const q = (document.getElementById('top50FilterInput').value || '').trim().toUpperCase();
+      const peFilter = document.getElementById('top50PeFilter').value;
       const ivrFilter = document.getElementById('top50IvrFilter').value;
       const sortBy = document.getElementById('top50SortBy').value;
 
       let list = TOP50_STOCKS.filter(s => {
         const matchText = !q || s.sym.includes(q) || s.name.toUpperCase().includes(q);
+        const matchPe = peFilter === 'all' ||
+          (peFilter === 'low_pe' && s.pe < 22) ||
+          (peFilter === 'mid_pe' && s.pe >= 22 && s.pe <= 35) ||
+          (peFilter === 'high_pe' && s.pe > 35);
         const matchIvr = ivrFilter === 'all' ||
           (ivrFilter === 'high' && s.ivr >= 50) ||
           (ivrFilter === 'mid' && s.ivr >= 30 && s.ivr < 50) ||
           (ivrFilter === 'low' && s.ivr < 30);
-        return matchText && matchIvr;
+        return matchText && matchPe && matchIvr;
       });
 
       list.sort((a, b) => {
@@ -1308,9 +1541,10 @@
 
       document.getElementById('top50TableBody').innerHTML = list.map(s => {
         const barColor = s.ivr >= 50 ? 'bg-rose-500' : (s.ivr >= 30 ? 'bg-amber-500' : 'bg-blue-500');
-        const peColor = s.pe < 22
-          ? 'bg-emerald-500/15 text-emerald-400'
-          : (s.pe <= 35 ? 'bg-blue-500/15 text-blue-400' : 'bg-amber-500/15 text-amber-400');
+        const peStyle = s.pe < 22
+          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+          : (s.pe <= 35 ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30');
+        const peTag = s.pe < 22 ? '價值低估' : (s.pe <= 35 ? '合理成長' : '高動能');
 
         const stratBadge = s.ivr >= 50
           ? `<span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 font-semibold">🔥 賣方收租 (CSP / Iron Condor)</span>`
@@ -1327,8 +1561,9 @@
             </td>
             <td class="py-2.5 px-2.5 font-mono">${s.mcap}</td>
             <td class="py-2.5 px-2.5 font-bold">$${s.price.toFixed(2)}</td>
-            <td class="py-2.5 px-2.5">
-              <span class="px-2 py-0.5 rounded font-bold ${peColor}">${s.pe.toFixed(1)}x</span>
+            <td class="py-2.5 px-3 bg-emerald-500/5 border-x border-emerald-500/10">
+              <span class="px-2 py-0.5 rounded font-bold ${peStyle}">${s.pe.toFixed(1)}x</span>
+              <span class="text-[10px] text-slate-400 ml-1">${peTag}</span>
             </td>
             <td class="py-2.5 px-2.5 font-bold text-purple-400">${s.iv}%</td>
             <td class="py-2.5 px-2.5 text-slate-400">${s.ivLow}% ~ ${s.ivHigh}%</td>
@@ -1357,7 +1592,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ==================== 8. 資產配置與複利成長模擬器 ====================
+    // ==================== 8. 第3頁：資產配置與複利模擬器 ====================
     let donutChartInstance = null, compoundChartInstance = null, activePortfolioMode = 'aggressive40';
     const PORTFOLIO_MODES = {
       aggressive40: {
@@ -1493,7 +1728,196 @@
       }
     }
 
-    // ==================== 9. 分頁切換與說明控制 ====================
+    // ==================== 9. 第4頁：教學百科互動決策導航 ====================
+    function runStrategyFinder() {
+      const dir = document.getElementById('finderDir').value;
+      const ivr = document.getElementById('finderIvr').value;
+      const card = document.getElementById('finderResultCard');
+
+      let recKey = 'csp', title = '', desc = '';
+      if (dir === 'bull' && ivr === 'high') {
+        recKey = 'csp';
+        title = '推薦：8. Cash-Secured Put (CSP) 或 9. Covered Call';
+        desc = '看漲且權利金昂貴，賣出價外 Put 收租勝率高達 80%，兼賺時間價值與波動率回落！';
+      } else if (dir === 'bull' && ivr === 'low') {
+        recKey = 'pmcc';
+        title = '推薦：10. PMCC (窮人掩護性買權) 或 2. Bull Call Spread';
+        desc = '權利金便宜，適合買進 Deep ITM Call 替代現貨，或用垂直價差以小博大！';
+      } else if (dir === 'neutral' && ivr === 'high') {
+        recKey = 'iron_condor';
+        title = '推薦：7. Iron Condor (鐵鷹價差) 或 5. Iron Butterfly';
+        desc = '橫盤且高 IV，上下雙向賣出價外價差單，躺在區間內每天收雙份租金！';
+      } else if (dir === 'neutral' && ivr === 'low') {
+        recKey = 'butterfly';
+        title = '推薦：4. Butterfly (蝶式價差) 或 6. Condor (禿鷹)';
+        desc = '低成本鎖定目標整理區間，風險完全封頂且賠率極佳。';
+      } else {
+        recKey = 'straddle';
+        title = '推薦：3. Straddle (跨式買方)';
+        desc = '同時買進同價 Call 與 Put，只要單邊大噴出即可倍數獲利！';
+      }
+
+      card.innerHTML = `
+        <div class="font-bold text-emerald-400">${title}</div>
+        <div class="text-[11px] text-slate-300 mt-0.5">${desc}</div>
+        <button onclick="document.getElementById('strategySelect').value='${recKey}'; switchTab('simulator'); onUnifiedStrategyChange();" 
+                class="mt-1.5 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] self-start">
+          ⚡ 立即載入此策略至第1頁模擬器
+        </button>
+      `;
+    }
+
+    // ==================== 10. ✨ 詢問 Gemini AI 期權顧問系統 ====================
+    function toggleGeminiDrawer(open) {
+      const drawer = document.getElementById('geminiDrawer');
+      const backdrop = document.getElementById('geminiDrawerBackdrop');
+      if (open) {
+        updateGeminiContextBanner();
+        backdrop.classList.remove('hidden');
+        drawer.classList.remove('translate-x-full');
+      } else {
+        backdrop.classList.add('hidden');
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function askGeminiAboutCurrentSetup() {
+      toggleGeminiDrawer(true);
+      runQuickGeminiPrompt('diagnose');
+    }
+
+    function updateGeminiContextBanner() {
+      const stratKey = document.getElementById('strategySelect').value;
+      const stratName = STRATEGIES[stratKey].name;
+      const d = document.getElementById('uDelta').value;
+      const t = document.getElementById('uTheta').value;
+      const v = document.getElementById('uVega').value;
+      document.getElementById('geminiContextBanner').innerHTML = `
+        <b>📌 自動綁定盤面參數：</b>標的 <b>${currentStock.sym} ($${currentStock.price})</b> · 本益比 <b>P/E ${currentStock.pe}x</b> · IV <b>${currentStock.iv}% (IVR ${currentStock.ivr}%)</b><br>
+        當前策略：<b>${stratName}</b> (Net Δ:${d} | Θ:${t} | ν:${v})
+      `;
+    }
+
+    function saveGeminiApiKey() {
+      const k = document.getElementById('geminiApiKeyInput').value.trim();
+      if (k) {
+        localStorage.setItem('USER_GEMINI_API_KEY', k);
+        appendGeminiChat('system', '✅ 已成功儲存你的 Gemini API Key！現在提問將直接連線 Google Gemini 2.5 Flash 模型進行即時回答。');
+      }
+    }
+
+    function appendGeminiChat(role, htmlText) {
+      const box = document.getElementById('geminiChatHistory');
+      const div = document.createElement('div');
+      if (role === 'user') {
+        div.className = 'p-3 rounded-2xl bg-blue-600 text-white ml-8';
+        div.innerHTML = `<div class="font-bold text-[11px] opacity-80 mb-0.5">你的提問：</div><div>${htmlText}</div>`;
+      } else {
+        div.className = 'p-3.5 rounded-2xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder mr-4 space-y-1.5';
+        div.innerHTML = `<div class="font-bold text-indigo-400">✨ Gemini 期權顧問：</div><div class="text-slate-700 dark:text-slate-200 leading-relaxed">${htmlText}</div>`;
+      }
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function generateLocalExpertResponse(typeOrQuestion) {
+      const s = currentStock;
+      const stratKey = document.getElementById('strategySelect').value;
+      const strat = STRATEGIES[stratKey];
+      const delta = Number(document.getElementById('uDelta').value) || 0;
+      const theta = Number(document.getElementById('uTheta').value) || 0;
+      const strike88 = Math.round(s.price * 0.88);
+      const cspMargin = strike88 * 100;
+      const maxLots22k = Math.max(1, Math.floor(11000 / cspMargin));
+
+      if (typeOrQuestion === 'diagnose') {
+        const peComment = s.pe < 22
+          ? `目前本益比僅 <b>${s.pe}x (價值低估區)</b>，下檔基本面支撐極強，萬一被指派接刀也非常安全。`
+          : (s.pe <= 35 ? `目前本益比為 <b>${s.pe}x (合理成長區)</b>，兼具基本面與波段彈性。` : `目前本益比達 <b>${s.pe}x (高本益比動能股)</b>，股價波動劇烈，需嚴格控制口數或使用價差單鎖定風險。`);
+        const ivrComment = s.ivr >= 50
+          ? `IV Rank 高達 <b>${s.ivr}% (高於 50% 賣方黃金門檻)</b>，代表權利金非常昂貴！首選 <b>Cash-Secured Put (賣出 $${strike88} Put)</b> 或 <b>Iron Condor</b> 收租。`
+          : `IV Rank 為 <b>${s.ivr}% (低於 50%)</b>，權利金相對便宜，適合使用 <b>PMCC (窮人掩護性買權)</b> 或 <b>Bull Call Spread</b> 進行低成本波段佈局。`;
+        return `${peComment}<br><br>${ivrComment}<br><br>💡 <b>針對目前選中的【${strat.name}】建議</b>：進場務必選擇 30~45 DTE 合約，成交當下立刻預掛 <b>50% GTC 自動停利單</b>。`;
+      }
+      if (typeOrQuestion === 'sizing') {
+        return `以你的 <b>$22,000 美元本金</b>（50% 核心部位 = $11,000 額度）計算 <b>${s.sym} ($${s.price})</b>：<br>
+        • <b>若做 Cash-Secured Put (賣出 $${strike88} Put)</b>：單口需圈存擔保金 <b>$${cspMargin.toLocaleString()}</b>，建議最多開 <b>${maxLots22k} 口</b>。<br>
+        • <b>若做 PMCC (買 Delta 0.85 長約 + 賣近月 Call)</b>：單口成本約 <b>$${Math.round(s.price * 28).toLocaleString()}</b>，資金效率放大 3 倍，可開 <b>1 ~ 2 口</b>。<br>
+        • <b>若做垂直價差 (Spread)</b>：單口最大風險鎖定在 $300~$450，可配置 <b>2 口</b>。`;
+      }
+      if (typeOrQuestion === 'rollover') {
+        return `當 <b>${s.sym}</b> 部位遭遇穿價威脅時，請遵守 <b>「21 DTE 展期鐵律」</b>：<br>
+        1. <b>若為 Covered Call 漲破行權價（不想賣股票）</b>：在 Firstrade 點擊 <code>Roll</code>，買回近月 Call (BTC)，同時賣出<b>往後 30~45 天、行權價調高 $5~$10 的遠月 Call (STO)</b>，確保整筆訂單為 <b>Net Credit (淨收錢)</b>。<br>
+        2. <b>若為 CSP 跌破行權價</b>：買回近月 Put，同時賣出下個月更低行權價的 Put (Roll Down & Out)，換取時間等待反彈。`;
+      }
+      if (typeOrQuestion === 'greeks') {
+        return `目前你設定的 <b>【${strat.name}】</b> 合成 Greeks 診斷：<br>
+        • <b>Net Delta = ${delta}</b>：${delta > 0.15 ? '部位偏多，股價每漲 $1 每口約賺 +$' + Math.round(delta * 100) : (delta < -0.15 ? '部位偏空' : '方向中性，不怕小幅漲跌')}。<br>
+        • <b>Net Theta = ${theta}</b>：${theta >= 0 ? '🟢 <b>正 Theta 包租公狀態</b>！每過一天時間流逝自動幫你賺進約 +$' + Math.round(theta * 100) + ' USD。' : '🔴 <b>負 Theta 買方狀態</b>，每天時間流逝會消耗約 -$' + Math.round(Math.abs(theta) * 100) + ' USD，不宜久抱超過 21 天。'}`;
+      }
+      return `針對你詢問的「<b>${typeOrQuestion}</b>」：<br>結合目前 <b>${s.sym} ($${s.price}, 本益比 ${s.pe}x, IVR ${s.ivr}%)</b> 與 <b>${strat.name}</b>，建議優先確認 IVR 位階（目前 ${s.ivr}% ${s.ivr >= 50 ? '適合賣方收租' : '適合買方價差'}），並嚴守單一部位不超過總資金 50% ($11,000)、開倉即掛 50% GTC 自動停利單。<br><span class="text-[11px] text-slate-400">（若需針對自由問題進行深度無限對話，可在上方填入 Gemini API Key 或點擊下方按鈕一鍵複製參數開啟 Gemini 網頁版！）</span>`;
+    }
+
+    async function runQuickGeminiPrompt(type) {
+      const titles = {
+        diagnose: `請幫我診斷 ${currentStock.sym} (本益比 ${currentStock.pe}x, IVR ${currentStock.ivr}%) 目前適合做什麼期權策略？`,
+        sizing: `以 $22,000 本金計算，操作 ${currentStock.sym} 的安全口數與保證金該如何配置？`,
+        rollover: `如果我操作 ${currentStock.sym} 的 ${STRATEGIES[document.getElementById('strategySelect').value].name} 被穿價，該如何 Rollover 展期？`,
+        greeks: `請幫我解讀目前畫面上的 Greeks (Delta/Gamma/Theta/Vega) 風險結構。`
+      };
+      appendGeminiChat('user', titles[type]);
+      await processGeminiRequest(titles[type], type);
+    }
+
+    async function sendGeminiMessage() {
+      const input = document.getElementById('geminiUserPrompt');
+      const q = input.value.trim();
+      if (!q) return;
+      input.value = '';
+      appendGeminiChat('user', q);
+      await processGeminiRequest(q, q);
+    }
+
+    async function processGeminiRequest(userText, fallbackKey) {
+      const apiKey = localStorage.getItem('USER_GEMINI_API_KEY') || document.getElementById('geminiApiKeyInput').value.trim();
+      if (!apiKey) {
+        const reply = generateLocalExpertResponse(fallbackKey);
+        appendGeminiChat('assistant', reply);
+        return;
+      }
+
+      const stratName = STRATEGIES[document.getElementById('strategySelect').value].name;
+      const sysContext = `你是一位專精 Firstrade 美股期權的量化顧問。使用者總本金 $22,000 美元，目標年化 40%。目前畫面選中股票：${currentStock.sym} (現價 $${currentStock.price}, 本益比 P/E ${currentStock.pe}x, IV ${currentStock.iv}%, IV Rank ${currentStock.ivr}%)，策略：${stratName}，Net Delta=${document.getElementById('uDelta').value}, Theta=${document.getElementById('uTheta').value}, Vega=${document.getElementById('uVega').value}。請用繁體中文給出具體、精準的實戰建議（200字內）。`;
+
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${sysContext}\n\n使用者問題：${userText}` }] }]
+          })
+        });
+        const data = await res.json();
+        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (aiText) {
+          appendGeminiChat('assistant', aiText.replace(/\n/g, '<br>'));
+        } else {
+          appendGeminiChat('assistant', generateLocalExpertResponse(fallbackKey));
+        }
+      } catch (e) {
+        appendGeminiChat('assistant', generateLocalExpertResponse(fallbackKey));
+      }
+    }
+
+    function copyPromptAndOpenGeminiWeb() {
+      const stratName = STRATEGIES[document.getElementById('strategySelect').value].name;
+      const promptText = `我正在用 $22,000 美金操作 Firstrade 期權。目前評估標的：${currentStock.sym} (現價 $${currentStock.price}, 本益比 P/E ${currentStock.pe}x, IV ${currentStock.iv}%, IV Rank ${currentStock.ivr}%)，擬採用策略：${stratName} (Net Delta: ${document.getElementById('uDelta').value}, Theta: ${document.getElementById('uTheta').value}, Vega: ${document.getElementById('uVega').value})。請幫我分析這筆交易的勝率、建議履約價、安全口數與 Rollover 防守計畫！`;
+      navigator.clipboard.writeText(promptText);
+      alert('✅ 已將當前股票、本益比、IV Rank 與 Greeks 完整參數複製到剪貼簿！即將為你開啟 Google Gemini，直接貼上 (Ctrl+V) 即可提問。');
+      window.open('https://gemini.google.com/app', '_blank');
+    }
+
+    // ==================== 11. 分頁切換與說明控制 ====================
     function updatePageGuide(tabKey) {
       const g = PAGE_GUIDES[tabKey];
       document.getElementById('guideTitle').innerHTML = g.title;
@@ -1505,7 +1929,7 @@
     }
 
     function switchTab(tabKey) {
-      ['simulator', 'top50', 'portfolio'].forEach(k => {
+      ['simulator', 'top50', 'portfolio', 'academy'].forEach(k => {
         document.getElementById(`panel-${k}`).classList.toggle('hidden', k !== tabKey);
         document.getElementById(`tab-${k}`).className = k === tabKey
           ? 'pb-2.5 whitespace-nowrap tab-active'
@@ -1515,6 +1939,7 @@
       if (tabKey === 'simulator') onUnifiedStrategyChange();
       if (tabKey === 'top50') renderTop50Table();
       if (tabKey === 'portfolio') { renderPortfolioAllocation(); updateCompoundChart(); }
+      if (tabKey === 'academy') runStrategyFinder();
     }
 
     document.getElementById('themeBtn').addEventListener('click', () => {
@@ -1522,9 +1947,12 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
+      const savedKey = localStorage.getItem('USER_GEMINI_API_KEY');
+      if (savedKey) document.getElementById('geminiApiKeyInput').value = savedKey;
       populateDatalist();
       renderStrategyTable();
       renderTop50Table();
+      runStrategyFinder();
       updatePageGuide('simulator');
       quickLoadTicker('SOXL', true);
       updateCompoundChart();

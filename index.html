@@ -77,7 +77,7 @@
         <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v3.0</span>
         <div>
           <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略 & Greeks 整合精算系統</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">策略與Greeks二合一 · Top 50 本益比(P/E) & IV Rank · 期權教學百科 · Gemini AI 顧問</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">策略與Greeks二合一 · Top 50 本益比(P/E) & IV Rank · 期權教學百科 </p>
         </div>
       </div>
 
@@ -404,15 +404,6 @@
             <canvas id="unifiedPayoffChart"></canvas>
           </div>
 
-          <!-- 情境結果對照卡 + AI 一鍵診斷按鈕 -->
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs items-center">
-            <div id="uWinBox" class="sm:col-span-5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300"></div>
-            <div id="uLossBox" class="sm:col-span-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-300"></div>
-            <button onclick="askGeminiAboutCurrentSetup()" class="sm:col-span-2 h-full p-3 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-center shadow transition">
-              ✨ 請 Gemini 診斷此部位
-            </button>
-          </div>
-
         </div>
       </div>
 
@@ -647,9 +638,6 @@
             <h2 class="font-bold text-base sm:text-lg text-blue-400">🧭 互動式期權策略決策導航（不知道該選哪個策略？點選你的看法）</h2>
             <p class="text-xs text-slate-300">根據你對「股價方向」與「隱含波動率位階 (IV Rank)」的判斷，自動配對最佳策略：</p>
           </div>
-          <button onclick="toggleGeminiDrawer(true)" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold">
-            ✨ 直接問 Gemini 教練
-          </button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div>
@@ -763,85 +751,7 @@
     </section>
 
   </main>
-
-  <!-- ==================== 右下角懸浮「✨ 詢問 Gemini AI」按鈕 ==================== -->
-  <button onclick="toggleGeminiDrawer(true)" 
-          class="fixed bottom-5 right-5 z-40 px-4 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-2xl border border-white/20 flex items-center gap-2 transition transform hover:scale-105">
-    <span>✨ 詢問 Gemini AI 期權顧問</span>
-  </button>
-
-  <!-- ==================== Gemini AI 智慧期權顧問側邊抽屜視窗 ==================== -->
-  <div id="geminiDrawerBackdrop" onclick="toggleGeminiDrawer(false)" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden"></div>
-  <aside id="geminiDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[460px] bg-white dark:bg-notionCard border-l border-slate-200 dark:border-notionBorder z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-5">
-    
-    <!-- 頂部標題與 API Key 設定 -->
-    <div class="space-y-3 border-b border-slate-200 dark:border-notionBorder pb-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold text-xs">GEMINI AI</span>
-          <h3 class="font-bold text-base">智慧期權策略與風險顧問</h3>
-        </div>
-        <button onclick="toggleGeminiDrawer(false)" class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold">✕ 關閉</button>
-      </div>
-
-      <!-- 當前自動綁定的盤面參數摘要 -->
-      <div id="geminiContextBanner" class="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-[11px] text-blue-300 leading-relaxed"></div>
-
-      <!-- 選填 Gemini API Key 連線設定 -->
-      <details class="text-xs bg-slate-100 dark:bg-notionDark p-2.5 rounded-xl border border-slate-200 dark:border-notionBorder">
-        <summary class="cursor-pointer font-semibold text-slate-500 dark:text-slate-300">🔑 設定 Google Gemini API Key (選填，未填亦可使用內建專家引擎)</summary>
-        <div class="mt-2 space-y-2">
-          <input id="geminiApiKeyInput" type="password" placeholder="貼上 AIzaSy... 開頭的 Gemini API Key" 
-                 class="w-full p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder text-xs" />
-          <div class="flex justify-between items-center text-[11px] text-slate-400">
-            <span>金鑰僅保存在你的瀏覽器本機端</span>
-            <button onclick="saveGeminiApiKey()" class="px-2.5 py-1 rounded bg-blue-600 text-white font-semibold">儲存金鑰</button>
-          </div>
-        </div>
-      </details>
-
-      <!-- 一鍵快速提問晶片 -->
-      <div class="flex flex-wrap gap-1.5 text-[11px]">
-        <button onclick="runQuickGeminiPrompt('diagnose')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
-          📊 診斷目前股票本益比與 IVR 適合策略
-        </button>
-        <button onclick="runQuickGeminiPrompt('sizing')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
-          🛡️ $22,000 本金安全口數與保證金計算
-        </button>
-        <button onclick="runQuickGeminiPrompt('rollover')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
-          🔄 若股價穿價該如何 Rollover 展期？
-        </button>
-        <button onclick="runQuickGeminiPrompt('greeks')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-blue-500/20 border border-slate-300 dark:border-notionBorder">
-          🔬 解讀目前部位的 Greeks 時間與波動風險
-        </button>
-      </div>
-    </div>
-
-    <!-- 中間對話歷史紀錄區 -->
-    <div id="geminiChatHistory" class="flex-1 overflow-y-auto my-3 space-y-3 pr-1 text-xs leading-relaxed">
-      <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-        <div class="font-bold text-blue-400 mb-1">✨ Gemini 期權顧問已就緒！</div>
-        <p class="text-slate-600 dark:text-slate-300">我已經自動讀取你目前畫面上選擇的股票代號、本益比 (P/E)、IV Rank、策略組合與 Greeks 參數。你可以直接點擊上方快速提問，或在下方輸入任何選擇權問題！</p>
-      </div>
-    </div>
-
-    <!-- 底部輸入框與外部跳轉按鈕 -->
-    <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-notionBorder">
-      <div class="flex gap-2">
-        <input id="geminiUserPrompt" type="text" placeholder="輸入你的期權問題 (例如：現在適合賣 NVDA Put 嗎？)"
-               onkeydown="if(event.key==='Enter') sendGeminiMessage()"
-               class="flex-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        <button onclick="sendGeminiMessage()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs whitespace-nowrap">
-          發送提問
-        </button>
-      </div>
-      <button onclick="copyPromptAndOpenGeminiWeb()" class="w-full py-1.5 rounded-lg bg-slate-100 dark:bg-notionDark hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-medium border border-slate-200 dark:border-notionBorder">
-        📋 一鍵複製完整盤面參數並開啟 Google Gemini 網頁版深聊
-      </button>
-    </div>
-
-  </aside>
-
+  
   <script>
     // ==================== 1. 美股市值 Top 50 資料庫 (含本益比 P/E、IV、52週高低點) ====================
     const TOP50_STOCKS = [
@@ -1156,7 +1066,6 @@
       updateGreeksModeButtons();
       onUnifiedStrategyChange();
       renderPortfolioAllocation();
-      updateGeminiContextBanner();
     }
 
     async function fetchLivePriceBackground(sym, stockRef) {
@@ -1767,156 +1676,6 @@
       `;
     }
 
-    // ==================== 10. ✨ 詢問 Gemini AI 期權顧問系統 ====================
-    function toggleGeminiDrawer(open) {
-      const drawer = document.getElementById('geminiDrawer');
-      const backdrop = document.getElementById('geminiDrawerBackdrop');
-      if (open) {
-        updateGeminiContextBanner();
-        backdrop.classList.remove('hidden');
-        drawer.classList.remove('translate-x-full');
-      } else {
-        backdrop.classList.add('hidden');
-        drawer.classList.add('translate-x-full');
-      }
-    }
-
-    function askGeminiAboutCurrentSetup() {
-      toggleGeminiDrawer(true);
-      runQuickGeminiPrompt('diagnose');
-    }
-
-    function updateGeminiContextBanner() {
-      const stratKey = document.getElementById('strategySelect').value;
-      const stratName = STRATEGIES[stratKey].name;
-      const d = document.getElementById('uDelta').value;
-      const t = document.getElementById('uTheta').value;
-      const v = document.getElementById('uVega').value;
-      document.getElementById('geminiContextBanner').innerHTML = `
-        <b>📌 自動綁定盤面參數：</b>標的 <b>${currentStock.sym} ($${currentStock.price})</b> · 本益比 <b>P/E ${currentStock.pe}x</b> · IV <b>${currentStock.iv}% (IVR ${currentStock.ivr}%)</b><br>
-        當前策略：<b>${stratName}</b> (Net Δ:${d} | Θ:${t} | ν:${v})
-      `;
-    }
-
-    function saveGeminiApiKey() {
-      const k = document.getElementById('geminiApiKeyInput').value.trim();
-      if (k) {
-        localStorage.setItem('USER_GEMINI_API_KEY', k);
-        appendGeminiChat('system', '✅ 已成功儲存你的 Gemini API Key！現在提問將直接連線 Google Gemini 2.5 Flash 模型進行即時回答。');
-      }
-    }
-
-    function appendGeminiChat(role, htmlText) {
-      const box = document.getElementById('geminiChatHistory');
-      const div = document.createElement('div');
-      if (role === 'user') {
-        div.className = 'p-3 rounded-2xl bg-blue-600 text-white ml-8';
-        div.innerHTML = `<div class="font-bold text-[11px] opacity-80 mb-0.5">你的提問：</div><div>${htmlText}</div>`;
-      } else {
-        div.className = 'p-3.5 rounded-2xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder mr-4 space-y-1.5';
-        div.innerHTML = `<div class="font-bold text-indigo-400">✨ Gemini 期權顧問：</div><div class="text-slate-700 dark:text-slate-200 leading-relaxed">${htmlText}</div>`;
-      }
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function generateLocalExpertResponse(typeOrQuestion) {
-      const s = currentStock;
-      const stratKey = document.getElementById('strategySelect').value;
-      const strat = STRATEGIES[stratKey];
-      const delta = Number(document.getElementById('uDelta').value) || 0;
-      const theta = Number(document.getElementById('uTheta').value) || 0;
-      const strike88 = Math.round(s.price * 0.88);
-      const cspMargin = strike88 * 100;
-      const maxLots22k = Math.max(1, Math.floor(11000 / cspMargin));
-
-      if (typeOrQuestion === 'diagnose') {
-        const peComment = s.pe < 22
-          ? `目前本益比僅 <b>${s.pe}x (價值低估區)</b>，下檔基本面支撐極強，萬一被指派接刀也非常安全。`
-          : (s.pe <= 35 ? `目前本益比為 <b>${s.pe}x (合理成長區)</b>，兼具基本面與波段彈性。` : `目前本益比達 <b>${s.pe}x (高本益比動能股)</b>，股價波動劇烈，需嚴格控制口數或使用價差單鎖定風險。`);
-        const ivrComment = s.ivr >= 50
-          ? `IV Rank 高達 <b>${s.ivr}% (高於 50% 賣方黃金門檻)</b>，代表權利金非常昂貴！首選 <b>Cash-Secured Put (賣出 $${strike88} Put)</b> 或 <b>Iron Condor</b> 收租。`
-          : `IV Rank 為 <b>${s.ivr}% (低於 50%)</b>，權利金相對便宜，適合使用 <b>PMCC (窮人掩護性買權)</b> 或 <b>Bull Call Spread</b> 進行低成本波段佈局。`;
-        return `${peComment}<br><br>${ivrComment}<br><br>💡 <b>針對目前選中的【${strat.name}】建議</b>：進場務必選擇 30~45 DTE 合約，成交當下立刻預掛 <b>50% GTC 自動停利單</b>。`;
-      }
-      if (typeOrQuestion === 'sizing') {
-        return `以你的 <b>$22,000 美元本金</b>（50% 核心部位 = $11,000 額度）計算 <b>${s.sym} ($${s.price})</b>：<br>
-        • <b>若做 Cash-Secured Put (賣出 $${strike88} Put)</b>：單口需圈存擔保金 <b>$${cspMargin.toLocaleString()}</b>，建議最多開 <b>${maxLots22k} 口</b>。<br>
-        • <b>若做 PMCC (買 Delta 0.85 長約 + 賣近月 Call)</b>：單口成本約 <b>$${Math.round(s.price * 28).toLocaleString()}</b>，資金效率放大 3 倍，可開 <b>1 ~ 2 口</b>。<br>
-        • <b>若做垂直價差 (Spread)</b>：單口最大風險鎖定在 $300~$450，可配置 <b>2 口</b>。`;
-      }
-      if (typeOrQuestion === 'rollover') {
-        return `當 <b>${s.sym}</b> 部位遭遇穿價威脅時，請遵守 <b>「21 DTE 展期鐵律」</b>：<br>
-        1. <b>若為 Covered Call 漲破行權價（不想賣股票）</b>：在 Firstrade 點擊 <code>Roll</code>，買回近月 Call (BTC)，同時賣出<b>往後 30~45 天、行權價調高 $5~$10 的遠月 Call (STO)</b>，確保整筆訂單為 <b>Net Credit (淨收錢)</b>。<br>
-        2. <b>若為 CSP 跌破行權價</b>：買回近月 Put，同時賣出下個月更低行權價的 Put (Roll Down & Out)，換取時間等待反彈。`;
-      }
-      if (typeOrQuestion === 'greeks') {
-        return `目前你設定的 <b>【${strat.name}】</b> 合成 Greeks 診斷：<br>
-        • <b>Net Delta = ${delta}</b>：${delta > 0.15 ? '部位偏多，股價每漲 $1 每口約賺 +$' + Math.round(delta * 100) : (delta < -0.15 ? '部位偏空' : '方向中性，不怕小幅漲跌')}。<br>
-        • <b>Net Theta = ${theta}</b>：${theta >= 0 ? '🟢 <b>正 Theta 包租公狀態</b>！每過一天時間流逝自動幫你賺進約 +$' + Math.round(theta * 100) + ' USD。' : '🔴 <b>負 Theta 買方狀態</b>，每天時間流逝會消耗約 -$' + Math.round(Math.abs(theta) * 100) + ' USD，不宜久抱超過 21 天。'}`;
-      }
-      return `針對你詢問的「<b>${typeOrQuestion}</b>」：<br>結合目前 <b>${s.sym} ($${s.price}, 本益比 ${s.pe}x, IVR ${s.ivr}%)</b> 與 <b>${strat.name}</b>，建議優先確認 IVR 位階（目前 ${s.ivr}% ${s.ivr >= 50 ? '適合賣方收租' : '適合買方價差'}），並嚴守單一部位不超過總資金 50% ($11,000)、開倉即掛 50% GTC 自動停利單。<br><span class="text-[11px] text-slate-400">（若需針對自由問題進行深度無限對話，可在上方填入 Gemini API Key 或點擊下方按鈕一鍵複製參數開啟 Gemini 網頁版！）</span>`;
-    }
-
-    async function runQuickGeminiPrompt(type) {
-      const titles = {
-        diagnose: `請幫我診斷 ${currentStock.sym} (本益比 ${currentStock.pe}x, IVR ${currentStock.ivr}%) 目前適合做什麼期權策略？`,
-        sizing: `以 $22,000 本金計算，操作 ${currentStock.sym} 的安全口數與保證金該如何配置？`,
-        rollover: `如果我操作 ${currentStock.sym} 的 ${STRATEGIES[document.getElementById('strategySelect').value].name} 被穿價，該如何 Rollover 展期？`,
-        greeks: `請幫我解讀目前畫面上的 Greeks (Delta/Gamma/Theta/Vega) 風險結構。`
-      };
-      appendGeminiChat('user', titles[type]);
-      await processGeminiRequest(titles[type], type);
-    }
-
-    async function sendGeminiMessage() {
-      const input = document.getElementById('geminiUserPrompt');
-      const q = input.value.trim();
-      if (!q) return;
-      input.value = '';
-      appendGeminiChat('user', q);
-      await processGeminiRequest(q, q);
-    }
-
-    async function processGeminiRequest(userText, fallbackKey) {
-      const apiKey = localStorage.getItem('USER_GEMINI_API_KEY') || document.getElementById('geminiApiKeyInput').value.trim();
-      if (!apiKey) {
-        const reply = generateLocalExpertResponse(fallbackKey);
-        appendGeminiChat('assistant', reply);
-        return;
-      }
-
-      const stratName = STRATEGIES[document.getElementById('strategySelect').value].name;
-      const sysContext = `你是一位專精 Firstrade 美股期權的量化顧問。使用者總本金 $22,000 美元，目標年化 40%。目前畫面選中股票：${currentStock.sym} (現價 $${currentStock.price}, 本益比 P/E ${currentStock.pe}x, IV ${currentStock.iv}%, IV Rank ${currentStock.ivr}%)，策略：${stratName}，Net Delta=${document.getElementById('uDelta').value}, Theta=${document.getElementById('uTheta').value}, Vega=${document.getElementById('uVega').value}。請用繁體中文給出具體、精準的實戰建議（200字內）。`;
-
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: `${sysContext}\n\n使用者問題：${userText}` }] }]
-          })
-        });
-        const data = await res.json();
-        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (aiText) {
-          appendGeminiChat('assistant', aiText.replace(/\n/g, '<br>'));
-        } else {
-          appendGeminiChat('assistant', generateLocalExpertResponse(fallbackKey));
-        }
-      } catch (e) {
-        appendGeminiChat('assistant', generateLocalExpertResponse(fallbackKey));
-      }
-    }
-
-    function copyPromptAndOpenGeminiWeb() {
-      const stratName = STRATEGIES[document.getElementById('strategySelect').value].name;
-      const promptText = `我正在用 $22,000 美金操作 Firstrade 期權。目前評估標的：${currentStock.sym} (現價 $${currentStock.price}, 本益比 P/E ${currentStock.pe}x, IV ${currentStock.iv}%, IV Rank ${currentStock.ivr}%)，擬採用策略：${stratName} (Net Delta: ${document.getElementById('uDelta').value}, Theta: ${document.getElementById('uTheta').value}, Vega: ${document.getElementById('uVega').value})。請幫我分析這筆交易的勝率、建議履約價、安全口數與 Rollover 防守計畫！`;
-      navigator.clipboard.writeText(promptText);
-      alert('✅ 已將當前股票、本益比、IV Rank 與 Greeks 完整參數複製到剪貼簿！即將為你開啟 Google Gemini，直接貼上 (Ctrl+V) 即可提問。');
-      window.open('https://gemini.google.com/app', '_blank');
-    }
-
     // ==================== 11. 分頁切換與說明控制 ====================
     function updatePageGuide(tabKey) {
       const g = PAGE_GUIDES[tabKey];
@@ -1947,8 +1706,6 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
-      const savedKey = localStorage.getItem('USER_GEMINI_API_KEY');
-      if (savedKey) document.getElementById('geminiApiKeyInput').value = savedKey;
       populateDatalist();
       renderStrategyTable();
       renderTop50Table();

@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>美股期權 - 策略模擬 · Top50本益比 · 期權百科</title>
-  <script src="https://cdn.tailwindcss.com"><>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"><>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -1030,7 +1030,7 @@ function refreshAllStockUI() {
     };
 
     // ==================== 5. 全域狀態與股票選取引擎 (選完股票才顯示資訊) ====================
-    let currentStock = TOP50_STOCKS[52]; // 內部預設基準為 SOXL $90，直到使用者選擇股票
+    let currentStock = TOP50_STOCKS.find(s => s.sym === 'SOXL') || TOP50_STOCKS[0]; // 內部預設基準為 SOXL $90，直到使用者選擇股票
     let hasUserSelectedStock = false;
     let isSoxlBenchmarkMode = true;
     let unifiedGreeksMode = 'auto';
@@ -1762,6 +1762,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderPortfolioAllocation();
   updateCompoundChart();
 });
-  <>
+  </script>
 </body>
 </html>

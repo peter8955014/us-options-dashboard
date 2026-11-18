@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>美股期權- 策略 · Top50本益比 · 期權百科 </title>
+  <title>美股期權 - 策略模擬 · Top50本益比 · 期權百科</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -25,13 +25,17 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
     }
     input[type="range"] {
-      accent-color: #3b82f6;
+      accent-color: #2563eb;
       cursor: pointer;
     }
     .tab-active {
+      border-bottom: 3px solid #2563eb;
+      color: #2563eb;
+      font-weight: 700;
+    }
+    .dark .tab-active {
       border-bottom: 3px solid #3b82f6;
       color: #3b82f6;
-      font-weight: 700;
     }
     /* 純 CSS 懸停 Tooltip 系統 */
     .has-tooltip {
@@ -70,75 +74,63 @@
 </head>
 <body class="bg-slate-50 dark:bg-notionDark text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
 
-  <!-- ==================== 頂部導覽與極速美股搜尋列 ==================== -->
+  <!-- ==================== 頂部導覽與美股選擇列 ==================== -->
   <header class="sticky top-0 z-40 bg-white/95 dark:bg-notionCard/95 backdrop-blur border-b border-slate-200 dark:border-notionBorder px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v3.0</span>
         <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略</h1>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略 & Greeks 整合系統</h1>
         </div>
       </div>
 
-      <!-- 極速股票搜尋框與即時數據徽章 -->
+      <!-- 股票選擇框與數據徽章 (選擇股票後才顯示資訊) -->
       <div class="flex flex-wrap items-center gap-2">
         <div class="flex items-center bg-slate-100 dark:bg-notionDark rounded-xl p-1 border border-slate-300 dark:border-notionBorder">
-          <span class="pl-2 text-xs text-slate-400">⚡</span>
-          <input id="globalTickerInput" type="text" value="NVDA" list="top50Datalist"
-                 placeholder="搜尋代號 (如 NVDA)"
+          <span class="pl-2 text-xs text-slate-400">🔍</span>
+          <input id="globalTickerInput" type="text" value="" list="top50Datalist"
+                 placeholder="選擇或輸入美股代號"
+                 onchange="searchAndLoadStock()"
                  onkeydown="if(event.key==='Enter') searchAndLoadStock()"
-                 class="bg-transparent px-2 py-1 text-xs sm:text-sm font-bold uppercase w-28 sm:w-36 focus:outline-none" />
+                 class="bg-transparent px-2 py-1 text-xs sm:text-sm font-bold uppercase w-36 sm:w-44 focus:outline-none" />
           <datalist id="top50Datalist"></datalist>
           <button onclick="searchAndLoadStock()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition">
-            極速帶入
+            確認帶入
           </button>
         </div>
 
-        <!-- 當前股票資訊徽章 (醒目顯示現價、本益比 P/E、IV、IVR) -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs">
-          <span id="headerSymbol" class="font-bold text-blue-500">NVDA</span>
-          <span id="headerPrice" class="font-bold text-sm">$138.50</span>
-          <span id="headerPeBadge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">本益比 P/E: 40.2x</span>
-          <span id="headerIvBadge" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">IV: 52% (IVR 64%)</span>
+        <!-- 當前股票資訊徽章 (預設 hidden，選擇完股票後才顯示) -->
+        <div id="headerStockInfo" class="hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs">
+          <span id="headerSymbol" class="font-bold text-blue-600 dark:text-blue-400"></span>
+          <span id="headerPrice" class="font-bold text-sm"></span>
+          <span id="headerPeBadge" class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-500/30"></span>
+          <span id="headerIvBadge" class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-700 dark:text-purple-400 font-bold"></span>
         </div>
 
         <!-- 本頁說明與深淺色切換 -->
-        <button onclick="togglePageGuide()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
+        <button onclick="togglePageGuide()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
           📖 說明
         </button>
-        <button id="themeBtn" class="p-1.5 rounded-xl border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 text-xs">
+        <button id="themeBtn" class="p-1.5 rounded-xl border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 text-xs" title="切換日間/夜間模式">
           🌓
         </button>
       </div>
     </div>
-
-    <!-- 熱門標的 0ms 瞬時切換列 -->
-    <div class="max-w-7xl mx-auto mt-2 pt-2 border-t border-slate-100 dark:border-notionBorder/60 flex flex-wrap items-center gap-1.5 text-xs">
-      <span class="text-slate-400">0ms 瞬時帶入：</span>
-      <button onclick="quickLoadTicker('NVDA')" class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 hover:bg-blue-500/25 font-semibold">SOXL ($90 教學基準)</button>
-      <button onclick="quickLoadTicker('TSLA')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">TSLA (P/E 88.5)</button>
-      <button onclick="quickLoadTicker('AMD')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AMD (P/E 42.6)</button>
-      <button onclick="quickLoadTicker('AAPL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AAPL (P/E 31.2)</button>
-      <button onclick="quickLoadTicker('GOOGL')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">GOOGL (P/E 23.2)</button>
-      <button onclick="quickLoadTicker('JPM')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">JPM (P/E 13.4)</button>
-      <button onclick="quickLoadTicker('KO')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">KO (P/E 23.5)</button>
-      <button onclick="quickLoadTicker('QQQ')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">QQQ</button>
-    </div>
   </header>
 
-  <!-- ==================== 4 大核心分頁選單 (已刪除第5頁，並將1、3頁完全合併為第1頁) ==================== -->
+  <!-- ==================== 4 大核心分頁選單 ==================== -->
   <div class="max-w-7xl mx-auto px-4 pt-3">
     <div class="flex space-x-6 border-b border-slate-200 dark:border-notionBorder text-xs sm:text-sm overflow-x-auto">
       <button onclick="switchTab('simulator')" id="tab-simulator" class="pb-2.5 whitespace-nowrap tab-active">
-        🎯 10大策略模擬
+        🎯 10大策略模擬 & Greeks 精算
       </button>
-      <button onclick="switchTab('top50')" id="tab-top50" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
-        🏆 Top 50 Rank 雷達
+      <button onclick="switchTab('top50')" id="tab-top50" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-600">
+        🏆 Top 50 本益比 & IV Rank 雷達
       </button>
-      <button onclick="switchTab('portfolio')" id="tab-portfolio" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
+      <button onclick="switchTab('portfolio')" id="tab-portfolio" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-600">
         🛡️ 風險配置 & 複利成長模擬
       </button>
-      <button onclick="switchTab('academy')" id="tab-academy" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
+      <button onclick="switchTab('academy')" id="tab-academy" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-600">
         📚 選擇權全攻略教學百科
       </button>
     </div>
@@ -148,10 +140,10 @@
   <div id="pageGuideBanner" class="max-w-7xl mx-auto px-4 pt-4">
     <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-start justify-between gap-4">
       <div class="space-y-1 text-xs sm:text-sm">
-        <div id="guideTitle" class="font-bold text-blue-400 text-sm sm:text-base"></div>
+        <div id="guideTitle" class="font-bold text-blue-600 dark:text-blue-400 text-sm sm:text-base"></div>
         <div id="guideContent" class="text-slate-600 dark:text-slate-300 leading-relaxed"></div>
       </div>
-      <button onclick="togglePageGuide()" class="text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap px-2 py-1 rounded border border-slate-600">
+      <button onclick="togglePageGuide()" class="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap px-2 py-1 rounded border border-slate-300 dark:border-slate-600">
         ✕ 收起說明
       </button>
     </div>
@@ -165,7 +157,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- 左側：策略選擇 + 合約設定 + 四大 Greeks (Delta/Gamma/Theta/Vega/IV) 精算面板 (5欄) -->
-        <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+        <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4 shadow-sm">
           
           <!-- 區塊 1：選擇 10 大期權策略 -->
           <div class="flex flex-wrap items-center justify-between gap-2">
@@ -176,11 +168,11 @@
               </span>
             </h2>
             <div class="flex gap-1">
-              <button onclick="quickLoadTicker('SOXL', true)" class="px-2 py-1 text-xs rounded-lg bg-blue-600/15 text-blue-400 hover:bg-blue-600/25 font-semibold">
+              <button onclick="resetToSoxlBenchmark()" class="px-2 py-1 text-xs rounded-lg bg-blue-600/15 text-blue-600 dark:text-blue-400 hover:bg-blue-600/25 font-semibold">
                 SOXL $90 範例
               </button>
-              <button onclick="syncStrategyToActiveStock()" class="px-2 py-1 text-xs rounded-lg bg-emerald-600/15 text-emerald-400 hover:bg-emerald-600/25 font-semibold">
-                套用當前股票
+              <button onclick="syncStrategyToActiveStock()" class="px-2 py-1 text-xs rounded-lg bg-emerald-600/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600/25 font-semibold">
+                套用所選股票
               </button>
             </div>
           </div>
@@ -206,8 +198,8 @@
           <!-- 策略腿數明細與解說 -->
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/80 dark:border-notionBorder space-y-2 text-xs">
             <div class="flex items-center justify-between">
-              <span id="stratBadge" class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold"></span>
-              <span id="stratWinRate" class="text-slate-400 font-medium"></span>
+              <span id="stratBadge" class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 font-semibold"></span>
+              <span id="stratWinRate" class="text-slate-500 dark:text-slate-400 font-medium"></span>
             </div>
             <p id="stratEssence" class="text-slate-600 dark:text-slate-300 leading-relaxed"></p>
             <div class="pt-2 border-t border-slate-200 dark:border-notionBorder">
@@ -227,30 +219,30 @@
               </span>
               <div class="flex gap-1 text-[11px]">
                 <button id="btnAutoGreeks" onclick="setUnifiedGreeksMode('auto')" class="px-2 py-0.5 rounded bg-blue-600 text-white font-semibold">BSM 自動精算</button>
-                <button id="btnManualGreeks" onclick="setUnifiedGreeksMode('manual')" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-400">手動輸入 Greeks</button>
+                <button id="btnManualGreeks" onclick="setUnifiedGreeksMode('manual')" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">手動輸入 Greeks</button>
               </div>
             </div>
 
             <!-- 現價 S / 主行權價 K / 到期天數 DTE / 隱含波動率 IV / 口數 -->
             <div class="grid grid-cols-5 gap-2 text-xs">
               <div>
-                <label class="text-[10px] text-slate-400">標的現價($)</label>
-                <input id="uSpot" type="number" step="0.5" value="90" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-blue-400" />
+                <label class="text-[10px] text-slate-500 dark:text-slate-400">標的現價($)</label>
+                <input id="uSpot" type="number" step="0.5" value="90" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <label class="text-[10px] text-slate-400">基準行權價($)</label>
+                <label class="text-[10px] text-slate-500 dark:text-slate-400">基準行權價($)</label>
                 <input id="uStrike" type="number" step="1" value="100" oninput="onStrikeManualChange()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold" />
               </div>
               <div>
-                <label class="text-[10px] text-slate-400">天數(DTE)</label>
+                <label class="text-[10px] text-slate-500 dark:text-slate-400">天數(DTE)</label>
                 <input id="uDte" type="number" min="1" max="365" value="30" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold" />
               </div>
               <div>
-                <label class="text-[10px] text-slate-400">IV波動率(%)</label>
-                <input id="uIv" type="number" min="5" max="250" value="65" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-purple-400" />
+                <label class="text-[10px] text-slate-500 dark:text-slate-400">IV波動率(%)</label>
+                <input id="uIv" type="number" min="5" max="250" value="65" oninput="onSpotOrIvInput()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <label class="text-[10px] text-slate-400">交易口數</label>
+                <label class="text-[10px] text-slate-500 dark:text-slate-400">交易口數</label>
                 <input id="uQty" type="number" min="1" max="50" value="1" oninput="updateUnifiedSimulation()" class="w-full mt-0.5 p-1.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-center" />
               </div>
             </div>
@@ -258,43 +250,43 @@
             <!-- Delta / Gamma / Theta / Vega / 每股淨權利金 -->
             <div class="grid grid-cols-5 gap-2 text-xs pt-1">
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="flex justify-between text-[10px] text-slate-400">
+                <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Delta (Δ)</span>
                   <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Delta (方向敏感度)</b>：股價每漲 $1，權利金變動的金額。</span></span>
                 </div>
-                <input id="uDelta" type="number" step="0.01" value="0.42" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-blue-400 focus:outline-none mt-0.5" />
+                <input id="uDelta" type="number" step="0.01" value="0.42" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-blue-600 dark:text-blue-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="flex justify-between text-[10px] text-slate-400">
+                <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Gamma (Γ)</span>
                   <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Gamma (加速度)</b>：股價每動 $1 時 Delta 的變化量。</span></span>
                 </div>
-                <input id="uGamma" type="number" step="0.005" value="0.018" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-cyan-400 focus:outline-none mt-0.5" />
+                <input id="uGamma" type="number" step="0.005" value="0.018" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-cyan-600 dark:text-cyan-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="flex justify-between text-[10px] text-slate-400">
+                <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Theta (Θ)</span>
                   <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Theta (時間收支)</b>：每過 1 天權利金的時間價值變化（正值代表賣方每天收租，負值代表買方每天耗損）。</span></span>
                 </div>
-                <input id="uTheta" type="number" step="0.01" value="-0.08" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-rose-400 focus:outline-none mt-0.5" />
+                <input id="uTheta" type="number" step="0.01" value="-0.08" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-rose-600 dark:text-rose-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="flex justify-between text-[10px] text-slate-400">
+                <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Vega (ν)</span>
                   <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box"><b>Vega (波動敏感度)</b>：IV 每升降 1% 對權利金的增減金額。</span></span>
                 </div>
-                <input id="uVega" type="number" step="0.01" value="0.11" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-amber-400 focus:outline-none mt-0.5" />
+                <input id="uVega" type="number" step="0.01" value="0.11" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-amber-600 dark:text-amber-400 focus:outline-none mt-0.5" />
               </div>
 
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="flex justify-between text-[10px] text-slate-400">
+                <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>權利金單價</span>
                   <span class="has-tooltip text-[9px] px-1 rounded bg-slate-700 text-white">?<span class="tooltip-box">每股淨權利金（負數代表買方支出 Debit，正數代表賣方收租 Credit）。</span></span>
                 </div>
-                <input id="uNetPrem" type="number" step="0.1" value="-4.50" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-emerald-400 focus:outline-none mt-0.5" />
+                <input id="uNetPrem" type="number" step="0.1" value="-4.50" oninput="onManualOverride()" class="w-full bg-transparent font-bold text-sm text-emerald-600 dark:text-emerald-400 focus:outline-none mt-0.5" />
               </div>
             </div>
           </div>
@@ -302,14 +294,14 @@
           <!-- 區塊 3：動態情境推演滑桿 (股價、天數、IV) -->
           <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/25 space-y-3 text-xs">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-sm text-blue-400">3️⃣ 拖動滑桿即時推演權利金與到期損益</span>
-              <button onclick="resetSimSliders()" class="text-[11px] text-slate-400 hover:text-white underline">歸零重設</button>
+              <span class="font-bold text-sm text-blue-600 dark:text-blue-400">3️⃣ 拖動滑桿即時推演權利金與到期損益</span>
+              <button onclick="resetSimSliders()" class="text-[11px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white underline">歸零重設</button>
             </div>
 
             <div>
               <div class="flex justify-between mb-1">
                 <span>🔍 模擬目標股價 (S + ΔS)：</span>
-                <span id="lblTargetStock" class="font-bold text-blue-400 text-sm">$110.00 (+$20.00)</span>
+                <span id="lblTargetStock" class="font-bold text-blue-600 dark:text-blue-400 text-sm">$110.00 (+$20.00)</span>
               </div>
               <input id="sliderTargetPrice" type="range" min="40" max="160" step="1" value="110" oninput="updateUnifiedSimulation()" class="w-full h-2 rounded-lg" />
               <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
@@ -322,7 +314,7 @@
             <div>
               <div class="flex justify-between mb-1">
                 <span>⏳ 模擬經過持倉天數 (Δt，計算 Theta 時間折舊/收租)：</span>
-                <span id="lblDaysPassed" class="font-bold text-rose-400">經過 15 天 (剩餘 15 DTE)</span>
+                <span id="lblDaysPassed" class="font-bold text-rose-600 dark:text-rose-400">經過 15 天 (剩餘 15 DTE)</span>
               </div>
               <input id="sliderDaysPassed" type="range" min="0" max="30" step="1" value="15" oninput="updateUnifiedSimulation()" class="w-full h-2 rounded-lg" />
             </div>
@@ -330,7 +322,7 @@
             <div>
               <div class="flex justify-between mb-1">
                 <span>⚡ 模擬 IV 隱含波動率變化 (ΔIV，計算 Vega 效應)：</span>
-                <span id="lblIvChange" class="font-bold text-amber-400">0% (維持原 IV)</span>
+                <span id="lblIvChange" class="font-bold text-amber-600 dark:text-amber-400">0% (維持原 IV)</span>
               </div>
               <input id="sliderIvChange" type="range" min="-30" max="30" step="1" value="0" oninput="updateUnifiedSimulation()" class="w-full h-2 rounded-lg" />
             </div>
@@ -339,54 +331,54 @@
         </div>
 
         <!-- 右側：權利金精算結果 + 四大 Greeks 拆解 + 雙軌損益曲線圖 (7欄) -->
-        <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder flex flex-col justify-between space-y-4">
+        <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder flex flex-col justify-between space-y-4 shadow-sm">
           
           <!-- 頂部 4 格核心財務與權利金精算指標 -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
-              <div class="text-[11px] text-slate-400">開倉權利金與保證金</div>
-              <div id="uMetricCost" class="text-sm font-bold mt-0.5 text-amber-400"></div>
-              <div id="uMetricMargin" class="text-[11px] text-slate-400 mt-0.5"></div>
+              <div class="text-[11px] text-slate-500 dark:text-slate-400">開倉權利金與保證金</div>
+              <div id="uMetricCost" class="text-sm font-bold mt-0.5 text-amber-600 dark:text-amber-400"></div>
+              <div id="uMetricMargin" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5"></div>
             </div>
             <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30">
-              <div class="text-[11px] text-blue-400 font-semibold">持倉中途 (T+Δt) 預估損益</div>
-              <div id="uMetricMidPnL" class="text-base font-bold mt-0.5 text-blue-400"></div>
-              <div id="uMetricNewPrem" class="text-[11px] text-slate-400 mt-0.5"></div>
+              <div class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">持倉中途 (T+Δt) 預估損益</div>
+              <div id="uMetricMidPnL" class="text-base font-bold mt-0.5 text-blue-600 dark:text-blue-400"></div>
+              <div id="uMetricNewPrem" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5"></div>
             </div>
             <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-              <div class="text-[11px] text-emerald-400 font-semibold">到期結算 (0 DTE) 淨損益</div>
-              <div id="uMetricExpPnL" class="text-base font-bold mt-0.5 text-emerald-400"></div>
-              <div id="uMetricBreakeven" class="text-[11px] text-slate-400 mt-0.5"></div>
+              <div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">到期結算 (0 DTE) 淨損益</div>
+              <div id="uMetricExpPnL" class="text-base font-bold mt-0.5 text-emerald-600 dark:text-emerald-400"></div>
+              <div id="uMetricBreakeven" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5"></div>
             </div>
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
-              <div class="text-[11px] text-slate-400">理論最大獲利 / 最大虧損</div>
-              <div id="uMetricMaxProfit" class="text-xs font-bold mt-0.5 text-emerald-400"></div>
-              <div id="uMetricMaxLoss" class="text-xs font-bold mt-0.5 text-rose-400"></div>
+              <div class="text-[11px] text-slate-500 dark:text-slate-400">理論最大獲利 / 最大虧損</div>
+              <div id="uMetricMaxProfit" class="text-xs font-bold mt-0.5 text-emerald-600 dark:text-emerald-400"></div>
+              <div id="uMetricMaxLoss" class="text-xs font-bold mt-0.5 text-rose-600 dark:text-rose-400"></div>
             </div>
           </div>
 
           <!-- 四大 Greeks 權利金貢獻度拆解列 -->
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2 text-xs">
             <div class="flex flex-wrap items-center justify-between gap-1">
-              <span class="font-bold text-slate-600 dark:text-slate-200">🔬 權利金變動四大 Greeks 拆解公式：</span>
-              <span class="font-mono text-[11px] text-slate-400">ΔP ≈ (Δ×dS) + (½×Γ×dS²) + (Θ×dt) + (ν×dIV)</span>
+              <span class="font-bold text-slate-700 dark:text-slate-200">🔬 權利金變動四大 Greeks 拆解公式：</span>
+              <span class="font-mono text-[11px] text-slate-500 dark:text-slate-400">ΔP ≈ (Δ×dS) + (½×Γ×dS²) + (Θ×dt) + (ν×dIV)</span>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="text-[10px] text-slate-400">Delta (Δ) 方向損益</div>
-                <div id="uContribDelta" class="font-bold text-sm text-blue-400">+$0</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Delta (Δ) 方向損益</div>
+                <div id="uContribDelta" class="font-bold text-sm text-blue-600 dark:text-blue-400">+$0</div>
               </div>
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="text-[10px] text-slate-400">Gamma (Γ) 加速度</div>
-                <div id="uContribGamma" class="font-bold text-sm text-cyan-400">+$0</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Gamma (Γ) 加速度</div>
+                <div id="uContribGamma" class="font-bold text-sm text-cyan-600 dark:text-cyan-400">+$0</div>
               </div>
               <div class="p-2 rounded-lg bg-white dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-                <div class="text-[10px] text-slate-400">Theta (Θ) 時間價值收支</div>
-                <div id="uContribTheta" class="font-bold text-sm text-rose-400">+$0</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Theta (Θ) 時間價值收支</div>
+                <div id="uContribTheta" class="font-bold text-sm text-rose-600 dark:text-rose-400">+$0</div>
               </div>
               <div class="p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder">
-                <div class="text-[10px] text-slate-400">Vega (ν) 波動率損益</div>
-                <div id="uContribVega" class="font-bold text-sm text-amber-400">+$0</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Vega (ν) 波動率損益</div>
+                <div id="uContribVega" class="font-bold text-sm text-amber-600 dark:text-amber-400">+$0</div>
               </div>
             </div>
           </div>
@@ -396,19 +388,25 @@
             <canvas id="unifiedPayoffChart"></canvas>
           </div>
 
+          <!-- 情境結果對照卡 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div id="uWinBox" class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-medium"></div>
+            <div id="uLossBox" class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 font-medium"></div>
+          </div>
+
         </div>
       </div>
 
       <!-- 下方 Firstrade 10 大策略對照總表 (點擊任一列直接載入上方模擬器) -->
-      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder">
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
           <h3 class="font-bold text-sm sm:text-base">📊 Firstrade 10 大期權策略全景對照表 (點擊任一列直接載入上方模擬器)</h3>
-          <span class="text-xs text-slate-400">基準案例：SOXL 現價 $90 · 30天期 · 1口=100股</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400">基準案例：SOXL 現價 $90 · 30天期 · 1口=100股</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
-              <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-400">
+              <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400">
                 <th class="py-2.5 px-3">#</th>
                 <th class="py-2.5 px-3">Firstrade 策略名稱</th>
                 <th class="py-2.5 px-3">腿數與方向本質</th>
@@ -425,7 +423,7 @@
 
     <!-- ==================== 分頁 2：市值 Top 50 · 本益比 (P/E) & IV Rank 雷達 ==================== -->
     <section id="panel-top50" class="hidden space-y-6">
-      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4 shadow-sm">
         
         <!-- 篩選與排序控制列 -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-notionBorder">
@@ -436,14 +434,14 @@
                 <span class="tooltip-box"><b>本益比 (P/E) + IV Rank 雙因子選股</b>：<br>• <b>低本益比 (P/E &lt; 22x) + 高 IVR</b>：公司估值便宜且權利金肥美，最適合賣出 Cash-Secured Put 打折接刀收租。<br>• <b>高本益比 (P/E &gt; 35x)</b>：高成長科技股波動大，適合用價差單 (Spread) 或 PMCC 鎖定下檔風險。</span>
               </span>
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">表格第 5 欄已醒目標示各公司目前「本益比 (P/E Ratio)」，可依本益比高低或 IV Rank 進行篩選與排序</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">表格第 5 欄已醒目標示各公司目前「本益比 (P/E Ratio)」，點選最右側「選擇此股」即可帶入數據並顯示於頂部資訊列</p>
           </div>
 
           <div class="flex flex-wrap items-center gap-2 text-xs">
             <input id="top50FilterInput" type="text" placeholder="搜尋代號或名稱..." oninput="renderTop50Table()"
                    class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder focus:outline-none" />
             <select id="top50PeFilter" onchange="renderTop50Table()"
-                    class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+                    class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold">
               <option value="all">📊 全部本益比 (P/E) 區間</option>
               <option value="low_pe">🟢 低本益比價值股 (P/E &lt; 22x)</option>
               <option value="mid_pe">🔵 合理成長股 (P/E 22x ~ 35x)</option>
@@ -470,15 +468,15 @@
         <!-- 3 格選股策略提示卡 -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-            <div class="text-emerald-400 font-bold">🟢 低本益比價值防禦 (P/E &lt; 22x)</div>
+            <div class="text-emerald-700 dark:text-emerald-400 font-bold">🟢 低本益比價值防禦 (P/E &lt; 22x)</div>
             <div class="text-slate-600 dark:text-slate-300 mt-1">JPM (13.4x), BAC (13.8x), XOM (14.2x), QCOM (16.4x), VZ (9.4x)... 獲利紮實，賣 Put 接刀最安全</div>
           </div>
           <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30">
-            <div class="text-rose-400 font-bold">🔥 高 IV Rank 收租王 (IVR ≥ 50%)</div>
+            <div class="text-rose-700 dark:text-rose-400 font-bold">🔥 高 IV Rank 收租王 (IVR ≥ 50%)</div>
             <div class="text-slate-600 dark:text-slate-300 mt-1">NVDA (P/E 40.2x | IVR 64%), TSLA (P/E 88.5x | IVR 52%), AMD (P/E 42.6x | IVR 43%)... 權利金最肥美</div>
           </div>
           <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30">
-            <div class="text-blue-400 font-bold">💎 低 IV Rank 買方首選 (IVR &lt; 30%)</div>
+            <div class="text-blue-700 dark:text-blue-400 font-bold">💎 低 IV Rank 買方首選 (IVR &lt; 30%)</div>
             <div class="text-slate-600 dark:text-slate-300 mt-1">KO (P/E 23.5x), PG (P/E 26.4x), WMT (P/E 34.1x), SPY, QQQ... 時間價值便宜，適合買方長約</div>
           </div>
         </div>
@@ -486,13 +484,13 @@
         <!-- Top 50 表格 (第5欄醒目顯示目前本益比 P/E) -->
         <div class="overflow-x-auto max-h-[600px]">
           <table class="w-full text-left border-collapse text-xs">
-            <thead class="sticky top-0 bg-white dark:bg-notionCard border-b-2 border-slate-200 dark:border-notionBorder text-slate-400 z-10">
+            <thead class="sticky top-0 bg-white dark:bg-notionCard border-b-2 border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400 z-10">
               <tr>
                 <th class="py-3 px-2.5">市值排名</th>
                 <th class="py-3 px-2.5">代號 / 公司名稱</th>
                 <th class="py-3 px-2.5">總市值</th>
                 <th class="py-3 px-2.5">目前股價</th>
-                <th class="py-3 px-3 bg-emerald-500/10 text-emerald-400 font-bold border-x border-emerald-500/20">
+                <th class="py-3 px-3 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold border-x border-emerald-500/20">
                   📊 目前本益比 (P/E Ratio)
                 </th>
                 <th class="py-3 px-2.5">當前 IV</th>
@@ -512,10 +510,10 @@
     <!-- ==================== 分頁 3：$22,000 風險配置 & 複利成長模擬 ==================== -->
     <section id="panel-portfolio" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+        <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4 shadow-sm">
           <h2 class="font-bold text-base">🛡️ $22,000 期權資產配置藍圖</h2>
           <div>
-            <label class="text-xs text-slate-400">帳戶總本金規模 (USD)</label>
+            <label class="text-xs text-slate-500 dark:text-slate-400">帳戶總本金規模 (USD)</label>
             <input id="portfolioCapitalInput" type="number" value="22000" step="1000" onchange="renderPortfolioAllocation()"
                    class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold text-base" />
           </div>
@@ -524,34 +522,34 @@
                     class="w-full text-left p-3.5 rounded-xl border-2 border-blue-500 bg-blue-500/10 transition">
               <div class="flex justify-between font-bold text-sm">
                 <span>🔥 進攻型高 IV 科技輪動 (目標年化 40%)</span>
-                <span class="text-blue-400">月目標 ~$750+</span>
+                <span class="text-blue-600 dark:text-blue-400">月目標 ~$750+</span>
               </div>
-              <p class="text-xs text-slate-400 mt-1">50% NVDA/AMD CSP + 20.5% TSLA PMCC + 6.8% QQQ 價差 + 22.7% 備用金</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">50% NVDA/AMD CSP + 20.5% TSLA PMCC + 6.8% QQQ 價差 + 22.7% 備用金</p>
             </button>
             <button onclick="selectPortfolioMode('steady20')" id="mode-steady20"
                     class="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-notionBorder hover:border-blue-400 transition">
               <div class="flex justify-between font-bold text-sm">
                 <span>⚖️ 穩健雙引擎收租配置 (目標年化 20%)</span>
-                <span class="text-emerald-400">月目標 ~$380</span>
+                <span class="text-emerald-600 dark:text-emerald-400">月目標 ~$380</span>
               </div>
-              <p class="text-xs text-slate-400 mt-1">50% SBUX Covered Call + 25% KO CSP + 25% SPY 垂直價差與防禦現金</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">50% SBUX Covered Call + 25% KO CSP + 25% SPY 垂直價差與防禦現金</p>
             </button>
             <button onclick="selectPortfolioMode('buyer50')" id="mode-buyer50"
                     class="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-notionBorder hover:border-blue-400 transition">
               <div class="flex justify-between font-bold text-sm">
                 <span>⚡ 30天純買方 50% 資金利用率架構</span>
-                <span class="text-amber-400">零保證金凍結</span>
+                <span class="text-amber-600 dark:text-amber-400">零保證金凍結</span>
               </div>
-              <p class="text-xs text-slate-400 mt-1">38% Deep ITM Call (Delta 0.85) + 12% Bull Call Spread + 50% 安全現金</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">38% Deep ITM Call (Delta 0.85) + 12% Bull Call Spread + 50% 安全現金</p>
             </button>
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2 text-xs">
-            <div class="font-bold text-sm text-blue-400">🔗 當前股票 (<span id="allocTickerName">NVDA</span>) 口數試算：</div>
+            <div class="font-bold text-sm text-blue-600 dark:text-blue-400">🔗 當前股票 (<span id="allocTickerName">尚未選擇</span>) 口數試算：</div>
             <div id="liveTickerAllocationAdvice" class="text-slate-600 dark:text-slate-300 space-y-1 leading-relaxed"></div>
           </div>
         </div>
 
-        <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-5">
+        <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-5 shadow-sm">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             <div class="relative h-[220px]">
               <canvas id="portfolioDonutChart"></canvas>
@@ -561,7 +559,7 @@
           <div class="overflow-x-auto pt-3 border-t border-slate-200 dark:border-notionBorder">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr class="text-slate-400 border-b border-slate-200 dark:border-notionBorder">
+                <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-notionBorder">
                   <th class="py-2">策略板塊</th>
                   <th class="py-2">推薦標的</th>
                   <th class="py-2">配置金額</th>
@@ -576,20 +574,20 @@
       </div>
 
       <!-- 複利成長與提領模擬器 -->
-      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-5">
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-5 shadow-sm">
         <h3 class="font-bold text-base">📈 期權策略長期複利成長與每月提領模擬器</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-            <div class="text-xs text-slate-400">期末累積投入本金</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">期末累積投入本金</div>
             <div id="compPrincipal" class="text-xl font-bold mt-1">$22,000</div>
           </div>
           <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-            <div class="text-xs text-slate-400">穩健收租預估終值</div>
-            <div id="compSteady" class="text-xl font-bold mt-1 text-emerald-500">$59,311</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">穩健收租預估終值</div>
+            <div id="compSteady" class="text-xl font-bold mt-1 text-emerald-600 dark:text-emerald-400">$59,311</div>
           </div>
           <div class="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/30">
-            <div class="text-xs text-blue-400 font-medium">進攻型期權預估終值</div>
-            <div id="compAggressive" class="text-xl font-bold mt-1 text-blue-500">$157,344</div>
+            <div class="text-xs text-blue-600 dark:text-blue-400 font-medium">進攻型期權預估終值</div>
+            <div id="compAggressive" class="text-xl font-bold mt-1 text-blue-600 dark:text-blue-400">$157,344</div>
           </div>
         </div>
         <div class="relative h-[280px] p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
@@ -597,68 +595,68 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs">
           <div>
-            <div class="flex justify-between mb-1"><span>起始本金 (USD)</span><span id="lblInitial" class="font-bold text-blue-500">$22,000</span></div>
+            <div class="flex justify-between mb-1"><span>起始本金 (USD)</span><span id="lblInitial" class="font-bold text-blue-600 dark:text-blue-400">$22,000</span></div>
             <input id="rngInitial" type="range" min="5000" max="100000" step="1000" value="22000" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span>每月額外投入 / 提領 (USD)</span><span id="lblMonthly" class="font-bold text-blue-500">$0</span></div>
+            <div class="flex justify-between mb-1"><span>每月額外投入 / 提領 (USD)</span><span id="lblMonthly" class="font-bold text-blue-600 dark:text-blue-400">$0</span></div>
             <input id="rngMonthly" type="range" min="-1500" max="3000" step="100" value="0" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span>進攻型策略年化報酬率 (%)</span><span id="lblAgg" class="font-bold text-blue-500">40%</span></div>
+            <div class="flex justify-between mb-1"><span>進攻型策略年化報酬率 (%)</span><span id="lblAgg" class="font-bold text-blue-600 dark:text-blue-400">40%</span></div>
             <input id="rngAgg" type="range" min="10" max="60" step="1" value="40" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
           </div>
           <div>
-            <div class="flex justify-between mb-1"><span>穩健收租策略年化報酬率 (%)</span><span id="lblStd" class="font-bold text-emerald-500">20%</span></div>
+            <div class="flex justify-between mb-1"><span>穩健收租策略年化報酬率 (%)</span><span id="lblStd" class="font-bold text-emerald-600 dark:text-emerald-400">20%</span></div>
             <input id="rngStd" type="range" min="5" max="35" step="1" value="20" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
           </div>
           <div class="md:col-span-2">
-            <div class="flex justify-between mb-1"><span>複利滾動年限 (Years)</span><span id="lblYears" class="font-bold text-blue-500">5 年</span></div>
+            <div class="flex justify-between mb-1"><span>複利滾動年限 (Years)</span><span id="lblYears" class="font-bold text-blue-600 dark:text-blue-400">5 年</span></div>
             <input id="rngYears" type="range" min="1" max="15" step="1" value="5" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== 分頁 4：選擇權全攻略教學百科 (全新建立！涵蓋所有期權核心知識) ==================== -->
+    <!-- ==================== 分頁 4：選擇權全攻略教學百科 ==================== -->
     <section id="panel-academy" class="hidden space-y-6">
       
       <!-- 頂部互動式「3秒策略決策幫手」 -->
-      <div class="bg-gradient-to-r from-blue-950/60 to-indigo-950/60 rounded-2xl p-5 border border-blue-500/30 space-y-4">
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-blue-500/30 space-y-4 shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 class="font-bold text-base sm:text-lg text-blue-400">🧭 互動式期權策略決策導航（不知道該選哪個策略？點選你的看法）</h2>
-            <p class="text-xs text-slate-300">根據你對「股價方向」與「隱含波動率位階 (IV Rank)」的判斷，自動配對最佳策略：</p>
+            <h2 class="font-bold text-base sm:text-lg text-blue-600 dark:text-blue-400">🧭 互動式期權策略決策導航（不知道該選哪個策略？點選你的看法）</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">根據你對「股價方向」與「隱含波動率位階 (IV Rank)」的判斷，自動配對最佳策略：</p>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div>
-            <label class="text-slate-400">1. 你對未來 30 天股價方向的看法：</label>
-            <select id="finderDir" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-900 border border-slate-700 font-bold text-white">
+            <label class="text-slate-500 dark:text-slate-400 font-medium">1. 你對未來 30 天股價方向的看法：</label>
+            <select id="finderDir" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold">
               <option value="bull">📈 看漲 / 偏多 (Bullish)</option>
               <option value="neutral">↔️ 橫盤震盪 / 不大跌即可 (Neutral)</option>
               <option value="volatile">💥 即將大噴發但不確定方向 (Volatile)</option>
             </select>
           </div>
           <div>
-            <label class="text-slate-400">2. 目前該股票的 IV Rank (權利金貴不貴)：</label>
-            <select id="finderIvr" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-900 border border-slate-700 font-bold text-white">
+            <label class="text-slate-500 dark:text-slate-400 font-medium">2. 目前該股票的 IV Rank (權利金貴不貴)：</label>
+            <select id="finderIvr" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold">
               <option value="high">🔥 高 IV Rank (≥50% 權利金昂貴)</option>
               <option value="low">💎 低 IV Rank (&lt;30% 權利金便宜)</option>
             </select>
           </div>
-          <div id="finderResultCard" class="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 flex flex-col justify-center"></div>
+          <div id="finderResultCard" class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col justify-center"></div>
         </div>
       </div>
 
-      <!-- 六大核心知識模組網格 -->
+      <!-- 核心知識模組網格 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
 
         <!-- 模組 1：期權基礎與價值結構 -->
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-blue-400">📘 一、期權本質、價值拆解與價內外 (ITM/ATM/OTM)</h3>
-            <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 text-xs font-bold">基礎核心</span>
+            <h3 class="font-bold text-base text-blue-600 dark:text-blue-400">📘 一、期權本質、價值拆解與價內外 (ITM/ATM/OTM)</h3>
+            <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 text-xs font-bold">基礎核心</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
             <p>• <b>1 口合約 = 100 股正股</b>：報價顯示 $2.50 時，實際收付金額為 <code>$2.50 × 100 = $250 美元</code>。</p>
@@ -673,26 +671,26 @@
         </div>
 
         <!-- 模組 2：Firstrade 四大交易動作 -->
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-emerald-400">📗 二、Firstrade 四大期權指令與配對鐵律</h3>
-            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-xs font-bold">必考操作</span>
+            <h3 class="font-bold text-base text-emerald-600 dark:text-emerald-400">📗 二、Firstrade 四大期權指令與配對鐵律</h3>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold">必考操作</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
             <p>• <b>買方流派（先付錢買進，後賣出平倉）</b>：<br>
               1. <b>Buy to Open (BTO 買進開倉)</b>：付出權利金 (Debit) 建立新買方部位，風險鎖定在投入成本，免保證金。<br>
               2. <b>Sell to Close (STC 賣出平倉)</b>：把手上的買方合約賣掉獲利了結或停損。</p>
             <p>• <b>賣方包租公流派（先收錢開倉，後買回平倉）</b>：<br>
-              1. <b>Sell to Open (STO 賣出開倉)</b>：無中生有簽發合約賣給市場，立即收到權利金現金 (Credit)，但需圈存現金擔保 (CSP) 或正股抵押 (Covered Call)。<br>
+              1. <b>Sell to Open (STO 賣出開倉)</b>：簽發合約賣給市場，立即收到權利金現金 (Credit)，但需圈存現金擔保 (CSP) 或正股抵押 (Covered Call)。<br>
               2. <b>Buy to Close (BTC 買進平倉)</b>：當權利金跌掉 50%~70% 時，花小錢把合約買回來銷毀，釋放保證金並鎖定獲利。</p>
           </div>
         </div>
 
         <!-- 模組 3：五大希臘字母 (Greeks) 全解析 -->
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-purple-400">🔬 三、五大希臘字母 (Greeks) 實戰速查指南</h3>
-            <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 text-xs font-bold">精算核心</span>
+            <h3 class="font-bold text-base text-purple-600 dark:text-purple-400">🔬 三、五大希臘字母 (Greeks) 實戰速查指南</h3>
+            <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-400 text-xs font-bold">精算核心</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
             <p>• <b>Delta (Δ 方向與勝率指標)</b>：股價每漲 $1 權利金的變動量。實戰中 <code>|Delta|</code> 可直接當作「到期進入價內的機率」——例如賣出 Delta 0.20 的 Put，代表到期有約 80% 機率安全歸零收租！</p>
@@ -703,10 +701,10 @@
         </div>
 
         <!-- 模組 4：IV 與 IV Rank (IVR) 交易法則 -->
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3">
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-amber-400">📊 四、隱含波動率 (IV) 與 IV Rank 選股鐵律</h3>
-            <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 text-xs font-bold">勝率關鍵</span>
+            <h3 class="font-bold text-base text-amber-600 dark:text-amber-400">📊 四、隱含波動率 (IV) 與 IV Rank 選股鐵律</h3>
+            <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold">勝率關鍵</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
             <p>• <b>為什麼不能只看 IV 絕對值？</b> TSLA 的 IV 常年在 55%，KO 常年在 15%。要知道現在權利金貴不貴，必須看該股票跟自己過去一年比較的位階——也就是 <b>IV Rank (IVR)</b>。</p>
@@ -718,22 +716,22 @@
         </div>
 
         <!-- 模組 5：Rollover 展期保住股票與自救聖經 -->
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 md:col-span-2">
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 md:col-span-2 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-rose-400">🔄 五、Rollover (展期) 永久保住正股 SOP 與除息日防提前行權公式</h3>
-            <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 text-xs font-bold">進階風控</span>
+            <h3 class="font-bold text-base text-rose-600 dark:text-rose-400">🔄 五、Rollover (展期) 永久保住正股 SOP 與除息日防提前行權公式</h3>
+            <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 text-xs font-bold">進階風控</span>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-              <div class="font-bold text-blue-400 mb-1">1. Covered Call 被漲破：Roll Up & Out</div>
+              <div class="font-bold text-blue-600 dark:text-blue-400 mb-1">1. Covered Call 被漲破：Roll Up & Out</div>
               當正股大漲觸及 Call 行權價（Delta 達 0.70、剩餘 14~21 天）且不想賣出股票時，在持倉點擊「Roll」：<b>買回近月 Call (BTC) ＋ 賣出往後 30~60 天、更高行權價的 Call (STO)</b>。用遠月豐厚的時間價值換取更高的履約天花板，確保整筆為 <b>Net Credit (淨收錢)</b>。
             </div>
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-              <div class="font-bold text-emerald-400 mb-1">2. CSP 被跌破：Roll Down & Out</div>
+              <div class="font-bold text-emerald-600 dark:text-emerald-400 mb-1">2. CSP 被跌破：Roll Down & Out</div>
               當賣出的 Put 遭遇回檔跌破履約價時，絕不驚慌認賠。在 21 DTE 時執行：<b>買回近月 Put (BTC) ＋ 賣出下個月更低履約價的 Put (STO)</b>，一邊降低接刀成本、一邊繼續收取額外權利金等待反彈。
             </div>
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-              <div class="font-bold text-amber-400 mb-1">3. 除息日防提前行權 (Early Assignment)</div>
+              <div class="font-bold text-amber-600 dark:text-amber-400 mb-1">3. 除息日防提前行權 (Early Assignment)</div>
               若你的 Covered Call 深入價內，在正股<b>除息日 (Ex-Dividend Date) 前 2 天</b>務必檢查：若 <code>Call 剩餘時間價值 &lt; 即將配發的每股股息</code>，對手會提前行權搶股息。此時必須立即向上展期 (Roll Out) 補厚時間價值。
             </div>
           </div>
@@ -743,7 +741,7 @@
     </section>
 
   </main>
-  
+
   <script>
     // ==================== 1. 美股市值 Top 50 資料庫 (含本益比 P/E、IV、52週高低點) ====================
     const TOP50_STOCKS = [
@@ -809,12 +807,12 @@
     // ==================== 2. 各分頁說明資料庫 ====================
     const PAGE_GUIDES = {
       simulator: {
-        title: '📖 本頁功能說明：10 大策略模擬 & Greeks 權利金精算（1、3頁完全二合一）',
-        content: '1. <b>策略與 Greeks 完全整合</b>：在同一頁面中，你可以自由切換 10 大期權策略，並同時調整現價、基準行權價、到期天數與 IV，系統會透過 Black-Scholes 模型即時算出 <b>Delta、Gamma、Theta、Vega</b> 與權利金變化。<br>2. <b>雙軌損益曲線圖</b>：右側圖表同時呈現「到期結算損益線 (0 DTE)」與「持倉中途動態損益線 (T+Δt)」，還可點擊右下角「✨ 請 Gemini 診斷此部位」取得 AI 分析。'
+        title: '📖 本頁功能說明：10 大策略模擬 & Greeks 權利金精算（完全二合一）',
+        content: '1. <b>選擇股票後才帶入顯示</b>：請在右上角搜尋框選擇股票（或至第 2 頁 Top 50 點擊「選擇此股」），頂部即會顯示該股現價、本益比 (P/E) 與 IV Rank，並自動帶入下方模型。<br>2. <b>策略與 Greeks 完全整合</b>：自由切換 10 大期權策略，系統會以 Black-Scholes 模型即時算出 <b>Delta、Gamma、Theta、Vega</b> 與雙軌損益曲線圖。'
       },
       top50: {
         title: '📖 本頁功能說明：美股市值 Top 50 · 本益比 (P/E Ratio) & IV Rank 選股雷達',
-        content: '1. <b>醒目本益比 (P/E) 欄位</b>：表格第 5 欄已專門標示每家公司的目前本益比，並支援依本益比篩選（低於 22x 價值股、22~35x 穩健股、高於 35x 動能股）與高低排序。<br>2. 點擊任一列右側「⚡ 極速帶入」，0 毫秒將該股現價、P/E 與 IV 載入模擬器。'
+        content: '1. <b>醒目本益比 (P/E) 欄位</b>：表格第 5 欄專門標示每家公司的目前本益比，支援依本益比區間篩選與高低排序。<br>2. 點擊任一列右側「選擇此股」，即可將該股現價、P/E 與 IV 載入模擬器並顯示於頂部。'
       },
       portfolio: {
         title: '📖 本頁功能說明：$22,000 風險配置藍圖 & 長期複利模擬器',
@@ -822,7 +820,7 @@
       },
       academy: {
         title: '📖 本頁功能說明：選擇權全攻略教學百科（從基礎、Greeks 到 Rollover 展期）',
-        content: '完整收錄選擇權交易必備的 6 大知識體系，上方並附有「互動式期權策略決策導航」，只要選擇你對方向與 IV Rank 的看法，系統就會自動推薦最適合的期權策略！'
+        content: '完整收錄選擇權交易必備的 5 大核心知識體系，上方並附有「互動式期權策略決策導航」，只要選擇你對方向與 IV Rank 的看法，系統就會自動推薦最適合的期權策略！'
       }
     };
 
@@ -1002,8 +1000,9 @@
       }
     };
 
-    // ==================== 5. 全域狀態與 0ms 極速選股快取引擎 ====================
-    let currentStock = TOP50_STOCKS[52]; // 預設 SOXL
+    // ==================== 5. 全域狀態與股票選取引擎 (選完股票才顯示資訊) ====================
+    let currentStock = TOP50_STOCKS[52]; // 內部預設基準為 SOXL $90，直到使用者選擇股票
+    let hasUserSelectedStock = false;
     let isSoxlBenchmarkMode = true;
     let unifiedGreeksMode = 'auto';
     let customStrikeOverride = null;
@@ -1019,11 +1018,24 @@
     function searchAndLoadStock() {
       const sym = document.getElementById('globalTickerInput').value.trim().toUpperCase();
       if (!sym) return;
-      quickLoadTicker(sym, sym === 'SOXL');
+      loadSelectedTicker(sym, false);
     }
 
-    function quickLoadTicker(sym, useSoxlBenchmark = false) {
+    function resetToSoxlBenchmark() {
+      isSoxlBenchmarkMode = true;
+      customStrikeOverride = null;
+      currentStock = TOP50_STOCKS[52];
+      document.getElementById('uSpot').value = 90;
+      document.getElementById('uIv').value = 65;
+      document.getElementById('uDte').value = 30;
+      unifiedGreeksMode = 'auto';
+      updateGreeksModeButtons();
+      onUnifiedStrategyChange();
+    }
+
+    function loadSelectedTicker(sym, useSoxlBenchmark = false) {
       const cleanSym = sym.trim().toUpperCase();
+      hasUserSelectedStock = true;
       isSoxlBenchmarkMode = useSoxlBenchmark;
       customStrikeOverride = null;
       document.getElementById('globalTickerInput').value = cleanSym;
@@ -1036,19 +1048,22 @@
       }
 
       currentStock = found;
-      applyStockToHeaderAndSimulator(found, `⚡ 0ms 已載入 ${cleanSym} (P/E ${found.pe}x | IVR ${found.ivr}%)`);
+      applyStockToHeaderAndSimulator(found);
 
       if (!useSoxlBenchmark && !liveQuoteCache[cleanSym]) {
         fetchLivePriceBackground(cleanSym, found);
       }
     }
 
-    function applyStockToHeaderAndSimulator(stock, statusMsg) {
-      document.getElementById('headerSymbol').textContent = stock.sym;
-      document.getElementById('headerPrice').textContent = `$${stock.price.toFixed(2)}`;
-      document.getElementById('headerPeBadge').textContent = `本益比 P/E: ${stock.pe.toFixed(1)}x`;
-      document.getElementById('headerIvBadge').textContent = `IV: ${stock.iv}% (IVR ${stock.ivr}%)`;
-      document.getElementById('quoteStatus').textContent = statusMsg;
+    function applyStockToHeaderAndSimulator(stock) {
+      if (hasUserSelectedStock) {
+        const infoBox = document.getElementById('headerStockInfo');
+        if (infoBox) infoBox.classList.remove('hidden');
+        document.getElementById('headerSymbol').textContent = stock.sym;
+        document.getElementById('headerPrice').textContent = `$${stock.price.toFixed(2)}`;
+        document.getElementById('headerPeBadge').textContent = `本益比 P/E: ${stock.pe.toFixed(1)}x`;
+        document.getElementById('headerIvBadge').textContent = `IV: ${stock.iv}% (IVR ${stock.ivr}%)`;
+      }
 
       document.getElementById('uSpot').value = stock.price.toFixed(2);
       document.getElementById('uIv').value = isSoxlBenchmarkMode ? 65 : stock.iv;
@@ -1075,7 +1090,7 @@
           liveQuoteCache[sym] = rounded;
           stockRef.price = rounded;
           if (currentStock.sym === sym && !isSoxlBenchmarkMode) {
-            applyStockToHeaderAndSimulator(stockRef, `✅ 已同步 ${sym} 最新報價 ($${rounded})`);
+            applyStockToHeaderAndSimulator(stockRef);
             renderTop50Table();
           }
         }
@@ -1085,9 +1100,18 @@
     }
 
     function syncStrategyToActiveStock() {
+      if (!hasUserSelectedStock) {
+        const inputVal = document.getElementById('globalTickerInput').value.trim();
+        if (inputVal) {
+          searchAndLoadStock();
+          return;
+        }
+        loadSelectedTicker('NVDA', false);
+        return;
+      }
       isSoxlBenchmarkMode = false;
       customStrikeOverride = null;
-      applyStockToHeaderAndSimulator(currentStock, `✅ 已套用 ${currentStock.sym} ($${currentStock.price}) 動態履約價與 Greeks`);
+      applyStockToHeaderAndSimulator(currentStock);
     }
 
     // ==================== 6. 第1頁：10大策略 & Greeks 整合計算核心 ====================
@@ -1100,10 +1124,10 @@
     function updateGreeksModeButtons() {
       document.getElementById('btnAutoGreeks').className = unifiedGreeksMode === 'auto'
         ? 'px-2 py-0.5 rounded bg-blue-600 text-white font-semibold'
-        : 'px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-400';
+        : 'px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
       document.getElementById('btnManualGreeks').className = unifiedGreeksMode === 'manual'
         ? 'px-2 py-0.5 rounded bg-blue-600 text-white font-semibold'
-        : 'px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-400';
+        : 'px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
     }
 
     function onSpotOrIvInput() {
@@ -1235,11 +1259,12 @@
         }).join('');
       }
 
-      document.getElementById('uWinBox').textContent = strat.winScenario;
-      document.getElementById('uLossBox').textContent = strat.lossScenario;
+      const winBox = document.getElementById('uWinBox');
+      const lossBox = document.getElementById('uLossBox');
+      if (winBox) winBox.textContent = strat.winScenario;
+      if (lossBox) lossBox.textContent = strat.lossScenario;
 
       updateUnifiedSimulation();
-      updateGeminiContextBanner();
     }
 
     function resetSimSliders() {
@@ -1307,13 +1332,13 @@
 
       const midEl = document.getElementById('uMetricMidPnL');
       midEl.textContent = `${fmtD(midPnLDollar)} USD`;
-      midEl.className = `text-base font-bold mt-0.5 ${midPnLDollar >= 0 ? 'text-blue-400' : 'text-rose-400'}`;
+      midEl.className = `text-base font-bold mt-0.5 ${midPnLDollar >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400'}`;
       const estNewPrem = Math.abs(netPrem) + (midPnLDollar / (100 * qty));
       document.getElementById('uMetricNewPrem').textContent = `推算新權利金價值: $${Math.max(0, estNewPrem).toFixed(2)}/股`;
 
       const expEl = document.getElementById('uMetricExpPnL');
       expEl.textContent = `${fmtD(expPnLDollar)} USD`;
-      expEl.className = `text-base font-bold mt-0.5 ${expPnLDollar >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+      expEl.className = `text-base font-bold mt-0.5 ${expPnLDollar >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
       document.getElementById('uMetricBreakeven').textContent = `兩平參考: ${strat.soxlBreakeven}`;
 
       const minP = Number(document.getElementById('sliderTargetPrice').min);
@@ -1354,7 +1379,7 @@
               {
                 label: '持倉中途 (T+Δt) Greeks 動態損益',
                 data: midData,
-                borderColor: '#3b82f6',
+                borderColor: '#2563eb',
                 borderDash: [5, 5],
                 borderWidth: 2,
                 pointRadius: 0,
@@ -1368,7 +1393,7 @@
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-              legend: { position: 'top', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11 } } },
+              legend: { position: 'top', labels: { color: '#64748b', boxWidth: 12, font: { size: 11 } } },
               tooltip: {
                 callbacks: {
                   title: items => `股價：$${items[0].label}`,
@@ -1377,8 +1402,8 @@
               }
             },
             scales: {
-              x: { ticks: { color: '#94a3b8', callback: function(v) { return '$' + this.getLabelForValue(v); } }, grid: { display: false } },
-              y: { ticks: { color: '#94a3b8', callback: v => (v >= 0 ? '+$' : '-$') + Math.abs(v) }, grid: { color: 'rgba(148, 163, 184, 0.14)' } }
+              x: { ticks: { color: '#64748b', callback: function(v) { return '$' + this.getLabelForValue(v); } }, grid: { display: false } },
+              y: { ticks: { color: '#64748b', callback: v => (v >= 0 ? '+$' : '-$') + Math.abs(v) }, grid: { color: 'rgba(148, 163, 184, 0.18)' } }
             }
           }
         });
@@ -1399,9 +1424,9 @@
           ? `淨收取 +$${Math.round(s.soxlNetPrem * 100)} (Credit)`
           : `淨支出 -$${Math.round(Math.abs(s.soxlNetPrem) * 100)} (Debit)`;
         return `
-          <tr onclick="document.getElementById('strategySelect').value='${k}'; quickLoadTicker('SOXL', true); window.scrollTo({top:0, behavior:'smooth'});" 
+          <tr onclick="document.getElementById('strategySelect').value='${k}'; resetToSoxlBenchmark(); window.scrollTo({top:0, behavior:'smooth'});" 
               class="hover:bg-blue-500/10 cursor-pointer transition">
-            <td class="py-2.5 px-3 font-bold text-blue-500">${s.num}</td>
+            <td class="py-2.5 px-3 font-bold text-blue-600 dark:text-blue-400">${s.num}</td>
             <td class="py-2.5 px-3 font-bold">${s.name}</td>
             <td class="py-2.5 px-3">${s.badge}</td>
             <td class="py-2.5 px-3 font-mono text-[11px]">${s.soxlLegsDesc.join('<br>')}</td>
@@ -1443,31 +1468,31 @@
       document.getElementById('top50TableBody').innerHTML = list.map(s => {
         const barColor = s.ivr >= 50 ? 'bg-rose-500' : (s.ivr >= 30 ? 'bg-amber-500' : 'bg-blue-500');
         const peStyle = s.pe < 22
-          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-          : (s.pe <= 35 ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30');
+          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+          : (s.pe <= 35 ? 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/30' : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30');
         const peTag = s.pe < 22 ? '價值低估' : (s.pe <= 35 ? '合理成長' : '高動能');
 
         const stratBadge = s.ivr >= 50
-          ? `<span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 font-semibold">🔥 賣方收租 (CSP / Iron Condor)</span>`
+          ? `<span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-400 font-semibold">🔥 賣方收租 (CSP / Iron Condor)</span>`
           : (s.ivr >= 30
-            ? `<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-semibold">⚖️ 垂直價差 (Bull Call / CC)</span>`
-            : `<span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 font-semibold">💎 買方長約 (PMCC / Deep ITM)</span>`);
+            ? `<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-400 font-semibold">⚖️ 垂直價差 (Bull Call / CC)</span>`
+            : `<span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-700 dark:text-blue-400 font-semibold">💎 買方長約 (PMCC / Deep ITM)</span>`);
 
         return `
           <tr class="hover:bg-blue-500/5 transition">
             <td class="py-2.5 px-2.5 font-bold text-slate-400">#${s.rank}</td>
             <td class="py-2.5 px-2.5">
-              <span class="font-bold text-blue-400">${s.sym}</span>
-              <span class="text-slate-400 ml-1">${s.name}</span>
+              <span class="font-bold text-blue-600 dark:text-blue-400">${s.sym}</span>
+              <span class="text-slate-500 dark:text-slate-400 ml-1">${s.name}</span>
             </td>
             <td class="py-2.5 px-2.5 font-mono">${s.mcap}</td>
             <td class="py-2.5 px-2.5 font-bold">$${s.price.toFixed(2)}</td>
             <td class="py-2.5 px-3 bg-emerald-500/5 border-x border-emerald-500/10">
               <span class="px-2 py-0.5 rounded font-bold ${peStyle}">${s.pe.toFixed(1)}x</span>
-              <span class="text-[10px] text-slate-400 ml-1">${peTag}</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 ml-1">${peTag}</span>
             </td>
-            <td class="py-2.5 px-2.5 font-bold text-purple-400">${s.iv}%</td>
-            <td class="py-2.5 px-2.5 text-slate-400">${s.ivLow}% ~ ${s.ivHigh}%</td>
+            <td class="py-2.5 px-2.5 font-bold text-purple-600 dark:text-purple-400">${s.iv}%</td>
+            <td class="py-2.5 px-2.5 text-slate-500 dark:text-slate-400">${s.ivLow}% ~ ${s.ivHigh}%</td>
             <td class="py-2.5 px-2.5">
               <div class="flex items-center gap-2">
                 <div class="w-20 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -1479,7 +1504,7 @@
             <td class="py-2.5 px-2.5">${stratBadge}</td>
             <td class="py-2.5 px-2.5 text-right">
               <button onclick="selectFromTop50('${s.sym}')" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">
-                ⚡ 極速帶入
+                選擇此股
               </button>
             </td>
           </tr>
@@ -1488,7 +1513,7 @@
     }
 
     function selectFromTop50(sym) {
-      quickLoadTicker(sym, sym === 'SOXL');
+      loadSelectedTicker(sym, sym === 'SOXL');
       switchTab('simulator');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1546,7 +1571,7 @@
         donutChartInstance = new Chart(ctx, {
           type: 'doughnut',
           data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
-          options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } } } } }
+          options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'bottom', labels: { color: '#64748b', boxWidth: 10, font: { size: 10 } } } } }
         });
       } else {
         donutChartInstance.data.labels = labels;
@@ -1560,14 +1585,14 @@
         const amt = Math.round(cap * item.ratio);
         const est = Math.round(amt * item.monthlyRoi);
         totalEst += est;
-        return `<tr><td class="py-2 font-bold">${item.name}</td><td class="py-2 text-slate-400">${item.tickers}</td><td class="py-2 font-bold text-blue-400">$${amt.toLocaleString()}</td><td class="py-2">${(item.ratio * 100).toFixed(1)}%</td><td class="py-2 font-bold text-emerald-400">${est > 0 ? '+$' + est : '$0'}</td></tr>`;
+        return `<tr><td class="py-2 font-bold">${item.name}</td><td class="py-2 text-slate-500 dark:text-slate-400">${item.tickers}</td><td class="py-2 font-bold text-blue-600 dark:text-blue-400">$${amt.toLocaleString()}</td><td class="py-2">${(item.ratio * 100).toFixed(1)}%</td><td class="py-2 font-bold text-emerald-600 dark:text-emerald-400">${est > 0 ? '+$' + est : '$0'}</td></tr>`;
       }).join('');
 
       document.getElementById('portfolioSummaryStats').innerHTML = `
         <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-          <div class="text-xs text-emerald-400">預估單月目標總收益</div>
-          <div class="font-bold text-xl text-emerald-400 mt-0.5">+$${totalEst.toLocaleString()} USD / 月</div>
-          <div class="text-[11px] text-slate-400">折合年化報酬約 ${((totalEst * 12 / cap) * 100).toFixed(1)}%</div>
+          <div class="text-xs text-emerald-700 dark:text-emerald-400">預估單月目標總收益</div>
+          <div class="font-bold text-xl text-emerald-600 dark:text-emerald-400 mt-0.5">+$${totalEst.toLocaleString()} USD / 月</div>
+          <div class="text-[11px] text-slate-500 dark:text-slate-400">折合年化報酬約 ${((totalEst * 12 / cap) * 100).toFixed(1)}%</div>
         </div>
       `;
 
@@ -1576,7 +1601,9 @@
       const cspMargin = strike88 * 100;
       const maxCsp = Math.floor((cap * 0.55) / cspMargin);
       const pmccCost = Math.round(sPrice * 0.28 * 100);
-      document.getElementById('allocTickerName').textContent = `${currentStock.sym} ($${sPrice} | P/E: ${currentStock.pe}x)`;
+      document.getElementById('allocTickerName').textContent = hasUserSelectedStock
+        ? `${currentStock.sym} ($${sPrice} | P/E: ${currentStock.pe}x)`
+        : `預設基準 (${currentStock.sym} $${sPrice})`;
       document.getElementById('liveTickerAllocationAdvice').innerHTML = `
         <div>• <b>CSP 現金擔保賣權 (Strike $${strike88})</b>：單口擔保金 <b>$${cspMargin.toLocaleString()}</b>，50% 額度可開 <b>${maxCsp} 口</b>。</div>
         <div>• <b>PMCC 窮人掩護性買權</b>：Deep ITM Call 單口約 <b>$${pmccCost.toLocaleString()}</b>，可配置 <b>${Math.max(1, Math.floor((cap * 0.25) / pmccCost))} 口</b>。</div>
@@ -1615,7 +1642,7 @@
           data: {
             labels,
             datasets: [
-              { label: '進攻型期權配置', data: aggData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.12)', fill: true, tension: 0.35 },
+              { label: '進攻型期權配置', data: aggData, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.12)', fill: true, tension: 0.35 },
               { label: '穩健收租配置', data: stdData, borderColor: '#10b981', borderDash: [5, 5], fill: false, tension: 0.35 }
             ]
           },
@@ -1659,8 +1686,8 @@
       }
 
       card.innerHTML = `
-        <div class="font-bold text-emerald-400">${title}</div>
-        <div class="text-[11px] text-slate-300 mt-0.5">${desc}</div>
+        <div class="font-bold text-emerald-700 dark:text-emerald-400">${title}</div>
+        <div class="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">${desc}</div>
         <button onclick="document.getElementById('strategySelect').value='${recKey}'; switchTab('simulator'); onUnifiedStrategyChange();" 
                 class="mt-1.5 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] self-start">
           ⚡ 立即載入此策略至第1頁模擬器
@@ -1668,7 +1695,7 @@
       `;
     }
 
-    // ==================== 11. 分頁切換與說明控制 ====================
+    // ==================== 10. 分頁切換與說明控制 ====================
     function updatePageGuide(tabKey) {
       const g = PAGE_GUIDES[tabKey];
       document.getElementById('guideTitle').innerHTML = g.title;
@@ -1684,7 +1711,7 @@
         document.getElementById(`panel-${k}`).classList.toggle('hidden', k !== tabKey);
         document.getElementById(`tab-${k}`).className = k === tabKey
           ? 'pb-2.5 whitespace-nowrap tab-active'
-          : 'pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500';
+          : 'pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-600';
       });
       updatePageGuide(tabKey);
       if (tabKey === 'simulator') onUnifiedStrategyChange();
@@ -1703,7 +1730,8 @@
       renderTop50Table();
       runStrategyFinder();
       updatePageGuide('simulator');
-      quickLoadTicker('SOXL', true);
+      onUnifiedStrategyChange();
+      renderPortfolioAllocation();
       updateCompoundChart();
     });
   </script>

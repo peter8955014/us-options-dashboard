@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Firstrade 美股期權戰略指揮中心 & 互動教學平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            notionDark: '#191919',
+            notionCard: '#222222',
+            notionBorder: '#333333'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+    }
+    input[type="range"] {
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+    .tab-active {
+      border-bottom: 2px solid #3b82f6;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-notionDark text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+  <!-- 頂部導覽與美股即時報價連線列 -->
+  <header class="sticky top-0 z-30 bg-white/95 dark:bg-notionCard/95 backdrop-blur border-b border-slate-200 dark:border-notionBorder px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE PRO</span>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權互動教學 & 資產配置系統</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">支援美股即時報價連線 · 10大策略到期損益圖 · $22,000 複利與風險模擬</p>
+        </div>
+      </div>
+
+      <!-- 美股連線搜尋器 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center bg-slate-100 dark:bg-notionDark rounded-lg p-1 border border-slate-300 dark:border-notionBorder">
+          <input id="tickerInput" type="text" value="SOXL" placeholder="輸入美股代號 (如 NVDA)" 
+                 class="bg-transparent px-2.5 py-1 text-xs sm:text-sm font-bold uppercase w-24 focus:outline-none" />
+          <button id="fetchQuoteBtn" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-md transition">
+            連線報價
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs">
+          <span class="text-slate-400">標的:</span>
+          <span id="liveSymbol" class="font-bold text-blue-500">SOXL</span>
+          <span id="livePrice" class="font-bold text-sm">$90.00</span>
+          <span id="liveChange" class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-500 font-medium">基準案例</span>
+        </div>
+
+        <button id="themeBtn" class="p-2 rounded-lg border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 text-xs">
+          🌓 深淺色
+        </button>
+      </div>
+    </div>
+
+    <!-- 熱門美股快速帶入列 -->
+    <div class="max-w-7xl mx-auto mt-2 pt-2 border-t border-slate-100 dark:border-notionBorder/60 flex flex-wrap items-center gap-1.5 text-xs">
+      <span class="text-slate-400 mr-1">熱門標的快速帶入：</span>
+      <button onclick="quickSelectTicker('SOXL', 90, '高倍槓桿ETF')" class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 font-medium">SOXL ($90 教學基準)</button>
+      <button onclick="quickSelectTicker('NVDA', 138, '高IV科技龍頭')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">NVDA (輝達)</button>
+      <button onclick="quickSelectTicker('TSLA', 255, '高IV動能股')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">TSLA (特斯拉)</button>
+      <button onclick="quickSelectTicker('AMD', 152, '半導體收租')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">AMD (超微)</button>
+      <button onclick="quickSelectTicker('QQQ', 495, '那斯達克指數')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">QQQ (科技ETF)</button>
+      <button onclick="quickSelectTicker('SPY', 585, '標普500指數')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">SPY (大盤ETF)</button>
+      <button onclick="quickSelectTicker('SBUX', 92, '穩健消費藍籌')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">SBUX (星巴克)</button>
+      <button onclick="quickSelectTicker('KO', 69, '極低波動防守')" class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 hover:bg-blue-500/20">KO (可口可樂)</button>
+      <span id="quoteStatus" class="ml-auto text-[11px] text-slate-400">可點擊上方標的或輸入代號即時抓價</span>
+    </div>
+  </header>
+
+  <!-- 主功能分頁選單 -->
+  <div class="max-w-7xl mx-auto px-4 pt-4">
+    <div class="flex space-x-6 border-b border-slate-200 dark:border-notionBorder text-sm overflow-x-auto">
+      <button onclick="switchTab('strategy')" id="tab-strategy" class="pb-2.5 whitespace-nowrap tab-active">
+        🎯 1. 期權策略互動教學 & 損益模擬 (7+3全策略)
+      </button>
+      <button onclick="switchTab('portfolio')" id="tab-portfolio" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
+        🛡️ 2. 推薦股票風險配置 ($22,000 藍圖)
+      </button>
+      <button onclick="switchTab('compound')" id="tab-compound" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
+        📈 3. 複利成長與提領模擬器
+      </button>
+      <button onclick="switchTab('sop')" id="tab-sop" class="pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500">
+        ⏱️ 4. 30天週期 SOP 與展期計算機
+      </button>
+    </div>
+  </div>
+
+  <!-- 主要內容區 -->
+  <main class="max-w-7xl mx-auto p-4 space-y-6">
+
+    <!-- ==================== 分頁 1：期權策略互動教學 & 損益圖 ==================== -->
+    <section id="panel-strategy" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 左側：策略選擇器與參數微調 (5欄) -->
+        <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-bold text-base">選擇 Firstrade 期權策略</h2>
+            <div class="flex gap-1.5">
+              <button onclick="resetToSoxlCase()" class="px-2.5 py-1 text-xs rounded bg-blue-600/15 text-blue-500 hover:bg-blue-600/25 font-medium">
+                還原 SOXL $90 範例
+              </button>
+              <button onclick="scaleStrategyToCurrentPrice()" class="px-2.5 py-1 text-xs rounded bg-emerald-600/15 text-emerald-500 hover:bg-emerald-600/25 font-medium">
+                依現價自動帶入
+              </button>
+            </div>
+          </div>
+
+          <select id="strategySelect" onchange="onStrategyChange()" 
+                  class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <optgroup label="Firstrade 7 大原生結構單 (SOXL $90 案例)">
+              <option value="single">1. Single (單腿期權 - Buy $100 Call)</option>
+              <option value="spread">2. Spread (垂直牛市價差 - $100/$120 Call)</option>
+              <option value="straddle">3. Straddle (跨式買方 - $90 Call + $90 Put)</option>
+              <option value="butterfly">4. Butterfly (蝶式價差 - $80/$90/$100 Call)</option>
+              <option value="iron_butterfly">5. Iron Butterfly (鐵蝴蝶 - 賣$90雙腿+買兩翼)</option>
+              <option value="condor">6. Condor (禿鷹價差 - $75/$85/$95/$105 Call)</option>
+              <option value="iron_condor">7. Iron Condor (鐵鷹價差 - $70/$80 Put + $105/$115 Call)</option>
+            </optgroup>
+            <optgroup label="高勝率實戰收租與現貨替代策略">
+              <option value="csp">8. Cash-Secured Put (現金擔保賣權收租)</option>
+              <option value="cc">9. Covered Call (持股掩護性買權收租)</option>
+              <option value="pmcc">10. PMCC (窮人掩護性買權 - Deep ITM 替代現貨)</option>
+            </optgroup>
+          </select>
+
+          <!-- 策略核心解說卡片 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder space-y-2.5 text-xs sm:text-sm">
+            <div class="flex items-center justify-between">
+              <span id="stratBadge" class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold text-xs">1 腿 · 純買方</span>
+              <span id="stratWinRate" class="text-xs text-slate-400">歷史參考勝率: ~35%</span>
+            </div>
+            <p id="stratEssence" class="text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+            <div class="pt-2 border-t border-slate-200 dark:border-notionBorder">
+              <div class="font-semibold text-slate-700 dark:text-slate-200 mb-1">📋 Firstrade 具體下單組合 (30天期)：</div>
+              <div id="stratLegsText" class="text-slate-600 dark:text-slate-300 space-y-1 font-mono text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 互動滑桿：模擬到期結算股價 & 口數 -->
+          <div class="p-4 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/50 space-y-3">
+            <div>
+              <div class="flex justify-between text-xs sm:text-sm mb-1">
+                <label class="font-semibold">🔍 拖動模擬 30 天後到期結算股價：</label>
+                <span id="simPriceDisplay" class="font-bold text-blue-500 text-base">$110.00</span>
+              </div>
+              <input id="simPriceSlider" type="range" min="40" max="160" step="1" value="110" oninput="updatePayoffSimulation()" class="w-full h-2 rounded-lg" />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span id="sliderMinLabel">$40 (崩跌)</span>
+                <span id="sliderMidLabel">$90 (現價)</span>
+                <span id="sliderMaxLabel">$160 (暴漲)</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-blue-200/40 dark:border-blue-900/40">
+              <div class="text-xs">
+                <span>交易口數 (1口=100股)：</span>
+                <input id="contractQty" type="number" min="1" max="50" value="1" onchange="updatePayoffSimulation()" 
+                       class="w-16 px-2 py-0.5 rounded bg-white dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold text-center" />
+              </div>
+              <div id="simResultBadge" class="text-sm font-bold text-emerald-500">
+                模擬到期損益: +$550
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右側：到期損益曲線圖 (Payoff Diagram) 與收支明細 (7欄) -->
+        <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder flex flex-col justify-between space-y-4">
+          <!-- 4格關鍵財務指標 -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
+              <div class="text-[11px] text-slate-400">資金收付與保證金</div>
+              <div id="metricCost" class="text-sm sm:text-base font-bold mt-0.5 text-amber-500">淨支出 $450</div>
+              <div id="metricMargin" class="text-[11px] text-slate-400 mt-0.5">免額外保證金</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
+              <div class="text-[11px] text-slate-400">最大可能獲利</div>
+              <div id="metricMaxProfit" class="text-sm sm:text-base font-bold mt-0.5 text-emerald-500">無限 ($150時+$4,550)</div>
+              <div id="metricRoi" class="text-[11px] text-slate-400 mt-0.5">高倍數爆發</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
+              <div class="text-[11px] text-slate-400">最大可能虧損 (封頂)</div>
+              <div id="metricMaxLoss" class="text-sm sm:text-base font-bold mt-0.5 text-rose-500">-$450</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">絕不穿倉超額負債</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200/70 dark:border-notionBorder">
+              <div class="text-[11px] text-slate-400">到期損益兩平點</div>
+              <div id="metricBreakeven" class="text-sm sm:text-base font-bold mt-0.5 text-blue-400">$104.50</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">30天結算基準</div>
+            </div>
+          </div>
+
+          <!-- 損益曲線畫布 -->
+          <div class="relative w-full h-[300px] sm:h-[340px] p-2 rounded-xl bg-slate-50/60 dark:bg-notionDark border border-slate-200/60 dark:border-notionBorder">
+            <canvas id="payoffChart"></canvas>
+          </div>
+
+          <!-- 情境結果對照列 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div id="winScenarioBox" class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300"></div>
+            <div id="lossScenarioBox" class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-300"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 完整 7 大 Firstrade 策略對照總表 (可一覽比較並點擊切換) -->
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm sm:text-base">📊 Firstrade 7 大期權結構單完整對照表 (點擊任一列可直接載入上方模擬器)</h3>
+          <span class="text-xs text-slate-400">基準：SOXL 現價 $90 · 30天期 · 1口=100股</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-400">
+                <th class="py-2.5 px-3">#</th>
+                <th class="py-2.5 px-3">Firstrade 策略名稱</th>
+                <th class="py-2.5 px-3">腿數與方向本質</th>
+                <th class="py-2.5 px-3">SOXL 具體下單組合 ($90現價)</th>
+                <th class="py-2.5 px-3">資金收付與保證金</th>
+                <th class="py-2.5 px-3">到期損益與結算結果</th>
+              </tr>
+            </thead>
+            <tbody id="strategyReferenceTable" class="divide-y divide-slate-200/60 dark:divide-notionBorder"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 分頁 2：推薦股票風險配置 ($22,000) ==================== -->
+    <section id="panel-portfolio" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 左側：風險偏好切換與本金設定 -->
+        <div class="lg:col-span-5 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+          <h2 class="font-bold text-base">🛡️ 選擇期權資產配置藍圖</h2>
+          <div>
+            <label class="text-xs text-slate-400">帳戶總本金規模 (USD)</label>
+            <input id="portfolioCapitalInput" type="number" value="22000" step="1000" onchange="renderPortfolioAllocation()"
+                   class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold text-base" />
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs text-slate-400">選擇目標報酬與風險等級：</label>
+            <button onclick="selectPortfolioMode('aggressive40')" id="mode-aggressive40"
+                    class="w-full text-left p-3.5 rounded-xl border-2 border-blue-500 bg-blue-500/10 transition">
+              <div class="flex justify-between font-bold text-sm">
+                <span>🔥 進攻型高 IV 科技輪動 (目標年化 40%)</span>
+                <span class="text-blue-400">月目標 ~$750+</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">50% NVDA/AMD CSP + 20.5% TSLA PMCC + 6.8% QQQ 價差 + 22.7% 備用現金</p>
+            </button>
+
+            <button onclick="selectPortfolioMode('steady20')" id="mode-steady20"
+                    class="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-notionBorder hover:border-blue-400 transition">
+              <div class="flex justify-between font-bold text-sm">
+                <span>⚖️ 穩健雙引擎收租配置 (目標年化 20%)</span>
+                <span class="text-emerald-400">月目標 ~$380</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">50% SBUX Covered Call + 25% KO CSP + 25% SPY 垂直價差與防禦現金</p>
+            </button>
+
+            <button onclick="selectPortfolioMode('buyer50')" id="mode-buyer50"
+                    class="w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-notionBorder hover:border-blue-400 transition">
+              <div class="flex justify-between font-bold text-sm">
+                <span>⚡ 30天純買方 50% 資金利用率架構</span>
+                <span class="text-amber-400">零保證金凍結</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">38% Deep ITM Call (Delta 0.85) + 12% Bull Call Spread + 50% 絕對安全現金</p>
+            </button>
+          </div>
+
+          <!-- 連線標的即時口數試算器 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2 text-xs">
+            <div class="font-bold text-sm text-blue-400">🔗 當前連線美股 (<span id="allocTickerName">SOXL $90</span>) 部位帶入試算：</div>
+            <div id="liveTickerAllocationAdvice" class="text-slate-600 dark:text-slate-300 space-y-1 leading-relaxed"></div>
+          </div>
+        </div>
+
+        <!-- 右側：甜甜圈圖與各板塊明細 -->
+        <div class="lg:col-span-7 bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            <div class="relative h-[240px]">
+              <canvas id="portfolioDonutChart"></canvas>
+            </div>
+            <div id="portfolioSummaryStats" class="space-y-3"></div>
+          </div>
+
+          <div class="overflow-x-auto pt-3 border-t border-slate-200 dark:border-notionBorder">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-200 dark:border-notionBorder">
+                  <th class="py-2">策略板塊</th>
+                  <th class="py-2">推薦美股標的</th>
+                  <th class="py-2">配置金額</th>
+                  <th class="py-2">佔比</th>
+                  <th class="py-2">預估單月收益</th>
+                </tr>
+              </thead>
+              <tbody id="portfolioBreakdownTable" class="divide-y divide-slate-200/60 dark:divide-notionBorder"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 分頁 3：複利成長與提領模擬器 ==================== -->
+    <section id="panel-compound" class="hidden space-y-6">
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+            <div class="text-xs text-slate-400">期末累積投入本金</div>
+            <div id="compPrincipal" class="text-xl font-bold mt-1">$22,000</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+            <div class="text-xs text-slate-400">穩健收租配置預估終值</div>
+            <div id="compSteady" class="text-xl font-bold mt-1 text-emerald-500">$59,311</div>
+          </div>
+          <div class="p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+            <div class="text-xs text-blue-400 font-medium">進攻型期權配置預估終值</div>
+            <div id="compAggressive" class="text-xl font-bold mt-1 text-blue-500">$157,344</div>
+          </div>
+        </div>
+
+        <div class="relative h-[320px] p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+          <canvas id="compoundChart"></canvas>
+        </div>
+
+        <!-- 5大複利滑桿 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs sm:text-sm">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span>起始本金 (USD)</span>
+              <span id="lblInitial" class="font-bold text-blue-500">$22,000</span>
+            </div>
+            <input id="rngInitial" type="range" min="5000" max="100000" step="1000" value="22000" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span>每月額外投入 / 提領生活費 (USD)</span>
+              <span id="lblMonthly" class="font-bold text-blue-500">$0</span>
+            </div>
+            <input id="rngMonthly" type="range" min="-1500" max="3000" step="100" value="0" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span>進攻型策略年化報酬率 (%)</span>
+              <span id="lblAgg" class="font-bold text-blue-500">40%</span>
+            </div>
+            <input id="rngAgg" type="range" min="10" max="60" step="1" value="40" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span>穩健收租策略年化報酬率 (%)</span>
+              <span id="lblStd" class="font-bold text-emerald-500">20%</span>
+            </div>
+            <input id="rngStd" type="range" min="5" max="35" step="1" value="20" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
+          </div>
+          <div class="md:col-span-2">
+            <div class="flex justify-between mb-1">
+              <span>複利滾動年限 (Years)</span>
+              <span id="lblYears" class="font-bold text-blue-500">5 年</span>
+            </div>
+            <input id="rngYears" type="range" min="1" max="15" step="1" value="5" oninput="updateCompoundChart()" class="w-full h-2 rounded-lg" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 分頁 4：30天週期 SOP 與展期計算機 ==================== -->
+    <section id="panel-sop" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 30天 SOP 檢核清單 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+          <h2 class="font-bold text-base">⏱️ 30 天期權輪動標準 SOP 檢核表</h2>
+          <div class="space-y-3 text-xs sm:text-sm">
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder cursor-pointer">
+              <input type="checkbox" class="mt-1 accent-blue-500" checked />
+              <div>
+                <div class="font-bold">Day 1：開倉前財報與流動性檢查</div>
+                <p class="text-xs text-slate-400">確認未來 35 天無季報公布；檢查期權鏈 Bid/Ask 價差小於 $0.10，選擇 30~45 DTE 合約。</p>
+              </div>
+            </label>
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder cursor-pointer">
+              <input type="checkbox" class="mt-1 accent-blue-500" checked />
+              <div>
+                <div class="font-bold">Day 1 成交當刻：預掛 50% GTC 自動停利單</div>
+                <p class="text-xs text-slate-400">賣方收租單成交後，立即掛出「開倉權利金 × 0.5」的 Buy to Close (GTC) 限價單，免盯盤自動收網。</p>
+              </div>
+            </label>
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder cursor-pointer">
+              <input type="checkbox" class="mt-1 accent-blue-500" />
+              <div>
+                <div class="font-bold">Day 15 ~ Day 21 (21 DTE 關鍵風控點)</div>
+                <p class="text-xs text-slate-400">剩餘 21 天時強制檢視：若獲利已達 40%+ 可提前平倉換下月；若股價挑戰履約價，啟動下方 Rollover 計算機。</p>
+              </div>
+            </label>
+            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder cursor-pointer">
+              <input type="checkbox" class="mt-1 accent-blue-500" />
+              <div>
+                <div class="font-bold">除息日前 2 天：Covered Call 防提前指派檢查</div>
+                <p class="text-xs text-slate-400">若 Call 深入價內且「剩餘時間價值 < 配息金額」，立即向上展期 (Roll Up & Out)，保住現貨不被叫走。</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Rollover 展期 Net Credit 計算機 -->
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4">
+          <h2 class="font-bold text-base">🔄 Firstrade Rollover (展期) Net Credit 試算器</h2>
+          <p class="text-xs text-slate-400">當 Covered Call 被漲破或 CSP 被跌破時，計算換到下個月能否取得「淨收錢 (Net Credit)」：</p>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="text-slate-400">買回近月合約成本 (BTC 單價 $)</label>
+              <input id="rollBtcPrice" type="number" step="0.1" value="4.20" oninput="calcRollover()"
+                     class="w-full mt-1 p-2 rounded-lg bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold" />
+            </div>
+            <div>
+              <label class="text-slate-400">賣出遠月新合約收入 (STO 單價 $)</label>
+              <input id="rollStoPrice" type="number" step="0.1" value="4.65" oninput="calcRollover()"
+                     class="w-full mt-1 p-2 rounded-lg bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold" />
+            </div>
+            <div>
+              <label class="text-slate-400">原履約價 ($)</label>
+              <input id="rollOldStrike" type="number" step="1" value="95" oninput="calcRollover()"
+                     class="w-full mt-1 p-2 rounded-lg bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold" />
+            </div>
+            <div>
+              <label class="text-slate-400">新目標履約價 ($)</label>
+              <input id="rollNewStrike" type="number" step="1" value="100" oninput="calcRollover()"
+                     class="w-full mt-1 p-2 rounded-lg bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold" />
+            </div>
+          </div>
+          <div id="rollResultBox" class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs sm:text-sm space-y-1"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ==================== 全域狀態與策略資料庫 ====================
+    let currentStock = { symbol: 'SOXL', price: 90.00, tag: '基準案例' };
+    let activePortfolioMode = 'aggressive40';
+
+    // 10 大期權策略完整定義 (預設以 SOXL $90 為基準)
+    const STRATEGIES = {
+      single: {
+        num: 1,
+        name: 'Single (單腿期權)',
+        badge: '1 腿 · 純買方 (Long Call)',
+        winRate: '~35% (需強勢大漲)',
+        essence: '單純買進或賣出單一合約，承擔最純粹的方向或時間風險。買方最大虧損完全鎖定在權利金，具備無限上檔潛力。',
+        baseStockPrice: 90,
+        legsDesc: ['• 買進 (BTO) 1 口 $100 Call (支付 $4.50)'],
+        netEntry: -450, // 負數代表 Debit 淨支出，正數代表 Credit 淨收取
+        marginReq: 0,
+        costText: '淨支出：$450 現金 (Debit)',
+        marginText: '不需額外保證金',
+        maxProfitText: '無限 ($150時淨賺 +$4,550)',
+        maxLossText: '-$450 (鎖定權利金)',
+        breakevenText: '$104.50',
+        winScenario: '🟢 暴漲至 $150：每口價值達 $50，扣除成本淨賺 +$4,550 (報酬率 +1011%)',
+        lossScenario: '🔴 跌破 $100：到期歸零，最大虧損永遠鎖定在 -$450',
+        calcPayoff: (S, scale = 1) => {
+          const K = Math.round(100 * scale);
+          const cost = 4.50 * scale;
+          return (Math.max(0, S - K) - cost) * 100;
+        }
+      },
+      spread: {
+        num: 2,
+        name: 'Spread (垂直牛市價差)',
+        badge: '2 腿 · 買方價差 (Bull Call Spread)',
+        winRate: '~55% (溫和上漲即賺)',
+        essence: '同月一買一賣同類型合約，用賣出遠端 Call 的租金補貼買方成本，同時抵銷大部分時間價值 (Theta) 折舊。',
+        baseStockPrice: 90,
+        legsDesc: ['• 買進 (BTO) 1 口 $100 Call (付 $4.50)', '• 賣出 (STO) 1 口 $120 Call (收 $1.50)'],
+        netEntry: -300,
+        marginReq: 0,
+        costText: '淨支出：$300 現金 ($3.00 × 100)',
+        marginText: '成本降低 33%，免保證金',
+        maxProfitText: '+$1,700 (報酬率 +566%)',
+        maxLossText: '-$300 (最大損失封頂)',
+        breakevenText: '$103.00',
+        winScenario: '🟢 漲破 $120：拿滿最大利潤 +$1,700 (價差 $2,000 - 成本 $300)',
+        lossScenario: '🔴 跌破 $100：兩腿歸零，最大虧損鎖定在 -$300',
+        calcPayoff: (S, scale = 1) => {
+          const k1 = Math.round(100 * scale);
+          const k2 = Math.round(120 * scale);
+          const debit = 3.00 * scale;
+          return (Math.max(0, S - k1) - Math.max(0, S - k2) - debit) * 100;
+        }
+      },
+      straddle: {
+        num: 3,
+        name: 'Straddle (跨式買方)',
+        badge: '2 腿 · 雙向突破 (Long Straddle)',
+        winRate: '~40% (專賭大波動)',
+        essence: '同時買進「相同月份、相同履約價」的 Call 與 Put。不在乎漲跌方向，只求財報或重大事件引發單邊劇烈噴出。',
+        baseStockPrice: 90,
+        legsDesc: ['• 買進 (BTO) 1 口 $90 Call (付 $8.00)', '• 買進 (BTO) 1 口 $90 Put (付 $8.00)'],
+        netEntry: -1600,
+        marginReq: 0,
+        costText: '淨支出：$1,600 現金 ($16.00 × 100)',
+        marginText: '免保證金，但權利金成本極高',
+        maxProfitText: '雙向無限 ($150賺+$4,400)',
+        maxLossText: '-$1,600 (停在 $90 全損)',
+        breakevenText: '$74.00 或 $106.00',
+        winScenario: '🟢 飆漲至 $150 淨賺 +$4,400；或崩跌至 $50 淨賺 +$2,400',
+        lossScenario: '🔴 橫盤停在 $90：雙邊時間價值蒸發歸零，淨虧 -$1,600',
+        calcPayoff: (S, scale = 1) => {
+          const K = Math.round(90 * scale);
+          const cost = 16.00 * scale;
+          return (Math.max(0, S - K) + Math.max(0, K - S) - cost) * 100;
+        }
+      },
+      butterfly: {
+        num: 4,
+        name: 'Butterfly (蝶式價差)',
+        badge: '3 腿 · 區間精準狙擊',
+        winRate: '~45% (高賠率低成本)',
+        essence: '買進兩側翅膀（低/高履約價）、賣出中間雙倍身體（2口）。以極低成本鎖定特定目標價位，風險完全封頂。',
+        baseStockPrice: 90,
+        legsDesc: [
+          '• 買進 1 口 $80 Call (付 $15.00)',
+          '• 賣出 2 口 $90 Call (收 $8.00 × 2 = $16.00)',
+          '• 買進 1 口 $100 Call (付 $4.50)'
+        ],
+        netEntry: -350,
+        marginReq: 0,
+        costText: '淨支出：$350 現金 ((15-16+4.5)×100)',
+        marginText: '成本極低，風險完全鎖定',
+        maxProfitText: '+$650 (報酬率 +185%)',
+        maxLossText: '-$350',
+        breakevenText: '$83.50 ～ $96.50',
+        winScenario: '🟢 結算精準收在 $90：拿滿最大利潤 +$650 (報酬率 +185%)',
+        lossScenario: '🔴 漲破 $100 或跌破 $80：最大虧損固定為 -$350',
+        calcPayoff: (S, scale = 1) => {
+          const k1 = Math.round(80 * scale);
+          const k2 = Math.round(90 * scale);
+          const k3 = Math.round(100 * scale);
+          const debit = 3.50 * scale;
+          const val = Math.max(0, S - k1) - 2 * Math.max(0, S - k2) + Math.max(0, S - k3) - debit;
+          return val * 100;
+        }
+      },
+      iron_butterfly: {
+        num: 5,
+        name: 'Iron Butterfly (鐵蝴蝶)',
+        badge: '4 腿 · 高額收租 + 雙翼保護',
+        winRate: '~55% (收租型區間)',
+        essence: '賣出中間價平 Straddle 收取巨額租金，同時買進兩側價外 Put 與 Call 作為保險，將最大虧損嚴格鎖死。',
+        baseStockPrice: 90,
+        legsDesc: [
+          '• 賣出 $90 Put + 賣出 $90 Call (共收 $16.00)',
+          '• 買進 $80 Put + 買進 $100 Call (共付 $7.50)'
+        ],
+        netEntry: 850,
+        marginReq: 150,
+        costText: '淨收取：+$850 現金 (Credit)',
+        marginText: '僅凍結保證金 $150 ($1,000寬度 - $850)',
+        maxProfitText: '+$850 (資金回報率極高)',
+        maxLossText: '-$150 (兩翼保險鎖死風險)',
+        breakevenText: '$81.50 ～ $98.50',
+        winScenario: '🟢 結算剛好停在 $90：拿滿最大權利金利潤 +$850',
+        lossScenario: '🔴 暴衝大跌破 $80 或大漲破 $100：最大虧損鎖定在 -$150',
+        calcPayoff: (S, scale = 1) => {
+          const kMid = Math.round(90 * scale);
+          const kLow = Math.round(80 * scale);
+          const kHigh = Math.round(100 * scale);
+          const credit = 8.50 * scale;
+          const lossPut = Math.max(0, kMid - S) - Math.max(0, kLow - S);
+          const lossCall = Math.max(0, S - kMid) - Math.max(0, S - kHigh);
+          return (credit - lossPut - lossCall) * 100;
+        }
+      },
+      condor: {
+        num: 6,
+        name: 'Condor (禿鷹價差)',
+        badge: '4 腿 · 平頂寬區間獲利',
+        winRate: '~60% (寬幅平台獲利)',
+        essence: '同類型期權買外側、賣內側，將蝶式價差的尖頂拉寬成「平頂獲利平台」，不需猜中精準單一點位，落入區間即拿滿利潤。',
+        baseStockPrice: 90,
+        legsDesc: [
+          '• 買進 1 口 $75 Call / 賣出 1 口 $85 Call',
+          '• 賣出 1 口 $95 Call / 買進 1 口 $105 Call'
+        ],
+        netEntry: -250,
+        marginReq: 0,
+        costText: '淨支出：-$250 現金 (Debit)',
+        marginText: '免保證金，落入區間即賺錢',
+        maxProfitText: '+$750 (報酬率 +300%)',
+        maxLossText: '-$250',
+        breakevenText: '$77.50 ～ $102.50',
+        winScenario: '🟢 結算落在 $85 ～ $95 平台區間內：拿滿最大利潤 +$750',
+        lossScenario: '🔴 脫離 $75 ～ $105 區間：最大損失固定為 -$250',
+        calcPayoff: (S, scale = 1) => {
+          const k1 = Math.round(75 * scale), k2 = Math.round(85 * scale), k3 = Math.round(95 * scale), k4 = Math.round(105 * scale);
+          const debit = 2.50 * scale;
+          const val = Math.max(0, S - k1) - Math.max(0, S - k2) - Math.max(0, S - k3) + Math.max(0, S - k4) - debit;
+          return val * 100;
+        }
+      },
+      iron_condor: {
+        num: 7,
+        name: 'Iron Condor (鐵鷹價差)',
+        badge: '4 腿 · 雙向價外包租公',
+        winRate: '~75% (高勝率寬幅收租)',
+        essence: '左邊做 Bull Put Spread、右邊做 Bear Call Spread，在現價上下築起寬闊護城河雙向收租，只要不爆邊就全拿權利金。',
+        baseStockPrice: 90,
+        legsDesc: [
+          '• 賣出 $80 Put / 買進 $70 Put (淨收 $2.00)',
+          '• 賣出 $105 Call / 買進 $115 Call (淨收 $1.50)'
+        ],
+        netEntry: 350,
+        marginReq: 650,
+        costText: '淨收取：+$350 現金 (Credit)',
+        marginText: '凍結保證金 $650 ($1,000單邊風險 - $350)',
+        maxProfitText: '+$350 (區間震盪全拿)',
+        maxLossText: '-$650 (單邊突破極限封頂)',
+        breakevenText: '$76.50 ～ $108.50',
+        winScenario: '🟢 在 $80 ～ $105 寬幅區間震盪：4 腿全歸零，淨利 +$350 全拿',
+        lossScenario: '🔴 單邊突破 $70 或 $115 極限：最大損失封頂 -$650',
+        calcPayoff: (S, scale = 1) => {
+          const pBuy = Math.round(70 * scale), pSell = Math.round(80 * scale);
+          const cSell = Math.round(105 * scale), cBuy = Math.round(115 * scale);
+          const credit = 3.50 * scale;
+          const putLoss = Math.max(0, pSell - S) - Math.max(0, pBuy - S);
+          const callLoss = Math.max(0, S - cSell) - Math.max(0, S - cBuy);
+          return (credit - putLoss - callLoss) * 100;
+        }
+      },
+      csp: {
+        num: 8,
+        name: 'Cash-Secured Put (CSP 現金擔保賣權)',
+        badge: '1 腿 · 價值投資打折接刀收租',
+        winRate: '~80% (Delta 0.20 高勝率)',
+        essence: '在心儀標的現價下方賣出價外 Put 收取租金。沒跌破就白賺現金流；若大跌則以打折價買進 100 股優質現貨，或透過 Roll Down & Out 展期防守。',
+        baseStockPrice: 90,
+        legsDesc: ['• 賣出 (STO) 1 口 $80 Put (Delta ~0.20，收取 $2.40)'],
+        netEntry: 240,
+        marginReq: 8000,
+        costText: '淨收取：+$240 現金 (Credit)',
+        marginText: '圈存現金擔保 $8,000 ($80 × 100)',
+        maxProfitText: '+$240 (設50%停利提前收網)',
+        maxLossText: '跌破 $77.60 轉為現貨折價承接',
+        breakevenText: '$77.60 (提供 13.8% 下檔保護墊)',
+        winScenario: '🟢 股價維持在 $80 以上：Put 歸零，全賺 +$240 租金 (30天回報率 3%)',
+        lossScenario: '🔴 跌破 $80：在第 21 天執行 Roll Down & Out 延後收租，或以 $77.60 成本接現貨',
+        calcPayoff: (S, scale = 1) => {
+          const K = Math.round(80 * scale);
+          const credit = 2.40 * scale;
+          return (credit - Math.max(0, K - S)) * 100;
+        }
+      },
+      cc: {
+        num: 9,
+        name: 'Covered Call (掩護性買權收租)',
+        badge: '現貨 + 賣出價外 Call',
+        winRate: '~80% (持股每月包租公)',
+        essence: '持有 100 股現貨，每 30 天在現價上方賣出 1 口價外 Call 收取租金。若股價漲破履約價，可透過 Roll Up & Out 向上展期保住股票。',
+        baseStockPrice: 90,
+        legsDesc: ['• 持有 100 股現貨 (成本 $90.00)', '• 賣出 (STO) 1 口 30天 $100 Call (收取 $2.50)'],
+        netEntry: 250,
+        marginReq: 9000,
+        costText: '收取租金：+$250 (現貨資金 $9,000)',
+        marginText: '以 100 股正股抵押，免現金保證金',
+        maxProfitText: '+$1,250 (價差+$1,000 + 租金+$250)',
+        maxLossText: '同現貨下跌風險 (有 +$250 租金緩衝)',
+        breakevenText: '$87.50',
+        winScenario: '🟢 漲至 $100：賺現貨價差 +$1,000 與租金 +$250；若想保留股票可 Roll Up 至 $105',
+        lossScenario: '🔴 股價回檔：收到的 +$250 權利金直接降低持股成本，下個月繼續賣 Call 收租',
+        calcPayoff: (S, scale = 1) => {
+          const s0 = 90 * scale;
+          const K = Math.round(100 * scale);
+          const credit = 2.50 * scale;
+          const stockPnL = S - s0;
+          const shortCallPnL = credit - Math.max(0, S - K);
+          return (stockPnL + shortCallPnL) * 100;
+        }
+      },
+      pmcc: {
+        num: 10,
+        name: 'PMCC (窮人掩護性買權)',
+        badge: '2 腿跨月 · 3倍資本效率現貨替代',
+        winRate: '~72% (年化 40% 核心利器)',
+        essence: '買進 90~120 天期 Delta 0.85 的深度價內 Call 代替昂貴的 100 股現貨，同時每 30 天賣出近月價外 Call 收租，資金效率放大 3 倍。',
+        baseStockPrice: 90,
+        legsDesc: [
+          '• 買進 (BTO) 90天期 $65 Deep ITM Call (Delta 0.85，付 $28.00)',
+          '• 賣出 (STO) 30天期 $100 OTM Call (收 $2.50)'
+        ],
+        netEntry: -2550,
+        marginReq: 0,
+        costText: '淨支出：$2,550 (替代 $9,000 現貨)',
+        marginText: '零額外保證金，省下 70% 現金',
+        maxProfitText: '+$1,200 (單月波段+收租，ROI +47%)',
+        maxLossText: '-$2,550 (最大風險鎖定於淨支出)',
+        breakevenText: '$87.50',
+        winScenario: '🟢 溫和漲至 $100：底層長約增值 + 收取 $250 租金，單月淨賺約 +$1,100',
+        lossScenario: '🔴 橫盤整理：僅耗損極少時間價值，卻實拿 +$250 近月租金，達成正 Theta 收租',
+        calcPayoff: (S, scale = 1) => {
+          const kLong = Math.round(65 * scale);
+          const kShort = Math.round(100 * scale);
+          const netCost = 25.50 * scale;
+          // 模擬 30 天後長約剩餘約 $1.50 時間價值
+          const longVal = Math.max(0, S - kLong) + (S > kLong ? 1.50 * scale : 0.3 * scale);
+          const shortLoss = Math.max(0, S - kShort);
+          return (longVal - shortLoss - netCost) * 100;
+        }
+      }
+    };
+
+    // ==================== 美股即時報價連線引擎 ====================
+    async function fetchLiveStockQuote(symbol) {
+      const cleanSym = symbol.trim().toUpperCase();
+      if (!cleanSym) return;
+      const statusEl = document.getElementById('quoteStatus');
+      statusEl.textContent = `⏳ 正在連線查詢 ${cleanSym} 美股即時報價...`;
+
+      try {
+        // 透過 AllOrigins CORS Proxy 抓取 Yahoo Finance 即時報價
+        const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${cleanSym}?interval=1d&range=2d`);
+        const res = await fetch(`https://api.allorigins.win/get?url=${targetUrl}`);
+        const wrapper = await res.json();
+        const data = JSON.parse(wrapper.contents);
+        const meta = data.chart.result[0].meta;
+        const price = Number(meta.regularMarketPrice.toFixed(2));
+        const prev = Number((meta.chartPreviousClose || price).toFixed(2));
+        const diffPct = (((price - prev) / prev) * 100).toFixed(2);
+
+        applyStockQuote(cleanSym, price, `${diffPct >= 0 ? '+' : ''}${diffPct}% 即時連線`, diffPct >= 0);
+        statusEl.textContent = `✅ 已成功同步 ${cleanSym} 美股最新報價 ($${price})`;
+      } catch (err) {
+        // 若網路環境阻擋外部 Proxy，自動啟用內建美股權值股基準報價
+        const fallbackMap = {
+          SOXL: 90.00, NVDA: 138.50, TSLA: 255.00, AMD: 152.00,
+          QQQ: 495.00, SPY: 585.00, SBUX: 92.00, KO: 69.00, AAPL: 228.00, MSFT: 425.00
+        };
+        const fallbackPrice = fallbackMap[cleanSym] || 100.00;
+        applyStockQuote(cleanSym, fallbackPrice, '離線基準價', true);
+        statusEl.textContent = `ℹ️ 已載入 ${cleanSym} 基準報價 ($${fallbackPrice})，可點擊「依現價自動帶入」更新策略`;
+      }
+    }
+
+    function applyStockQuote(symbol, price, badgeText, isUp = true) {
+      currentStock = { symbol, price, tag: badgeText };
+      document.getElementById('tickerInput').value = symbol;
+      document.getElementById('liveSymbol').textContent = symbol;
+      document.getElementById('livePrice').textContent = `$${price.toFixed(2)}`;
+      const chgEl = document.getElementById('liveChange');
+      chgEl.textContent = badgeText;
+      chgEl.className = `px-1.5 py-0.5 rounded font-medium ${isUp ? 'bg-emerald-500/15 text-emerald-500' : 'bg-rose-500/15 text-rose-500'}`;
+      renderPortfolioAllocation();
+    }
+
+    function quickSelectTicker(symbol, defaultPrice, desc) {
+      applyStockQuote(symbol, defaultPrice, desc, true);
+      fetchLiveStockQuote(symbol);
+      scaleStrategyToCurrentPrice();
+    }
+
+    document.getElementById('fetchQuoteBtn').addEventListener('click', () => {
+      fetchLiveStockQuote(document.getElementById('tickerInput').value);
+    });
+
+    // ==================== 策略損益曲線圖 (Payoff Chart) ====================
+    let payoffChartInstance = null;
+    let priceScaleRatio = 1; // 1 代表維持 SOXL $90 原始教學案例
+
+    function initPayoffChart() {
+      const ctx = document.getElementById('payoffChart').getContext('2d');
+      payoffChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: '到期淨損益 (USD)',
+            data: [],
+            borderWidth: 2.5,
+            pointRadius: 0,
+            pointHoverRadius: 6,
+            tension: 0.1,
+            fill: {
+              target: 'origin',
+              above: 'rgba(16, 185, 129, 0.18)',
+              below: 'rgba(244, 63, 94, 0.18)'
+            },
+            segment: {
+              borderColor: ctx => (ctx.p0.parsed.y >= 0 && ctx.p1.parsed.y >= 0) ? '#10b981' : (ctx.p0.parsed.y < 0 && ctx.p1.parsed.y < 0) ? '#f43f5e' : '#f59e0b'
+            }
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: items => `到期股價：$${items[0].label}`,
+                label: item => `到期損益：${item.parsed.y >= 0 ? '+' : ''}$${item.parsed.y.toLocaleString()} USD`
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: '30 天到期結算股價 (USD)', color: '#94a3b8', font: { size: 11 } },
+              ticks: { color: '#94a3b8', maxTicksLimit: 9, callback: function(val) { return '$' + this.getLabelForValue(val); } },
+              grid: { display: false }
+            },
+            y: {
+              title: { display: true, text: '到期損益 P&L (USD)', color: '#94a3b8', font: { size: 11 } },
+              ticks: { color: '#94a3b8', callback: v => (v >= 0 ? '+$' : '-$') + Math.abs(v) },
+              grid: { color: 'rgba(148, 163, 184, 0.15)' }
+            }
+          }
+        }
+      });
+    }
+
+    function onStrategyChange() {
+      const key = document.getElementById('strategySelect').value;
+      const strat = STRATEGIES[key];
+      const qty = Math.max(1, Number(document.getElementById('contractQty').value) || 1);
+      const centerPrice = Math.round(90 * priceScaleRatio);
+
+      // 更新左側滑桿範圍
+      const slider = document.getElementById('simPriceSlider');
+      const minP = Math.max(10, Math.round(centerPrice * 0.5));
+      const maxP = Math.round(centerPrice * 1.75);
+      slider.min = minP;
+      slider.max = maxP;
+      slider.value = Math.round(centerPrice * 1.15);
+      document.getElementById('sliderMinLabel').textContent = `$${minP} (大跌)`;
+      document.getElementById('sliderMidLabel').textContent = `$${centerPrice} (現價)`;
+      document.getElementById('sliderMaxLabel').textContent = `$${maxP} (大漲)`;
+
+      // 更新文字說明
+      document.getElementById('stratBadge').textContent = strat.badge;
+      document.getElementById('stratWinRate').textContent = `參考勝率: ${strat.winRate}`;
+      document.getElementById('stratEssence').textContent = strat.essence;
+
+      const legsHtml = strat.legsDesc.map(l => {
+        if (priceScaleRatio === 1) return `<div>${l}</div>`;
+        return `<div>${l} <span class="text-blue-400">(${currentStock.symbol} 等比縮放 ${priceScaleRatio.toFixed(2)}x)</span></div>`;
+      }).join('');
+      document.getElementById('stratLegsText').innerHTML = legsHtml;
+
+      document.getElementById('metricCost').textContent = strat.costText;
+      document.getElementById('metricMargin').textContent = strat.marginText;
+      document.getElementById('metricMaxProfit').textContent = strat.maxProfitText;
+      document.getElementById('metricMaxLoss').textContent = strat.maxLossText;
+      document.getElementById('metricBreakeven').textContent = strat.breakevenText;
+      document.getElementById('winScenarioBox').textContent = strat.winScenario;
+      document.getElementById('lossScenarioBox').textContent = strat.lossScenario;
+
+      updatePayoffSimulation();
+    }
+
+    function updatePayoffSimulation() {
+      const key = document.getElementById('strategySelect').value;
+      const strat = STRATEGIES[key];
+      const simPrice = Number(document.getElementById('simPriceSlider').value);
+      const qty = Math.max(1, Number(document.getElementById('contractQty').value) || 1);
+
+      document.getElementById('simPriceDisplay').textContent = `$${simPrice.toFixed(2)}`;
+      const currentPnL = Math.round(strat.calcPayoff(simPrice, priceScaleRatio) * qty);
+      const resBadge = document.getElementById('simResultBadge');
+      resBadge.textContent = `模擬到期損益: ${currentPnL >= 0 ? '+' : ''}$${currentPnL.toLocaleString()} USD`;
+      resBadge.className = `text-sm font-bold ${currentPnL >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+
+      // 重繪損益曲線
+      const minP = Number(document.getElementById('simPriceSlider').min);
+      const maxP = Number(document.getElementById('simPriceSlider').max);
+      const step = Math.max(1, Math.round((maxP - minP) / 60));
+      const labels = [];
+      const dataPts = [];
+      for (let p = minP; p <= maxP; p += step) {
+        labels.push(p);
+        dataPts.push(Math.round(strat.calcPayoff(p, priceScaleRatio) * qty));
+      }
+      payoffChartInstance.data.labels = labels;
+      payoffChartInstance.data.datasets[0].data = dataPts;
+      payoffChartInstance.update('none');
+    }
+
+    function resetToSoxlCase() {
+      priceScaleRatio = 1;
+      applyStockQuote('SOXL', 90.00, '基準案例', true);
+      onStrategyChange();
+    }
+
+    function scaleStrategyToCurrentPrice() {
+      priceScaleRatio = currentStock.price / 90.0;
+      onStrategyChange();
+    }
+
+    // 渲染下方 7 大策略對照總表
+    function renderStrategyTable() {
+      const keys = ['single', 'spread', 'straddle', 'butterfly', 'iron_butterfly', 'condor', 'iron_condor'];
+      const tbody = document.getElementById('strategyReferenceTable');
+      tbody.innerHTML = keys.map(k => {
+        const s = STRATEGIES[k];
+        return `
+          <tr onclick="document.getElementById('strategySelect').value='${k}'; resetToSoxlCase(); window.scrollTo({top:0, behavior:'smooth'});" 
+              class="hover:bg-blue-500/10 cursor-pointer transition">
+            <td class="py-3 px-3 font-bold text-blue-500">${s.num}</td>
+            <td class="py-3 px-3 font-bold">${s.name}</td>
+            <td class="py-3 px-3 text-slate-500 dark:text-slate-300">${s.badge}<br><span class="text-[11px] text-slate-400">${s.essence.slice(0, 32)}...</span></td>
+            <td class="py-3 px-3 font-mono text-[11px]">${s.legsDesc.join('<br>')}</td>
+            <td class="py-3 px-3 font-semibold">${s.costText}<br><span class="text-[11px] text-slate-400">${s.marginText}</span></td>
+            <td class="py-3 px-3">${s.winScenario}<br>${s.lossScenario}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ==================== 分頁 2：資產配置甜甜圈圖 ====================
+    let donutChartInstance = null;
+    const PORTFOLIO_MODES = {
+      aggressive40: {
+        title: '進攻型高 IV 科技輪動 (目標年化 40%)',
+        monthlyRate: 0.034,
+        items: [
+          { name: '高IV科技龍頭 CSP (50%)', tickers: 'NVDA / AMD (30~45天 Delta 0.20 Put)', ratio: 0.50, monthlyRoi: 0.026, color: '#3b82f6' },
+          { name: 'PMCC 槓桿收租 (20.5%)', tickers: 'TSLA / AMD (90天 ITM + 30天 OTM Call)', ratio: 0.205, monthlyRoi: 0.053, color: '#8b5cf6' },
+          { name: '動能牛市垂直價差 (6.8%)', tickers: 'QQQ 30天 Bull Call Spread', ratio: 0.068, monthlyRoi: 0.26, color: '#10b981' },
+          { name: '機動展期與防震備用金 (22.7%)', tickers: 'USD Cash (專供 Rollover 與抗跌緩衝)', ratio: 0.227, monthlyRoi: 0.0, color: '#64748b' }
+        ]
+      },
+      steady20: {
+        title: '穩健雙引擎收租配置 (目標年化 20%)',
+        monthlyRate: 0.017,
+        items: [
+          { name: '核心持股 Covered Call (50%)', tickers: '100股 SBUX/KO 現貨 + 賣30天 Call', ratio: 0.50, monthlyRoi: 0.013, color: '#10b981' },
+          { name: '防禦收租 CSP (25%)', tickers: 'KO 30~45天 Delta 0.18 Put', ratio: 0.25, monthlyRoi: 0.01, color: '#3b82f6' },
+          { name: '大盤趨勢價差 (5%)', tickers: 'SPY 30天 Bull Call Spread', ratio: 0.05, monthlyRoi: 0.18, color: '#f59e0b' },
+          { name: '機動安全現金 (20%)', tickers: 'USD Cash 帳戶安全墊', ratio: 0.20, monthlyRoi: 0.0, color: '#64748b' }
+        ]
+      },
+      buyer50: {
+        title: '30天純買方 50% 資金利用率架構',
+        monthlyRate: 0.038,
+        items: [
+          { name: '抗衰減核心 Deep ITM Call (38%)', tickers: 'Delta 0.85 買權 (替代現貨)', ratio: 0.38, monthlyRoi: 0.045, color: '#3b82f6' },
+          { name: '爆發衛星 Bull Call Spread (12%)', tickers: '30天期價外垂直價差單', ratio: 0.12, monthlyRoi: 0.15, color: '#f59e0b' },
+          { name: '50% 絕對不動用安全現金 (50%)', tickers: 'USD Cash (零凍結、鎖定最大風險)', ratio: 0.50, monthlyRoi: 0.0, color: '#64748b' }
+        ]
+      }
+    };
+
+    function selectPortfolioMode(modeKey) {
+      activePortfolioMode = modeKey;
+      ['aggressive40', 'steady20', 'buyer50'].forEach(k => {
+        const btn = document.getElementById(`mode-${k}`);
+        btn.className = k === modeKey
+          ? 'w-full text-left p-3.5 rounded-xl border-2 border-blue-500 bg-blue-500/10 transition'
+          : 'w-full text-left p-3.5 rounded-xl border border-slate-200 dark:border-notionBorder hover:border-blue-400 transition';
+      });
+      renderPortfolioAllocation();
+    }
+
+    function renderPortfolioAllocation() {
+      const cap = Math.max(1000, Number(document.getElementById('portfolioCapitalInput').value) || 22000);
+      const mode = PORTFOLIO_MODES[activePortfolioMode];
+
+      const labels = mode.items.map(i => i.name);
+      const values = mode.items.map(i => Math.round(cap * i.ratio));
+      const colors = mode.items.map(i => i.color);
+
+      if (!donutChartInstance) {
+        const ctx = document.getElementById('portfolioDonutChart').getContext('2d');
+        donutChartInstance = new Chart(ctx, {
+          type: 'doughnut',
+          data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 11 } } } }
+          }
+        });
+      } else {
+        donutChartInstance.data.labels = labels;
+        donutChartInstance.data.datasets[0].data = values;
+        donutChartInstance.data.datasets[0].backgroundColor = colors;
+        donutChartInstance.update();
+      }
+
+      let totalMonthlyEst = 0;
+      const rowsHtml = mode.items.map(item => {
+        const amt = Math.round(cap * item.ratio);
+        const est = Math.round(amt * item.monthlyRoi);
+        totalMonthlyEst += est;
+        return `
+          <tr>
+            <td class="py-2.5 font-bold">${item.name}</td>
+            <td class="py-2.5 text-slate-400">${item.tickers}</td>
+            <td class="py-2.5 font-bold text-blue-400">$${amt.toLocaleString()}</td>
+            <td class="py-2.5">${(item.ratio * 100).toFixed(1)}%</td>
+            <td class="py-2.5 font-bold text-emerald-400">${est > 0 ? '+$' + est.toLocaleString() : '$0 (防禦緩衝)'}</td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('portfolioBreakdownTable').innerHTML = rowsHtml;
+
+      document.getElementById('portfolioSummaryStats').innerHTML = `
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+          <div class="text-xs text-slate-400">配置模式</div>
+          <div class="font-bold text-sm mt-0.5">${mode.title}</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+          <div class="text-xs text-emerald-400">預估單月目標總收益</div>
+          <div class="font-bold text-xl text-emerald-400 mt-0.5">+$${totalMonthlyEst.toLocaleString()} USD / 月</div>
+          <div class="text-[11px] text-slate-400">折合年化報酬約 ${((totalMonthlyEst * 12 / cap) * 100).toFixed(1)}%</div>
+        </div>
+      `;
+
+      // 更新連線美股口數建議
+      const sPrice = currentStock.price;
+      const strike88 = Math.round(sPrice * 0.88);
+      const cspMarginPerLot = strike88 * 100;
+      const maxCspLots = Math.floor((cap * 0.5) / cspMarginPerLot);
+      const pmccCostPerLot = Math.round(sPrice * 0.28 * 100);
+      const maxPmccLots = Math.floor((cap * 0.25) / pmccCostPerLot);
+
+      document.getElementById('allocTickerName').textContent = `${currentStock.symbol} ($${sPrice})`;
+      document.getElementById('liveTickerAllocationAdvice').innerHTML = `
+        <div>• <b>若做 Cash-Secured Put (賣出 $${strike88} Put)</b>：單口需擔保金 <b>$${cspMarginPerLot.toLocaleString()}</b>，以 50% 資金上限可開 <b>${maxCspLots} 口</b>。</div>
+        <div>• <b>若做 PMCC 窮人掩護性買權</b>：買進 Delta 0.85 Deep ITM Call 單口約需 <b>$${pmccCostPerLot.toLocaleString()}</b>，建議配置 <b>${Math.max(1, maxPmccLots)} 口</b>。</div>
+        <div>• <b>若做 Bull Call Spread (垂直價差)</b>：單口成本約 $300~$450，建議配置 <b>1 ~ 2 口</b> 鎖定風險。</div>
+      `;
+    }
+
+    // ==================== 分頁 3：複利成長模擬器 ====================
+    let compoundChartInstance = null;
+    function updateCompoundChart() {
+      const initial = Number(document.getElementById('rngInitial').value);
+      const monthly = Number(document.getElementById('rngMonthly').value);
+      const aggRate = Number(document.getElementById('rngAgg').value);
+      const stdRate = Number(document.getElementById('rngStd').value);
+      const years = Number(document.getElementById('rngYears').value);
+
+      document.getElementById('lblInitial').textContent = `$${initial.toLocaleString()}`;
+      document.getElementById('lblMonthly').textContent = `${monthly >= 0 ? '+' : ''}$${monthly.toLocaleString()}`;
+      document.getElementById('lblAgg').textContent = `${aggRate}%`;
+      document.getElementById('lblStd').textContent = `${stdRate}%`;
+      document.getElementById('lblYears').textContent = `${years} 年`;
+
+      const labels = [], aggData = [], stdData = [];
+      const rAgg = aggRate / 100 / 12, rStd = stdRate / 100 / 12;
+
+      for (let y = 0; y <= years; y++) {
+        labels.push(`第 ${y} 年`);
+        const m = y * 12;
+        const vAgg = rAgg > 0 ? Math.max(0, initial * Math.pow(1 + rAgg, m) + monthly * ((Math.pow(1 + rAgg, m) - 1) / rAgg)) : Math.max(0, initial + monthly * m);
+        const vStd = rStd > 0 ? Math.max(0, initial * Math.pow(1 + rStd, m) + monthly * ((Math.pow(1 + rStd, m) - 1) / rStd)) : Math.max(0, initial + monthly * m);
+        aggData.push(Math.round(vAgg));
+        stdData.push(Math.round(vStd));
+      }
+
+      document.getElementById('compPrincipal').textContent = `$${Math.max(0, initial + monthly * 12 * years).toLocaleString()}`;
+      document.getElementById('compSteady').textContent = `$${stdData[stdData.length - 1].toLocaleString()}`;
+      document.getElementById('compAggressive').textContent = `$${aggData[aggData.length - 1].toLocaleString()}`;
+
+      if (!compoundChartInstance) {
+        const ctx = document.getElementById('compoundChart').getContext('2d');
+        compoundChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              { label: '進攻型期權配置', data: aggData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.12)', fill: true, tension: 0.35 },
+              { label: '穩健收租配置', data: stdData, borderColor: '#10b981', borderDash: [5, 5], fill: false, tension: 0.35 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+              y: { ticks: { color: '#94a3b8', callback: v => '$' + (v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v) }, grid: { color: 'rgba(148, 163, 184, 0.15)' } }
+            }
+          }
+        });
+      } else {
+        compoundChartInstance.data.labels = labels;
+        compoundChartInstance.data.datasets[0].data = aggData;
+        compoundChartInstance.data.datasets[1].data = stdData;
+        compoundChartInstance.update('none');
+      }
+    }
+
+    // ==================== 分頁 4：Rollover 展期計算機 ====================
+    function calcRollover() {
+      const btc = Number(document.getElementById('rollBtcPrice').value) || 0;
+      const sto = Number(document.getElementById('rollStoPrice').value) || 0;
+      const oldK = Number(document.getElementById('rollOldStrike').value) || 0;
+      const newK = Number(document.getElementById('rollNewStrike').value) || 0;
+
+      const netPerShare = sto - btc;
+      const netDollar = Math.round(netPerShare * 100);
+      const strikeDiff = (newK - oldK) * 100;
+      const box = document.getElementById('rollResultBox');
+
+      if (netDollar >= 0) {
+        box.className = 'p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs sm:text-sm space-y-1 text-emerald-400';
+        box.innerHTML = `
+          <div class="font-bold text-base">✅ 符合黃金展期鐵律：Net Credit 淨收錢 +$${netDollar} USD / 口</div>
+          <div>• 履約價調整空間：由 $${oldK} 移至 $${newK}（現貨獲利天花板額外墊高 <b>$${strikeDiff} USD</b>）</div>
+          <div>• 結論：無需自掏腰包，成功保住正股並賺取時間價值！</div>
+        `;
+      } else {
+        box.className = 'p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs sm:text-sm space-y-1 text-rose-400';
+        box.innerHTML = `
+          <div class="font-bold text-base">⚠️ 注意：此組合為 Net Debit 淨支出 -$${Math.abs(netDollar)} USD / 口</div>
+          <div>• 建議把「到期日」再往後推遲 30~45 天，或微調新履約價，直到轉為 Net Credit (淨收錢) 再送出訂單。</div>
+        `;
+      }
+    }
+
+    // ==================== 分頁切換與主題控制 ====================
+    function switchTab(tabKey) {
+      ['strategy', 'portfolio', 'compound', 'sop'].forEach(k => {
+        document.getElementById(`panel-${k}`).classList.toggle('hidden', k !== tabKey);
+        const btn = document.getElementById(`tab-${k}`);
+        if (k === tabKey) {
+          btn.className = 'pb-2.5 whitespace-nowrap tab-active';
+        } else {
+          btn.className = 'pb-2.5 whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-blue-500';
+        }
+      });
+      if (tabKey === 'portfolio') renderPortfolioAllocation();
+      if (tabKey === 'compound') updateCompoundChart();
+    }
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // 啟動初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      initPayoffChart();
+      renderStrategyTable();
+      onStrategyChange();
+      renderPortfolioAllocation();
+      updateCompoundChart();
+      calcRollover();
+    });
+  </script>
+</body>
+</html>

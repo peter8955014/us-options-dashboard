@@ -1,5 +1,6 @@
 import io
 import json
+import math
 import time
 from datetime import datetime, timezone, date, timedelta
 import requests
@@ -19,7 +20,7 @@ MEGA_CAP_POOL = [
     "BA", "DE", "MDT", "PLD", "ANET", "PANW", "MU", "ADI", "KLAC", "LRCX"
 ]
 
-# 額外高流動性 ETF 與熱門期權觀察清單（若已入選 Top 50 會自動略過避免重複）
+# 額外高流動性 ETF 與熱門期權觀察清單
 EXTRA_WATCHLIST = [
     {"sym": "SPY", "default_name": "SPDR S&P 500 ETF (標普大盤)", "default_pe": 26.5, "is_etf": True},
     {"sym": "QQQ", "default_name": "Invesco QQQ ETF (那斯達克)", "default_pe": 33.8, "is_etf": True},
@@ -34,8 +35,19 @@ EXTRA_WATCHLIST = [
 ]
 
 
+def norm_cdf(x):
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+
+def calc_bsm_delta(S, K, dte_days, sigma, opt_type="put", r=0.045):
+    T = max(0.001, dte_days / 365.0)
+    sigma = max(0.02, sigma)
+    d1 = (math.log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * math.sqrt(T))
+    nd1 = norm_cdf(d1)
+    return nd1 if opt_type == "call" else (nd1 - 1.0)
+
+
 def load_existing_data(filepath="top50.json"):
-    """讀取既有 top50.json，保留中文名稱與歷史 IV 區間紀錄"""
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -45,7 +57,6 @@ def load_existing_data(filepath="top50.json"):
 
 
 def fetch_sp500_tickers():
-    """附加瀏覽器 User-Agent 讀取 Wikipedia S&P 500 清單"""
     url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     headers = {
         "User-Agent": (
@@ -77,7 +88,6 @@ def format_mcap(num):
 
 
 def extract_close_series(df, sym):
-    """相容不同版本 yfinance 的 MultiIndex 欄位格式，安全取出收盤價序列"""
     if df is None or df.empty:
         return pd.Series(dtype=float)
     if isinstance(df.columns, pd.MultiIndex):
@@ -95,7 +105,6 @@ def extract_close_series(df, sym):
 
 
 def calc_hv_stats(close_series, fallback_item=None):
-    """計算最新收盤價與 1 年 21 日滾動歷史波動率 (HV) 區間"""
     fb = fallback_item or {}
     if len(close_series) >= 25:
         price = round(float(close_series.iloc[-1]), 2)
@@ -115,28 +124,82 @@ def calc_hv_stats(close_series, fallback_item=None):
     )
 
 
-def fetch_option_atm_iv(tk, spot_price):
-    """從 Yahoo 期權鏈抓取最接近 30 DTE 的價平 (ATM) 隱含波動率"""
+def pick_best_otm_contract(df, spot_price, dte, opt_type="put", target_abs_delta=0.20):
+    """從期權鏈挑選最接近 Delta 0.20 的價外合約並計算年化收租殖利率"""
+    if df is None or df.empty or spot_price <= 0 or dte <= 0:
+        return None
+
+    best_row = None
+    best_diff = 999.0
+
+    for _, row in df.iterrows():
+        strike = float(row.get("strike") or 0)
+        if strike <= 0:
+            continue
+        if opt_type == "put" and strike >= spot_price * 0.99:
+            continue
+        if opt_type == "call" and strike <= spot_price * 1.01:
+            continue
+
+        bid = float(row.get("bid") or 0)
+        ask = float(row.get("ask") or 0)
+        last_p = float(row.get("lastPrice") or 0)
+        prem = round((bid + ask) / 2.0, 2) if (bid > 0 and ask > 0) else round(last_p, 2)
+        if prem <= 0.02:
+            continue
+
+        raw_iv = float(row.get("impliedVolatility") or 0)
+        if not (0.05 <= raw_iv <= 3.0):
+            continue
+
+        delta = calc_bsm_delta(spot_price, strike, dte, raw_iv, opt_type=opt_type)
+        abs_d = abs(delta)
+        if not (0.08 <= abs_d <= 0.35):
+            continue
+
+        diff = abs(abs_d - target_abs_delta)
+        if diff < best_diff:
+            best_diff = diff
+            capital_base = strike if opt_type == "put" else spot_price
+            roc_pct = round((prem / capital_base) * 100.0, 2)
+            ann_yield = round((prem / capital_base) * (365.0 / max(1, dte)) * 100.0, 1)
+            best_row = {
+                "strike": round(strike, 2),
+                "prem": prem,
+                "delta": round(delta, 2),
+                "iv": round(raw_iv * 100.0),
+                "rocPct": roc_pct,
+                "annYield": ann_yield,
+            }
+
+    return best_row
+
+
+def fetch_option_chain_snapshot(tk, spot_price):
+    """一次讀取期權鏈，同時萃取 ATM IV 與最佳 30D CSP / Covered Call 合約"""
     try:
         expirations = tk.options
         if not expirations or spot_price <= 0:
-            return None
+            return None, None, None
 
         today = datetime.now(timezone.utc).date()
         best_exp = None
+        best_dte = 30
         best_diff = 9999
 
         for exp_str in expirations:
             exp_date = datetime.strptime(exp_str, "%Y-%m-%d").date()
             dte = (exp_date - today).days
-            if 10 <= dte <= 75:
+            if 14 <= dte <= 65:
                 diff = abs(dte - 30)
                 if diff < best_diff:
                     best_diff = diff
                     best_exp = exp_str
+                    best_dte = dte
 
         if not best_exp:
             best_exp = expirations[0]
+            best_dte = max(1, (datetime.strptime(best_exp, "%Y-%m-%d").date() - today).days)
 
         chain = tk.option_chain(best_exp)
         iv_candidates = []
@@ -149,19 +212,27 @@ def fetch_option_atm_iv(tk, spot_price):
             near_atm = df_valid.nsmallest(2, "dist")
             for _, row in near_atm.iterrows():
                 raw_iv = row.get("impliedVolatility")
-                # 過濾盤後極端異常值，僅採納 5% ~ 300% 的有效 IV
                 if pd.notna(raw_iv) and 0.05 <= float(raw_iv) <= 3.0:
                     iv_candidates.append(float(raw_iv) * 100.0)
 
-        if iv_candidates:
-            return round(float(np.mean(iv_candidates)))
+        atm_iv = round(float(np.mean(iv_candidates))) if iv_candidates else None
+
+        best_csp = pick_best_otm_contract(chain.puts, spot_price, best_dte, opt_type="put", target_abs_delta=0.20)
+        if best_csp:
+            best_csp["exp"] = best_exp
+            best_csp["dte"] = best_dte
+
+        best_cc = pick_best_otm_contract(chain.calls, spot_price, best_dte, opt_type="call", target_abs_delta=0.20)
+        if best_cc:
+            best_cc["exp"] = best_exp
+            best_cc["dte"] = best_dte
+
+        return atm_iv, best_csp, best_cc
     except Exception:
-        pass
-    return None
+        return None, None, None
 
 
 def fetch_earnings_info(tk, info_dict):
-    """取得下一次財報公布日期與倒數天數"""
     today = datetime.now(timezone.utc).date()
     candidates = []
 
@@ -227,7 +298,6 @@ def generate_top50_json():
         progress=False,
     )
 
-    # 取得最新美股交易日期作為資料基準時間戳記
     latest_trade_date = ""
     if hist_df is not None and not hist_df.empty:
         latest_trade_date = pd.to_datetime(hist_df.index[-1]).strftime("%Y-%m-%d")
@@ -244,6 +314,8 @@ def generate_top50_json():
         pe_val = fb.get("pe", 25.0)
         name_val = fb.get("name", sym)
         option_iv = None
+        best_csp = fb.get("bestCsp")
+        best_cc = fb.get("bestCc")
         earnings_date = fb.get("earningsDate")
         days_to_earnings = fb.get("daysToEarnings")
 
@@ -259,7 +331,14 @@ def generate_top50_json():
             if sym not in existing_map and info.get("shortName"):
                 name_val = info["shortName"]
 
-            option_iv = fetch_option_atm_iv(tk, price)
+            opt_iv, csp_snap, cc_snap = fetch_option_chain_snapshot(tk, price)
+            if opt_iv is not None:
+                option_iv = opt_iv
+            if csp_snap is not None:
+                best_csp = csp_snap
+            if cc_snap is not None:
+                best_cc = cc_snap
+
             ed_str, ed_days = fetch_earnings_info(tk, info)
             if ed_str:
                 earnings_date, days_to_earnings = ed_str, ed_days
@@ -291,6 +370,8 @@ def generate_top50_json():
                 "ivLow": iv_low,
                 "ivHigh": iv_high,
                 "ivSource": iv_source,
+                "bestCsp": best_csp,
+                "bestCc": best_cc,
                 "earningsDate": earnings_date,
                 "daysToEarnings": days_to_earnings,
                 "updatedAt": updated_at_label,
@@ -298,7 +379,6 @@ def generate_top50_json():
 
         time.sleep(0.12)
 
-    # 依最新市值由大到小排序，取前 50 名
     results.sort(key=lambda x: x["marketCap"], reverse=True)
     top50 = results[:50]
     top50_syms = set()
@@ -308,7 +388,6 @@ def generate_top50_json():
         item.pop("marketCap", None)
         top50_syms.add(item["sym"])
 
-    # 附加高流動性 ETF 與熱門期權觀察標的（排除已入選前 50 名者）
     extra_rank = 51
     for w in EXTRA_WATCHLIST:
         sym = w["sym"]
@@ -320,6 +399,8 @@ def generate_top50_json():
         price, hv, hv_low, hv_high = calc_hv_stats(close_s, fb)
 
         option_iv = None
+        best_csp = fb.get("bestCsp")
+        best_cc = fb.get("bestCc")
         mcap_str = "ETF" if w["is_etf"] else fb.get("mcap", "Watchlist")
         pe_val = fb.get("pe", w["default_pe"])
         earnings_date = None
@@ -327,7 +408,14 @@ def generate_top50_json():
 
         try:
             tk = yf.Ticker(sym)
-            option_iv = fetch_option_atm_iv(tk, price)
+            opt_iv, csp_snap, cc_snap = fetch_option_chain_snapshot(tk, price)
+            if opt_iv is not None:
+                option_iv = opt_iv
+            if csp_snap is not None:
+                best_csp = csp_snap
+            if cc_snap is not None:
+                best_cc = cc_snap
+
             if not w["is_etf"]:
                 f_info = tk.fast_info
                 m_val = float(f_info.get("market_cap") or 0)
@@ -360,6 +448,8 @@ def generate_top50_json():
             "ivLow": iv_low,
             "ivHigh": iv_high,
             "ivSource": iv_source,
+            "bestCsp": best_csp,
+            "bestCc": best_cc,
             "earningsDate": earnings_date,
             "daysToEarnings": days_to_earnings,
             "updatedAt": updated_at_label,
@@ -370,7 +460,7 @@ def generate_top50_json():
     with open("top50.json", "w", encoding="utf-8") as f:
         json.dump(top50, f, ensure_ascii=False, indent=2)
 
-    print(f"更新完成！共寫入 {len(top50)} 筆最新標的資料至 top50.json ({updated_at_label})")
+    print(f"更新完成！共寫入 {len(top50)} 筆最新標的與真實收租報價至 top50.json ({updated_at_label})")
 
 
 if __name__ == "__main__":

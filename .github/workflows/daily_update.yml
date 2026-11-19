@@ -1,35 +1,50 @@
-name: Auto Update Top 50 Stocks
+name: Auto Update US Top 50 Stocks
 
 on:
   schedule:
-    - cron: '30 22 * * 1-5'
+    # 每個美股交易日（週一至週五）UTC 22:00 執行
+    # 對應時間：美東冬令 17:00 / 夏令 18:00（收盤後約 1~2 小時，確保 Yahoo Finance 數據結算完成）
+    # 對應台灣時間：週二至週六 06:00
+    - cron: '0 22 * * 1-5'
+
+  # 允許在 GitHub Actions 頁面手動點擊「Run workflow」立即測試更新
   workflow_dispatch:
 
+# 賦予 GitHub Actions 寫入儲存庫的權限，才能將更新後的 top50.json 推回 GitHub
 permissions:
   contents: write
 
 jobs:
-  update-data:
+  update-stock-data:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 1. 讀取專案檔案
+      - name: 1. 檢出儲存庫程式碼 (Checkout)
         uses: actions/checkout@v4
 
-      - name: 2. 設定 Python 3.11 環境
+      - name: 2. 設定 Python 環境
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: 3. 安裝套件清單 (requirements.txt)
-        run: pip install -r requirements.txt
+      - name: 3. 安裝 Python 相依套件
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: 4. 執行 Python 腳本抓取最新 Top 50
-        run: python update_top50.py
+      - name: 4. 執行股價與本益比爬蟲腳本
+        run: |
+          python update_top50.py
 
-      - name: 5. 自動儲存並更新 top50.json
+      - name: 5. 檢查變更並自動 Commit & Push 更新 top50.json
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add top50.json
-          git diff --staged --quiet || (git commit -m "chore: auto update top50.json" && git push)
+          if git diff --staged --quiet; then
+            echo "top50.json 數值無變動，略過此次提交。"
+          else
+            git commit -m "chore: update top50.json stock prices ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+            git push
+          fi

@@ -631,6 +631,83 @@
         </div>
       </div>
 
+      <!-- 工具 2.5：Firstrade 交易明細 CSV 自動統計與勝率分析器 -->
+      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-blue-500/30 space-y-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-notionBorder pb-3">
+          <div>
+            <h2 class="font-bold text-base text-blue-600 dark:text-blue-400">📊 3. Firstrade 交易明細 CSV 自動分析器（累積收租 · 勝率 · 各股損益）</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">上傳從 Firstrade 匯出的帳戶交易明細 (.csv)，全本地端自動統計期權收租總額、勝率與各標的績效（資料不上傳雲端）</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <button onclick="loadSampleFirstradeCsv()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 font-semibold transition">
+              🧪 載入範例明細測試
+            </button>
+            <label class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold cursor-pointer transition shadow-sm">
+              📂 選擇 Firstrade CSV 檔案
+              <input type="file" accept=".csv,text/csv" onchange="handleFirstradeCsvUpload(event)" class="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <!-- 尚未上傳前的操作提示 -->
+        <div id="ftCsvPlaceholder" class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-dashed border-slate-300 dark:border-notionBorder text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            💡 <b>如何匯出 Firstrade CSV？</b> 登入 Firstrade 網頁版 → 點選上方 <b>「我的帳戶 (My Account)」</b> → <b>「帳戶紀錄 (History)」</b> → 篩選日期區間後點選右上角 <b>「下載 CSV (Download CSV)」</b> 即可匯入。
+          </div>
+        </div>
+
+        <!-- 解析後的統計結果儀表板 (預設隱藏) -->
+        <div id="ftCsvDashboard" class="hidden space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span id="ftCsvFileInfo" class="font-semibold text-slate-600 dark:text-slate-300"></span>
+            <button id="ftSyncOpenBtn" onclick="syncParsedOpenPositionsToTracker()" class="hidden px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">
+              ⚡ 將偵測到的未平倉賣方部位匯入 21 DTE 追蹤本
+            </button>
+          </div>
+
+          <!-- 4 格核心績效指標 -->
+          <div id="ftCsvSummaryCards" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs"></div>
+
+          <!-- 左右雙欄：各標的損益統計 + 最近期權交易明細 -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div class="lg:col-span-5 p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+              <div class="font-bold text-xs text-slate-700 dark:text-slate-200">🏆 各標的累積收租與損益排行</div>
+              <div class="overflow-x-auto max-h-[260px]">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400">
+                      <th class="py-1.5 px-2">標的</th>
+                      <th class="py-1.5 px-2">交易筆數</th>
+                      <th class="py-1.5 px-2">完結勝率</th>
+                      <th class="py-1.5 px-2 text-right">淨損益 (USD)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ftCsvTickerTableBody" class="divide-y divide-slate-200/60 dark:divide-notionBorder"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+              <div class="font-bold text-xs text-slate-700 dark:text-slate-200">🧾 解析出的期權交易明細（最近 30 筆）</div>
+              <div class="overflow-x-auto max-h-[260px]">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400">
+                      <th class="py-1.5 px-2">交易日</th>
+                      <th class="py-1.5 px-2">動作</th>
+                      <th class="py-1.5 px-2">合約明細</th>
+                      <th class="py-1.5 px-2">口數</th>
+                      <th class="py-1.5 px-2 text-right">淨收付金額</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ftCsvTradesTableBody" class="divide-y divide-slate-200/60 dark:divide-notionBorder"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- 工具 3：21 DTE 收租與輪動 (Wheel) 模擬倉位追蹤本 -->
       <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-4 shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-notionBorder pb-3">
@@ -2226,6 +2303,361 @@
         }
       };
       reader.readAsText(file);
+    }
+
+    // ==================== Firstrade 交易明細 CSV 解析與勝率統計引擎 ====================
+    let detectedOpenShortPositions = [];
+
+    function parseCsvRows(text) {
+      const cleanText = text.replace(/^\uFEFF/, '');
+      const rows = [];
+      let curRow = [];
+      let curCell = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < cleanText.length; i++) {
+        const ch = cleanText[i];
+        const nextCh = cleanText[i + 1];
+
+        if (inQuotes) {
+          if (ch === '"' && nextCh === '"') {
+            curCell += '"';
+            i++;
+          } else if (ch === '"') {
+            inQuotes = false;
+          } else {
+            curCell += ch;
+          }
+        } else {
+          if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === ',') {
+            curRow.push(curCell.trim());
+            curCell = '';
+          } else if (ch === '\r' && nextCh === '\n') {
+            curRow.push(curCell.trim());
+            if (curRow.some(c => c !== '')) rows.push(curRow);
+            curRow = [];
+            curCell = '';
+            i++;
+          } else if (ch === '\n' || ch === '\r') {
+            curRow.push(curCell.trim());
+            if (curRow.some(c => c !== '')) rows.push(curRow);
+            curRow = [];
+            curCell = '';
+          } else {
+            curCell += ch;
+          }
+        }
+      }
+      if (curCell !== '' || curRow.length > 0) {
+        curRow.push(curCell.trim());
+        if (curRow.some(c => c !== '')) rows.push(curRow);
+      }
+      return rows;
+    }
+
+    function parseOccOptionContract(rawSym, rawDesc) {
+      const symClean = (rawSym || '').replace(/\s+/g, '').toUpperCase();
+      // 1. 嘗試解析 OCC 標準期權代碼，例如 NVDA261218P00125000
+      const occMatch = symClean.match(/^([A-Z.\-]+)(\d{6})([CP])(\d{8})$/);
+      if (occMatch) {
+        const underlying = occMatch[1];
+        const yymmdd = occMatch[2];
+        const optType = occMatch[3] === 'C' ? 'CALL' : 'PUT';
+        const strike = parseInt(occMatch[4], 10) / 1000;
+        const expiry = `20${yymmdd.slice(0, 2)}-${yymmdd.slice(2, 4)}-${yymmdd.slice(4, 6)}`;
+        return {
+          isOption: true,
+          underlying,
+          optType,
+          strike,
+          expiry,
+          contractKey: `${underlying}_${expiry}_${strike}_${optType}`,
+          label: `${underlying} ${expiry} $${strike} ${optType}`
+        };
+      }
+
+      // 2. 嘗試從 Firstrade Description 解析文字描述，例如 "SOLD TO OPEN 1 NVDA 12/18/2026 125.00 PUT"
+      const descUpper = (rawDesc || '').toUpperCase();
+      const descMatch = descUpper.match(/\b([A-Z]{1,5})\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+(\d+(?:\.\d+)?)\s+(CALL|PUT)\b/);
+      if (descMatch) {
+        const underlying = descMatch[1];
+        const mm = descMatch[2].padStart(2, '0');
+        const dd = descMatch[3].padStart(2, '0');
+        const yyyy = descMatch[4].length === 2 ? `20${descMatch[4]}` : descMatch[4];
+        const strike = parseFloat(descMatch[5]);
+        const optType = descMatch[6];
+        const expiry = `${yyyy}-${mm}-${dd}`;
+        return {
+          isOption: true,
+          underlying,
+          optType,
+          strike,
+          expiry,
+          contractKey: `${underlying}_${expiry}_${strike}_${optType}`,
+          label: `${underlying} ${expiry} $${strike} ${optType}`
+        };
+      }
+
+      return { isOption: false };
+    }
+
+    function analyzeFirstradeCsvText(csvText, fileName = 'Firstrade_History.csv') {
+      const rows = parseCsvRows(csvText);
+      if (rows.length < 2) {
+        alert('CSV 檔案內容為空或格式無法辨識');
+        return;
+      }
+
+      // 自動尋找表頭所在列（Firstrade 有時前幾行會有帳戶摘要文字）
+      let headerIdx = 0;
+      for (let i = 0; i < Math.min(10, rows.length); i++) {
+        const lineLower = rows[i].map(c => c.toLowerCase());
+        if (lineLower.some(c => c.includes('action') || c.includes('symbol') || c.includes('amount'))) {
+          headerIdx = i;
+          break;
+        }
+      }
+
+      const headers = rows[headerIdx].map(h => h.toLowerCase());
+      const findCol = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+
+      const idxDate = findCol(['tradedate', 'date', '交易日']);
+      const idxAction = findCol(['action', 'type', '動作']);
+      const idxSymbol = findCol(['symbol', 'ticker', '代號']);
+      const idxDesc = findCol(['description', 'desc', '說明']);
+      const idxQty = findCol(['quantity', 'qty', '數量']);
+      const idxAmount = findCol(['amount', 'net', '金額']);
+      const idxPrice = findCol(['price', '價格']);
+
+      const optionTrades = [];
+      const contractLedger = {}; // 依合約追蹤開平倉配對
+
+      for (let r = headerIdx + 1; r < rows.length; r++) {
+        const cols = rows[r];
+        const rawSym = idxSymbol >= 0 ? cols[idxSymbol] : '';
+        const rawDesc = idxDesc >= 0 ? cols[idxDesc] : '';
+        const rawAction = idxAction >= 0 ? cols[idxAction] : '';
+        const rawDate = idxDate >= 0 ? cols[idxDate] : '';
+
+        const parsedOpt = parseOccOptionContract(rawSym, rawDesc);
+        if (!parsedOpt.isOption) continue;
+
+        const qtyVal = Math.abs(parseFloat((idxQty >= 0 ? cols[idxQty] : '1').replace(/[^0-9.\-]/g, ''))) || 1;
+        let amountVal = 0;
+        if (idxAmount >= 0 && cols[idxAmount]) {
+          amountVal = parseFloat(cols[idxAmount].replace(/[$,\s]/g, '')) || 0;
+        } else if (idxPrice >= 0 && cols[idxPrice]) {
+          const pVal = parseFloat(cols[idxPrice].replace(/[$,\s]/g, '')) || 0;
+          const isSell = /sell|sold|sto|stc/i.test(rawAction + ' ' + rawDesc);
+          amountVal = (isSell ? 1 : -1) * pVal * 100 * qtyVal;
+        }
+
+        const combinedActionText = `${rawAction} ${rawDesc}`.toUpperCase();
+        let actionTag = 'OTHER';
+        if (combinedActionText.includes('SOLD TO OPEN') || combinedActionText.includes('SELL TO OPEN') || (rawAction.toUpperCase() === 'SELL' && amountVal > 0)) {
+          actionTag = 'STO (賣出開倉)';
+        } else if (combinedActionText.includes('BOUGHT TO CLOSE') || combinedActionText.includes('BUY TO CLOSE')) {
+          actionTag = 'BTC (買進平倉)';
+        } else if (combinedActionText.includes('BOUGHT TO OPEN') || combinedActionText.includes('BUY TO OPEN') || (rawAction.toUpperCase() === 'BUY' && amountVal < 0)) {
+          actionTag = 'BTO (買進開倉)';
+        } else if (combinedActionText.includes('SOLD TO CLOSE') || combinedActionText.includes('SELL TO CLOSE')) {
+          actionTag = 'STC (賣出平倉)';
+        } else if (combinedActionText.includes('EXPIRED')) {
+          actionTag = 'EXP (到期歸零)';
+        } else if (combinedActionText.includes('ASSIGN')) {
+          actionTag = 'ASN (履約指派)';
+        }
+
+        const tradeRecord = {
+          date: rawDate,
+          actionTag,
+          underlying: parsedOpt.underlying,
+          optType: parsedOpt.optType,
+          strike: parsedOpt.strike,
+          expiry: parsedOpt.expiry,
+          label: parsedOpt.label,
+          qty: qtyVal,
+          amount: amountVal
+        };
+        optionTrades.push(tradeRecord);
+
+        // 累計合約帳本以計算單筆輪次損益與未平倉部位
+        if (!contractLedger[parsedOpt.contractKey]) {
+          contractLedger[parsedOpt.contractKey] = {
+            ...parsedOpt,
+            netCashFlow: 0,
+            openShortQty: 0,
+            openLongQty: 0,
+            totalCreditCollected: 0,
+            tradeCount: 0
+          };
+        }
+        const entry = contractLedger[parsedOpt.contractKey];
+        entry.netCashFlow += amountVal;
+        entry.tradeCount += 1;
+        if (amountVal > 0) entry.totalCreditCollected += amountVal;
+
+        if (actionTag.startsWith('STO')) entry.openShortQty += qtyVal;
+        else if (actionTag.startsWith('BTC') || actionTag.startsWith('EXP') || actionTag.startsWith('ASN')) entry.openShortQty = Math.max(0, entry.openShortQty - qtyVal);
+        else if (actionTag.startsWith('BTO')) entry.openLongQty += qtyVal;
+        else if (actionTag.startsWith('STC')) entry.openLongQty = Math.max(0, entry.openLongQty - qtyVal);
+      }
+
+      if (optionTrades.length === 0) {
+        alert('在此 CSV 中未偵測到期權交易紀錄，請確認匯出的是包含期權合約的帳戶明細檔案。');
+        return;
+      }
+
+      // 統計總收付、勝率與各標的表現
+      let totalNetCashFlow = 0;
+      let grossProfit = 0;
+      let grossLoss = 0;
+      let closedCount = 0;
+      let winCount = 0;
+      const tickerStats = {};
+      detectedOpenShortPositions = [];
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      optionTrades.forEach(t => {
+        totalNetCashFlow += t.amount;
+        if (!tickerStats[t.underlying]) {
+          tickerStats[t.underlying] = { sym: t.underlying, trades: 0, netPnL: 0, closed: 0, wins: 0 };
+        }
+        tickerStats[t.underlying].trades += 1;
+        tickerStats[t.underlying].netPnL += t.amount;
+      });
+
+      Object.values(contractLedger).forEach(c => {
+        const isClosed = (c.openShortQty === 0 && c.openLongQty === 0) || c.expiry < todayStr;
+        if (isClosed) {
+          closedCount += 1;
+          tickerStats[c.underlying].closed += 1;
+          if (c.netCashFlow >= 0) {
+            winCount += 1;
+            grossProfit += c.netCashFlow;
+            tickerStats[c.underlying].wins += 1;
+          } else {
+            grossLoss += Math.abs(c.netCashFlow);
+          }
+        } else if (c.openShortQty > 0) {
+          const avgCreditPerShare = c.totalCreditCollected / (100 * c.openShortQty);
+          detectedOpenShortPositions.push({
+            sym: c.underlying,
+            strat: c.optType === 'PUT' ? 'CSP' : 'Covered Call',
+            strike: c.strike,
+            expiry: c.expiry,
+            qty: c.openShortQty,
+            credit: Number(avgCreditPerShare.toFixed(2)),
+            costBasis: c.strike
+          });
+        }
+      });
+
+      const winRate = closedCount > 0 ? ((winCount / closedCount) * 100).toFixed(1) : '100.0';
+      const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : '∞';
+
+      // 顯示分析儀表板
+      document.getElementById('ftCsvPlaceholder').classList.add('hidden');
+      document.getElementById('ftCsvDashboard').classList.remove('hidden');
+      document.getElementById('ftCsvFileInfo').textContent = `📄 已解析檔案：${fileName}（共 ${optionTrades.length} 筆期權交易，涵蓋 ${Object.keys(tickerStats).length} 檔標的）`;
+
+      const syncBtn = document.getElementById('ftSyncOpenBtn');
+      if (detectedOpenShortPositions.length > 0) {
+        syncBtn.classList.remove('hidden');
+        syncBtn.textContent = `⚡ 將 ${detectedOpenShortPositions.length} 筆未平倉賣方部位匯入 21 DTE 追蹤本`;
+      } else {
+        syncBtn.classList.add('hidden');
+      }
+
+      const netColor = totalNetCashFlow >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+      document.getElementById('ftCsvSummaryCards').innerHTML = `
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+          <div class="text-slate-500 dark:text-slate-400">累積期權淨現金流</div>
+          <div class="text-base font-bold mt-0.5 ${netColor}">${totalNetCashFlow >= 0 ? '+$' : '-$'}${Math.abs(Math.round(totalNetCashFlow)).toLocaleString()} USD</div>
+        </div>
+        <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+          <div class="text-emerald-700 dark:text-emerald-400">已完結輪次勝率 (Win Rate)</div>
+          <div class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">${winRate}% <span class="text-xs font-normal">(${winCount}/${closedCount} 輪)</span></div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+          <div class="text-slate-500 dark:text-slate-400">獲利因子 (Profit Factor)</div>
+          <div class="text-base font-bold text-blue-600 dark:text-blue-400 mt-0.5">${profitFactor}</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
+          <div class="text-slate-500 dark:text-slate-400">未平倉收租中部位</div>
+          <div class="text-base font-bold text-purple-600 dark:text-purple-400 mt-0.5">${detectedOpenShortPositions.length} 筆進行中</div>
+        </div>
+      `;
+
+      const sortedTickers = Object.values(tickerStats).sort((a, b) => b.netPnL - a.netPnL);
+      document.getElementById('ftCsvTickerTableBody').innerHTML = sortedTickers.map(st => {
+        const tWinRate = st.closed > 0 ? `${Math.round((st.wins / st.closed) * 100)}%` : '進行中';
+        const pCls = st.netPnL >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+        return `
+          <tr>
+            <td class="py-2 px-2 font-bold text-blue-600 dark:text-blue-400">${st.sym}</td>
+            <td class="py-2 px-2">${st.trades} 筆</td>
+            <td class="py-2 px-2 font-semibold">${tWinRate}</td>
+            <td class="py-2 px-2 text-right font-bold ${pCls}">${st.netPnL >= 0 ? '+$' : '-$'}${Math.abs(Math.round(st.netPnL)).toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('ftCsvTradesTableBody').innerHTML = optionTrades.slice(0, 30).map(tr => {
+        const amtCls = tr.amount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+        return `
+          <tr>
+            <td class="py-1.5 px-2 font-mono text-[11px]">${tr.date}</td>
+            <td class="py-1.5 px-2 font-semibold">${tr.actionTag}</td>
+            <td class="py-1.5 px-2 font-mono text-[11px]">${tr.label}</td>
+            <td class="py-1.5 px-2">${tr.qty}</td>
+            <td class="py-1.5 px-2 text-right font-bold ${amtCls}">${tr.amount >= 0 ? '+$' : '-$'}${Math.abs(tr.amount).toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleFirstradeCsvUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        analyzeFirstradeCsvText(String(e.target.result || ''), file.name);
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    function syncParsedOpenPositionsToTracker() {
+      if (!detectedOpenShortPositions.length) return;
+      const existing = getTrackedPositions();
+      let added = 0;
+      detectedOpenShortPositions.forEach((p, idx) => {
+        const isDup = existing.some(e => e.sym === p.sym && e.strike === p.strike && e.expiry === p.expiry);
+        if (!isDup) {
+          existing.unshift({ id: Date.now() + idx, ...p });
+          added++;
+        }
+      });
+      saveTrackedPositions(existing);
+      renderTrackedPositions();
+      alert(`已成功匯入 ${added} 筆未平倉賣方部位至下方「21 DTE 倉位追蹤本」！`);
+    }
+
+    function loadSampleFirstradeCsv() {
+      const futureDate = new Date(Date.now() + 19 * 86400000).toISOString().slice(2, 10).replace(/-/g, '');
+      const sampleCsv = [
+        'TradeDate,SettleDate,Account,Action,Quantity,Symbol,Description,Price,Amount,Commission,Fee',
+        '2026-10-05,2026-10-06,12345678,SELL,1,NVDA261106P00120000,SOLD TO OPEN 1 NVDA 11/06/2026 120.00 PUT,3.20,320.00,0.00,0.02',
+        '2026-10-22,2026-10-23,12345678,BUY,1,NVDA261106P00120000,BOUGHT TO CLOSE 1 NVDA 11/06/2026 120.00 PUT,0.85,-85.00,0.00,0.02',
+        '2026-10-12,2026-10-13,12345678,SELL,1,TSLA261113P00260000,SOLD TO OPEN 1 TSLA 11/13/2026 260.00 PUT,5.40,540.00,0.00,0.02',
+        '2026-11-13,2026-11-14,12345678,EXPIRED,1,TSLA261113P00260000,EXPIRED 1 TSLA 11/13/2026 260.00 PUT,0.00,0.00,0.00,0.00',
+        '2026-10-15,2026-10-16,12345678,SELL,2,AAPL261113C00240000,SOLD TO OPEN 2 AAPL 11/13/2026 240.00 CALL,2.10,420.00,0.00,0.04',
+        '2026-11-04,2026-11-05,12345678,BUY,2,AAPL261113C00240000,BOUGHT TO CLOSE 2 AAPL 11/13/2026 240.00 CALL,2.75,-550.00,0.00,0.04',
+        `2026-11-10,2026-11-11,12345678,SELL,1,AMD${futureDate}P00130000,SOLD TO OPEN 1 AMD 12/11/2026 130.00 PUT,2.95,295.00,0.00,0.02`
+      ].join('\n');
+      analyzeFirstradeCsvText(sampleCsv, 'Firstrade_Sample_History.csv');
     }
 
     // ==================== 9. 第4頁：資產配置與複利模擬器 ====================

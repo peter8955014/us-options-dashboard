@@ -10,9 +10,29 @@
     "ivLow": 10,
     "ivHigh": 40,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 330.0,
+      "prem": 3.12,
+      "delta": -0.18,
+      "iv": 28,
+      "rocPct": 0.95,
+      "annYield": 11.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 375.0,
+      "prem": 2.0,
+      "delta": 0.19,
+      "iv": 22,
+      "rocPct": 0.57,
+      "annYield": 7.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 1
   },
   {
@@ -26,9 +46,29 @@
     "ivLow": 22,
     "ivHigh": 54,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 135.0,
+      "prem": 3.17,
+      "delta": -0.21,
+      "iv": 55,
+      "rocPct": 2.35,
+      "annYield": 29.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 172.0,
+      "prem": 2.24,
+      "delta": 0.2,
+      "iv": 50,
+      "rocPct": 1.48,
+      "annYield": 18.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 2
   },
   {
@@ -42,9 +82,29 @@
     "ivLow": 14,
     "ivHigh": 58,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 470.0,
+      "prem": 6.82,
+      "delta": -0.2,
+      "iv": 37,
+      "rocPct": 1.45,
+      "annYield": 18.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 550.0,
+      "prem": 4.05,
+      "delta": 0.19,
+      "iv": 29,
+      "rocPct": 0.8,
+      "annYield": 10.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 3
   },
   {
@@ -53,14 +113,34 @@
     "category": "Top50",
     "mcap": "2.18T",
     "price": 267.74,
-    "pe": 21.6,
+    "pe": 20.9,
     "iv": 37,
     "ivLow": 17,
     "ivHigh": 61,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 245.0,
+      "prem": 3.58,
+      "delta": -0.19,
+      "iv": 40,
+      "rocPct": 1.46,
+      "annYield": 18.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 295.0,
+      "prem": 2.33,
+      "delta": 0.18,
+      "iv": 35,
+      "rocPct": 0.87,
+      "annYield": 11.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 4
   },
   {
@@ -69,14 +149,34 @@
     "category": "Top50",
     "mcap": "2.15T",
     "price": 282.44,
-    "pe": 14.7,
+    "pe": 14.6,
     "iv": 36,
     "ivLow": 17,
     "ivHigh": 54,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 260.0,
+      "prem": 3.85,
+      "delta": -0.2,
+      "iv": 39,
+      "rocPct": 1.48,
+      "annYield": 18.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 310.0,
+      "prem": 2.63,
+      "delta": 0.19,
+      "iv": 34,
+      "rocPct": 0.93,
+      "annYield": 11.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 5
   },
   {
@@ -85,14 +185,34 @@
     "category": "Top50",
     "mcap": "1.48T",
     "price": 616.38,
-    "pe": 21.0,
+    "pe": 21.1,
     "iv": 41,
     "ivLow": 18,
     "ivHigh": 60,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 560.0,
+      "prem": 9.28,
+      "delta": -0.19,
+      "iv": 44,
+      "rocPct": 1.66,
+      "annYield": 20.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 685.0,
+      "prem": 6.8,
+      "delta": 0.19,
+      "iv": 39,
+      "rocPct": 1.1,
+      "annYield": 13.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 6
   },
   {
@@ -101,14 +221,34 @@
     "category": "Top50",
     "mcap": "1.02T",
     "price": 383.72,
-    "pe": 421.7,
+    "pe": 417.1,
     "iv": 49,
     "ivLow": 29,
     "ivHigh": 78,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 345.0,
+      "prem": 7.72,
+      "delta": -0.21,
+      "iv": 53,
+      "rocPct": 2.24,
+      "annYield": 28.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 435.0,
+      "prem": 4.8,
+      "delta": 0.19,
+      "iv": 46,
+      "rocPct": 1.25,
+      "annYield": 15.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 7
   },
   {
@@ -117,14 +257,34 @@
     "category": "Top50",
     "mcap": "985B",
     "price": 574.62,
-    "pe": 16.1,
+    "pe": 16.4,
     "iv": 19,
     "ivLow": 9,
     "ivHigh": 25,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 550.0,
+      "prem": 3.95,
+      "delta": -0.19,
+      "iv": 20,
+      "rocPct": 0.72,
+      "annYield": 9.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 600.0,
+      "prem": 3.12,
+      "delta": 0.22,
+      "iv": 18,
+      "rocPct": 0.54,
+      "annYield": 6.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 8
   },
   {
@@ -138,9 +298,29 @@
     "ivLow": 30,
     "ivHigh": 76,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 310.0,
+      "prem": 8.68,
+      "delta": -0.2,
+      "iv": 65,
+      "rocPct": 2.8,
+      "annYield": 35.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 410.0,
+      "prem": 6.78,
+      "delta": 0.22,
+      "iv": 59,
+      "rocPct": 1.91,
+      "annYield": 24.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-12-09",
     "daysToEarnings": 20,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 9
   },
   {
@@ -154,9 +334,29 @@
     "ivLow": 18,
     "ivHigh": 57,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 1280.0,
+      "prem": 18.1,
+      "delta": -0.2,
+      "iv": 36,
+      "rocPct": 1.41,
+      "annYield": 17.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 1500.0,
+      "prem": 14.3,
+      "delta": 0.21,
+      "iv": 33,
+      "rocPct": 1.03,
+      "annYield": 13.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 10
   },
   {
@@ -170,9 +370,29 @@
     "ivLow": 13,
     "ivHigh": 31,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 305.0,
+      "prem": 3.38,
+      "delta": -0.2,
+      "iv": 29,
+      "rocPct": 1.11,
+      "annYield": 13.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 345.0,
+      "prem": 2.28,
+      "delta": 0.21,
+      "iv": 25,
+      "rocPct": 0.7,
+      "annYield": 8.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-14",
     "daysToEarnings": 56,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 11
   },
   {
@@ -186,9 +406,29 @@
     "ivLow": 17,
     "ivHigh": 39,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 120.0,
+      "prem": 2.17,
+      "delta": -0.25,
+      "iv": 36,
+      "rocPct": 1.81,
+      "annYield": 22.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 140.0,
+      "prem": 1.08,
+      "delta": 0.18,
+      "iv": 34,
+      "rocPct": 0.85,
+      "annYield": 10.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-11-19",
     "daysToEarnings": 0,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 12
   },
   {
@@ -197,14 +437,34 @@
     "category": "Top50",
     "mcap": "610B",
     "price": 415.22,
-    "pe": 33.7,
+    "pe": 33.8,
     "iv": 24,
     "ivLow": 15,
     "ivHigh": 33,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 395.0,
+      "prem": 4.08,
+      "delta": -0.22,
+      "iv": 25,
+      "rocPct": 1.03,
+      "annYield": 13.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 440.0,
+      "prem": 2.56,
+      "delta": 0.21,
+      "iv": 23,
+      "rocPct": 0.62,
+      "annYield": 7.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-26",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 13
   },
   {
@@ -218,9 +478,29 @@
     "ivLow": 17,
     "ivHigh": 36,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 150.0,
+      "prem": 1.83,
+      "delta": -0.2,
+      "iv": 32,
+      "rocPct": 1.22,
+      "annYield": 15.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 175.0,
+      "prem": 1.2,
+      "delta": 0.18,
+      "iv": 31,
+      "rocPct": 0.75,
+      "annYield": 9.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-29",
     "daysToEarnings": 71,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 14
   },
   {
@@ -234,9 +514,29 @@
     "ivLow": 18,
     "ivHigh": 84,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 320.0,
+      "prem": 6.42,
+      "delta": -0.22,
+      "iv": 46,
+      "rocPct": 2.01,
+      "annYield": 25.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 390.0,
+      "prem": 3.1,
+      "delta": 0.17,
+      "iv": 37,
+      "rocPct": 0.89,
+      "annYield": 11.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-12",
     "daysToEarnings": 54,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 15
   },
   {
@@ -250,9 +550,29 @@
     "ivLow": 38,
     "ivHigh": 85,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 95.0,
+      "prem": 3.08,
+      "delta": -0.18,
+      "iv": 82,
+      "rocPct": 3.24,
+      "annYield": 40.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 140.0,
+      "prem": 2.32,
+      "delta": 0.19,
+      "iv": 74,
+      "rocPct": 2.04,
+      "annYield": 25.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-12-14",
     "daysToEarnings": 25,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 16
   },
   {
@@ -266,9 +586,29 @@
     "ivLow": 14,
     "ivHigh": 34,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 610.0,
+      "prem": 5.85,
+      "delta": -0.21,
+      "iv": 26,
+      "rocPct": 0.96,
+      "annYield": 12.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 685.0,
+      "prem": 3.8,
+      "delta": 0.2,
+      "iv": 24,
+      "rocPct": 0.59,
+      "annYield": 7.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 17
   },
   {
@@ -277,14 +617,34 @@
     "category": "Top50",
     "mcap": "415B",
     "price": 1096.62,
-    "pe": 52.8,
+    "pe": 53.5,
     "iv": 28,
     "ivLow": 13,
     "ivHigh": 28,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 1030.0,
+      "prem": 10.6,
+      "delta": -0.2,
+      "iv": 29,
+      "rocPct": 1.03,
+      "annYield": 13.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 1180.0,
+      "prem": 7.9,
+      "delta": 0.21,
+      "iv": 29,
+      "rocPct": 0.72,
+      "annYield": 9.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-12-10",
     "daysToEarnings": 21,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 18
   },
   {
@@ -293,14 +653,34 @@
     "category": "Top50",
     "mcap": "405B",
     "price": 170.29,
-    "pe": 25.6,
+    "pe": 25.9,
     "iv": 22,
     "ivLow": 13,
     "ivHigh": 28,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 160.0,
+      "prem": 0.96,
+      "delta": -0.15,
+      "iv": 23,
+      "rocPct": 0.6,
+      "annYield": 7.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 180.0,
+      "prem": 1.05,
+      "delta": 0.21,
+      "iv": 22,
+      "rocPct": 0.62,
+      "annYield": 7.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-21",
     "daysToEarnings": 63,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 19
   },
   {
@@ -314,9 +694,29 @@
     "ivLow": 17,
     "ivHigh": 38,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 315.0,
+      "prem": 3.4,
+      "delta": -0.19,
+      "iv": 32,
+      "rocPct": 1.08,
+      "annYield": 13.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 365.0,
+      "prem": 1.74,
+      "delta": 0.18,
+      "iv": 28,
+      "rocPct": 0.52,
+      "annYield": 6.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 20
   },
   {
@@ -330,9 +730,29 @@
     "ivLow": 15,
     "ivHigh": 59,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 55.0,
+      "prem": 0.74,
+      "delta": -0.19,
+      "iv": 37,
+      "rocPct": 1.35,
+      "annYield": 16.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 66.0,
+      "prem": 0.56,
+      "delta": 0.19,
+      "iv": 36,
+      "rocPct": 0.94,
+      "annYield": 11.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-19",
     "daysToEarnings": 61,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 21
   },
   {
@@ -346,9 +766,29 @@
     "ivLow": 11,
     "ivHigh": 34,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 260.0,
+      "prem": 3.6,
+      "delta": -0.25,
+      "iv": 29,
+      "rocPct": 1.38,
+      "annYield": 17.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 290.0,
+      "prem": 2.26,
+      "delta": 0.23,
+      "iv": 26,
+      "rocPct": 0.83,
+      "annYield": 10.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-26",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 22
   },
   {
@@ -357,14 +797,34 @@
     "category": "Top50",
     "mcap": "355B",
     "price": 48.91,
-    "pe": 11.7,
+    "pe": 11.8,
     "iv": 29,
     "ivLow": 13,
     "ivHigh": 33,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 46.0,
+      "prem": 0.61,
+      "delta": -0.22,
+      "iv": 32,
+      "rocPct": 1.33,
+      "annYield": 16.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 52.5,
+      "prem": 0.3,
+      "delta": 0.18,
+      "iv": 25,
+      "rocPct": 0.61,
+      "annYield": 7.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-15",
     "daysToEarnings": 57,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 23
   },
   {
@@ -378,9 +838,29 @@
     "ivLow": 24,
     "ivHigh": 80,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 165.0,
+      "prem": 3.88,
+      "delta": -0.18,
+      "iv": 63,
+      "rocPct": 2.35,
+      "annYield": 29.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 220.0,
+      "prem": 3.48,
+      "delta": 0.21,
+      "iv": 57,
+      "rocPct": 1.83,
+      "annYield": 23.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-12-02",
     "daysToEarnings": 13,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 24
   },
   {
@@ -394,9 +874,29 @@
     "ivLow": 12,
     "ivHigh": 38,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 270.0,
+      "prem": 3.08,
+      "delta": -0.21,
+      "iv": 28,
+      "rocPct": 1.14,
+      "annYield": 14.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 310.0,
+      "prem": 1.64,
+      "delta": 0.17,
+      "iv": 27,
+      "rocPct": 0.57,
+      "annYield": 7.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 25
   },
   {
@@ -410,9 +910,29 @@
     "ivLow": 17,
     "ivHigh": 31,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 195.0,
+      "prem": 2.8,
+      "delta": -0.24,
+      "iv": 30,
+      "rocPct": 1.44,
+      "annYield": 18.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 220.0,
+      "prem": 2.07,
+      "delta": 0.23,
+      "iv": 29,
+      "rocPct": 1.01,
+      "annYield": 12.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-29",
     "daysToEarnings": 71,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 26
   },
   {
@@ -426,9 +946,29 @@
     "ivLow": 12,
     "ivHigh": 32,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 92.5,
+      "prem": 0.71,
+      "delta": -0.17,
+      "iv": 24,
+      "rocPct": 0.77,
+      "annYield": 9.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 105.0,
+      "prem": 0.33,
+      "delta": 0.14,
+      "iv": 20,
+      "rocPct": 0.34,
+      "annYield": 4.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 27
   },
   {
@@ -442,9 +982,29 @@
     "ivLow": 15,
     "ivHigh": 49,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 125.0,
+      "prem": 1.23,
+      "delta": -0.16,
+      "iv": 37,
+      "rocPct": 0.98,
+      "annYield": 12.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 150.0,
+      "prem": 1.09,
+      "delta": 0.19,
+      "iv": 31,
+      "rocPct": 0.79,
+      "annYield": 10.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 28
   },
   {
@@ -458,9 +1018,29 @@
     "ivLow": 17,
     "ivHigh": 37,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 75.0,
+      "prem": 0.77,
+      "delta": -0.18,
+      "iv": 32,
+      "rocPct": 1.03,
+      "annYield": 12.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 87.5,
+      "prem": 0.59,
+      "delta": 0.2,
+      "iv": 30,
+      "rocPct": 0.73,
+      "annYield": 9.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-14",
     "daysToEarnings": 56,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 29
   },
   {
@@ -469,14 +1049,34 @@
     "category": "Top50",
     "mcap": "235B",
     "price": 97.18,
-    "pe": 25.8,
+    "pe": 25.3,
     "iv": 38,
     "ivLow": 14,
     "ivHigh": 60,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 90.0,
+      "prem": 1.51,
+      "delta": -0.22,
+      "iv": 40,
+      "rocPct": 1.68,
+      "annYield": 21.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 105.0,
+      "prem": 1.2,
+      "delta": 0.25,
+      "iv": 36,
+      "rocPct": 1.23,
+      "annYield": 15.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-02-10",
     "daysToEarnings": 83,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 30
   },
   {
@@ -485,14 +1085,34 @@
     "category": "Top50",
     "mcap": "230B",
     "price": 530.14,
-    "pe": 113.3,
+    "pe": 107.5,
     "iv": 72,
     "ivLow": 36,
     "ivHigh": 123,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 450.0,
+      "prem": 14.55,
+      "delta": -0.19,
+      "iv": 78,
+      "rocPct": 3.23,
+      "annYield": 40.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 630.0,
+      "prem": 11.35,
+      "delta": 0.21,
+      "iv": 67,
+      "rocPct": 2.14,
+      "annYield": 26.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-02-02",
     "daysToEarnings": 75,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 31
   },
   {
@@ -506,9 +1126,29 @@
     "ivLow": 14,
     "ivHigh": 32,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 135.0,
+      "prem": 1.75,
+      "delta": -0.24,
+      "iv": 28,
+      "rocPct": 1.3,
+      "annYield": 16.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 150.0,
+      "prem": 0.96,
+      "delta": 0.21,
+      "iv": 22,
+      "rocPct": 0.68,
+      "annYield": 8.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 32
   },
   {
@@ -522,9 +1162,29 @@
     "ivLow": 27,
     "ivHigh": 119,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 80.0,
+      "prem": 1.75,
+      "delta": -0.19,
+      "iv": 57,
+      "rocPct": 2.19,
+      "annYield": 27.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 104.0,
+      "prem": 1.31,
+      "delta": 0.19,
+      "iv": 51,
+      "rocPct": 1.45,
+      "annYield": 18.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 33
   },
   {
@@ -533,14 +1193,34 @@
     "category": "Top50",
     "mcap": "218B",
     "price": 226.2,
-    "pe": 12.6,
+    "pe": 13.2,
     "iv": 56,
     "ivLow": 24,
     "ivHigh": 59,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 200.0,
+      "prem": 4.38,
+      "delta": -0.19,
+      "iv": 56,
+      "rocPct": 2.19,
+      "annYield": 27.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 260.0,
+      "prem": 4.1,
+      "delta": 0.22,
+      "iv": 56,
+      "rocPct": 1.81,
+      "annYield": 22.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-12-09",
     "daysToEarnings": 20,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 34
   },
   {
@@ -554,9 +1234,29 @@
     "ivLow": 9,
     "ivHigh": 27,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 480.0,
+      "prem": 3.9,
+      "delta": -0.2,
+      "iv": 30,
+      "rocPct": 0.81,
+      "annYield": 10.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 550.0,
+      "prem": 2.25,
+      "delta": 0.19,
+      "iv": 27,
+      "rocPct": 0.44,
+      "annYield": 5.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 35
   },
   {
@@ -570,9 +1270,29 @@
     "ivLow": 13,
     "ivHigh": 44,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 115.0,
+      "prem": 1.04,
+      "delta": -0.18,
+      "iv": 27,
+      "rocPct": 0.9,
+      "annYield": 11.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 130.0,
+      "prem": 0.85,
+      "delta": 0.22,
+      "iv": 25,
+      "rocPct": 0.69,
+      "annYield": 8.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-02-01",
     "daysToEarnings": 74,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 36
   },
   {
@@ -586,9 +1306,29 @@
     "ivLow": 12,
     "ivHigh": 31,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 260.0,
+      "prem": 2.21,
+      "delta": -0.2,
+      "iv": 24,
+      "rocPct": 0.85,
+      "annYield": 10.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 290.0,
+      "prem": 1.44,
+      "delta": 0.19,
+      "iv": 21,
+      "rocPct": 0.53,
+      "annYield": 6.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 37
   },
   {
@@ -597,14 +1337,34 @@
     "category": "Top50",
     "mcap": "205B",
     "price": 228.53,
-    "pe": 19.5,
+    "pe": 19.7,
     "iv": 38,
     "ivLow": 13,
     "ivHigh": 111,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 210.0,
+      "prem": 2.8,
+      "delta": -0.19,
+      "iv": 38,
+      "rocPct": 1.33,
+      "annYield": 16.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 250.0,
+      "prem": 2.44,
+      "delta": 0.21,
+      "iv": 36,
+      "rocPct": 1.07,
+      "annYield": 13.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 38
   },
   {
@@ -613,14 +1373,34 @@
     "category": "Top50",
     "mcap": "202B",
     "price": 192.73,
-    "pe": 28.1,
+    "pe": 28.4,
     "iv": 30,
     "ivLow": 18,
     "ivHigh": 42,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 180.0,
+      "prem": 1.73,
+      "delta": -0.18,
+      "iv": 29,
+      "rocPct": 0.96,
+      "annYield": 12.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 210.0,
+      "prem": 1.15,
+      "delta": 0.17,
+      "iv": 30,
+      "rocPct": 0.6,
+      "annYield": 7.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 39
   },
   {
@@ -634,9 +1414,29 @@
     "ivLow": 12,
     "ivHigh": 46,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 97.5,
+      "prem": 0.88,
+      "delta": -0.18,
+      "iv": 30,
+      "rocPct": 0.9,
+      "annYield": 11.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 115.0,
+      "prem": 0.45,
+      "delta": 0.13,
+      "iv": 28,
+      "rocPct": 0.43,
+      "annYield": 5.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 40
   },
   {
@@ -650,9 +1450,29 @@
     "ivLow": 14,
     "ivHigh": 45,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 640.0,
+      "prem": 7.55,
+      "delta": -0.21,
+      "iv": 39,
+      "rocPct": 1.18,
+      "annYield": 14.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 760.0,
+      "prem": 6.2,
+      "delta": 0.21,
+      "iv": 38,
+      "rocPct": 0.89,
+      "annYield": 11.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 41
   },
   {
@@ -661,14 +1481,34 @@
     "category": "Top50",
     "mcap": "196B",
     "price": 328.1,
-    "pe": 37.5,
+    "pe": 37.3,
     "iv": 39,
     "ivLow": 19,
     "ivHigh": 52,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 300.0,
+      "prem": 4.17,
+      "delta": -0.19,
+      "iv": 40,
+      "rocPct": 1.39,
+      "annYield": 17.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 360.0,
+      "prem": 3.06,
+      "delta": 0.2,
+      "iv": 35,
+      "rocPct": 0.93,
+      "annYield": 11.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-21",
     "daysToEarnings": 63,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 42
   },
   {
@@ -682,9 +1522,29 @@
     "ivLow": 25,
     "ivHigh": 61,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 500.0,
+      "prem": 9.28,
+      "delta": -0.19,
+      "iv": 51,
+      "rocPct": 1.86,
+      "annYield": 23.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 630.0,
+      "prem": 7.18,
+      "delta": 0.21,
+      "iv": 47,
+      "rocPct": 1.28,
+      "annYield": 16.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 43
   },
   {
@@ -698,9 +1558,29 @@
     "ivLow": 18,
     "ivHigh": 73,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 385.0,
+      "prem": 4.7,
+      "delta": -0.2,
+      "iv": 42,
+      "rocPct": 1.22,
+      "annYield": 15.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 470.0,
+      "prem": 3.55,
+      "delta": 0.22,
+      "iv": 46,
+      "rocPct": 0.84,
+      "annYield": 10.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-21",
     "daysToEarnings": 63,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 44
   },
   {
@@ -714,9 +1594,29 @@
     "ivLow": 22,
     "ivHigh": 100,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 270.0,
+      "prem": 6.35,
+      "delta": -0.18,
+      "iv": 64,
+      "rocPct": 2.35,
+      "annYield": 29.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 370.0,
+      "prem": 5.35,
+      "delta": 0.19,
+      "iv": 61,
+      "rocPct": 1.71,
+      "annYield": 21.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2026-11-19",
     "daysToEarnings": 0,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 45
   },
   {
@@ -730,9 +1630,29 @@
     "ivLow": 17,
     "ivHigh": 70,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 260.0,
+      "prem": 5.72,
+      "delta": -0.2,
+      "iv": 55,
+      "rocPct": 2.2,
+      "annYield": 27.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 335.0,
+      "prem": 3.25,
+      "delta": 0.19,
+      "iv": 49,
+      "rocPct": 1.11,
+      "annYield": 14.0,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-26",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 46
   },
   {
@@ -741,14 +1661,34 @@
     "category": "Top50",
     "mcap": "180B",
     "price": 159.81,
-    "pe": 12.6,
+    "pe": 13.1,
     "iv": 54,
     "ivLow": 20,
     "ivHigh": 105,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 140.0,
+      "prem": 2.95,
+      "delta": -0.18,
+      "iv": 58,
+      "rocPct": 2.11,
+      "annYield": 26.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 185.0,
+      "prem": 2.0,
+      "delta": 0.17,
+      "iv": 50,
+      "rocPct": 1.25,
+      "annYield": 15.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-02-03",
     "daysToEarnings": 76,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 47
   },
   {
@@ -757,14 +1697,34 @@
     "category": "Top50",
     "mcap": "176B",
     "price": 46.13,
-    "pe": 11.8,
+    "pe": 11.7,
     "iv": 25,
     "ivLow": 12,
     "ivHigh": 44,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 44.0,
+      "prem": 0.47,
+      "delta": -0.23,
+      "iv": 25,
+      "rocPct": 1.07,
+      "annYield": 13.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 49.0,
+      "prem": 0.32,
+      "delta": 0.22,
+      "iv": 24,
+      "rocPct": 0.69,
+      "annYield": 8.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 48
   },
   {
@@ -778,9 +1738,29 @@
     "ivLow": 16,
     "ivHigh": 57,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 138.0,
+      "prem": 1.9,
+      "delta": -0.2,
+      "iv": 50,
+      "rocPct": 1.38,
+      "annYield": 17.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 170.0,
+      "prem": 1.2,
+      "delta": 0.2,
+      "iv": 40,
+      "rocPct": 0.78,
+      "annYield": 9.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 49
   },
   {
@@ -789,14 +1769,34 @@
     "category": "Top50",
     "mcap": "112B",
     "price": 109.11,
-    "pe": 49.4,
+    "pe": 48.7,
     "iv": 31,
     "ivLow": 16,
     "ivHigh": 40,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 100.0,
+      "prem": 0.79,
+      "delta": -0.15,
+      "iv": 32,
+      "rocPct": 0.79,
+      "annYield": 9.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 120.0,
+      "prem": 0.45,
+      "delta": 0.13,
+      "iv": 28,
+      "rocPct": 0.41,
+      "annYield": 5.2,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)",
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)",
     "rank": 50
   },
   {
@@ -811,9 +1811,29 @@
     "ivLow": 7,
     "ivHigh": 23,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 690.0,
+      "prem": 6.38,
+      "delta": -0.19,
+      "iv": 25,
+      "rocPct": 0.92,
+      "annYield": 11.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 764.0,
+      "prem": 3.33,
+      "delta": 0.2,
+      "iv": 17,
+      "rocPct": 0.46,
+      "annYield": 5.7,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 52,
@@ -827,9 +1847,29 @@
     "ivLow": 12,
     "ivHigh": 36,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 615.0,
+      "prem": 8.45,
+      "delta": -0.21,
+      "iv": 34,
+      "rocPct": 1.37,
+      "annYield": 17.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 705.0,
+      "prem": 4.98,
+      "delta": 0.2,
+      "iv": 26,
+      "rocPct": 0.76,
+      "annYield": 9.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 53,
@@ -843,9 +1883,29 @@
     "ivLow": 11,
     "ivHigh": 26,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 255.0,
+      "prem": 2.73,
+      "delta": -0.2,
+      "iv": 27,
+      "rocPct": 1.07,
+      "annYield": 13.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 285.0,
+      "prem": 1.42,
+      "delta": 0.19,
+      "iv": 20,
+      "rocPct": 0.53,
+      "annYield": 6.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 54,
@@ -859,9 +1919,29 @@
     "ivLow": 7,
     "ivHigh": 13,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 78.0,
+      "prem": 0.4,
+      "delta": -0.19,
+      "iv": 13,
+      "rocPct": 0.51,
+      "annYield": 6.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 83.0,
+      "prem": 0.25,
+      "delta": 0.2,
+      "iv": 12,
+      "rocPct": 0.31,
+      "annYield": 3.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 55,
@@ -875,9 +1955,29 @@
     "ivLow": 75,
     "ivHigh": 260,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 36.0,
+      "prem": 3.8,
+      "delta": -0.19,
+      "iv": 186,
+      "rocPct": 10.56,
+      "annYield": 132.9,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 77.0,
+      "prem": 1.94,
+      "delta": 0.2,
+      "iv": 148,
+      "rocPct": 3.94,
+      "annYield": 49.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 56,
@@ -891,9 +1991,29 @@
     "ivLow": 37,
     "ivHigh": 110,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 43.0,
+      "prem": 2.0,
+      "delta": -0.2,
+      "iv": 101,
+      "rocPct": 4.65,
+      "annYield": 58.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 64.0,
+      "prem": 1.11,
+      "delta": 0.2,
+      "iv": 73,
+      "rocPct": 2.12,
+      "annYield": 26.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 57,
@@ -907,9 +2027,29 @@
     "ivLow": 25,
     "ivHigh": 73,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 405.0,
+      "prem": 9.43,
+      "delta": -0.19,
+      "iv": 59,
+      "rocPct": 2.33,
+      "annYield": 29.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 520.0,
+      "prem": 5.97,
+      "delta": 0.2,
+      "iv": 47,
+      "rocPct": 1.3,
+      "annYield": 16.4,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 58,
@@ -923,9 +2063,29 @@
     "ivLow": 24,
     "ivHigh": 108,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 140.0,
+      "prem": 3.85,
+      "delta": -0.22,
+      "iv": 59,
+      "rocPct": 2.75,
+      "annYield": 34.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 180.0,
+      "prem": 2.4,
+      "delta": 0.2,
+      "iv": 52,
+      "rocPct": 1.53,
+      "annYield": 19.3,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": "2027-02-01",
     "daysToEarnings": 74,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 59,
@@ -939,9 +2099,29 @@
     "ivLow": 38,
     "ivHigh": 123,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 95.0,
+      "prem": 3.38,
+      "delta": -0.21,
+      "iv": 78,
+      "rocPct": 3.56,
+      "annYield": 44.8,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 135.0,
+      "prem": 2.15,
+      "delta": 0.19,
+      "iv": 71,
+      "rocPct": 1.95,
+      "annYield": 24.5,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   },
   {
     "rank": 60,
@@ -955,8 +2135,28 @@
     "ivLow": 52,
     "ivHigh": 131,
     "ivSource": "Option Chain",
+    "bestCsp": {
+      "strike": 75.0,
+      "prem": 3.67,
+      "delta": -0.21,
+      "iv": 100,
+      "rocPct": 4.89,
+      "annYield": 61.6,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
+    "bestCc": {
+      "strike": 115.0,
+      "prem": 2.02,
+      "delta": 0.19,
+      "iv": 84,
+      "rocPct": 2.24,
+      "annYield": 28.1,
+      "exp": "2026-12-18",
+      "dte": 29
+    },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:21)"
+    "updatedAt": "2026-11-18 美股收盤 (同步於 2026-11-19 11:54)"
   }
 ]

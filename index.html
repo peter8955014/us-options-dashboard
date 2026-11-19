@@ -107,10 +107,15 @@
           <span id="headerIvBadge" class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-700 dark:text-purple-400 font-bold"></span>
         </div>
 
+        <!-- 手動強制更新最新股價按鈕 -->
+        <button id="refreshDataBtn" onclick="forceReloadStockData()" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 text-xs font-semibold transition">
+          🔄 更新股價
+        </button>
         <!-- 本頁說明與深淺色切換 -->
         <button onclick="togglePageGuide()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
           📖 說明
         </button>
+        <!-- 本頁說明與深淺色切換 -->
         <button id="themeBtn" class="p-1.5 rounded-xl border border-slate-300 dark:border-notionBorder hover:bg-slate-200 dark:hover:bg-slate-800 text-xs" title="切換日間/夜間模式">
           🌓
         </button>
@@ -780,35 +785,18 @@
 
     let TOP50_STOCKS = normalizeStockList(FALLBACK_STOCKS);
 
-    async function loadDynamicTop50(forceRefresh = false) {
-      const CACHE_KEY = 'DYNAMIC_TOP50_CACHE_V1';
-      const CACHE_TTL = 6 * 60 * 60 * 1000;
-
-      if (!forceRefresh) {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
-          try {
-            const parsed = JSON.parse(cached);
-            if (Date.now() - parsed.timestamp < CACHE_TTL && Array.isArray(parsed.data) && parsed.data.length > 0) {
-              TOP50_STOCKS = normalizeStockList(parsed.data);
-              refreshAllStockUI();
-              return;
-            }
-          } catch (e) { console.warn('Cache parse error:', e); }
-        }
-      }
+    async function loadDynamicTop50() {
+      // 清除舊版 6 小時快取，確保每次開啟都抓取最新資料
+      localStorage.removeItem('DYNAMIC_TOP50_CACHE_V1');
 
       try {
-        const res = await fetch('./top50.json', { cache: 'no-store' });
+        // 加上時間戳記 (?t=...) 強制繞過瀏覽器與 GitHub Pages CDN 快取
+        const res = await fetch(`./top50.json?t=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const remoteData = await res.json();
 
         if (Array.isArray(remoteData) && remoteData.length > 0) {
           TOP50_STOCKS = normalizeStockList(remoteData);
-          localStorage.setItem(CACHE_KEY, JSON.stringify({
-            timestamp: Date.now(),
-            data: TOP50_STOCKS
-          }));
         }
       } catch (err) {
         console.warn('無法載入遠端 Top50，使用預設保底清單:', err.message);
@@ -816,6 +804,26 @@
       }
 
       refreshAllStockUI();
+
+      // 若使用者已選取特定股票，同步更新該股的最新報價與模擬器數值
+      if (hasUserSelectedStock && currentStock) {
+        const updated = TOP50_STOCKS.find(s => s.sym === currentStock.sym);
+        if (updated) {
+          currentStock = updated;
+          applyStockToHeaderAndSimulator(updated);
+        }
+      }
+    }
+
+    async function forceReloadStockData() {
+      const btn = document.getElementById('refreshDataBtn');
+      if (btn) btn.textContent = '⏳ 更新中...';
+      Object.keys(liveQuoteCache).forEach(k => delete liveQuoteCache[k]);
+      await loadDynamicTop50();
+      if (btn) {
+        btn.textContent = '✅ 已更新';
+        setTimeout(() => { btn.textContent = '🔄 更新股價'; }, 1500);
+      }
     }
 
     function refreshAllStockUI() {

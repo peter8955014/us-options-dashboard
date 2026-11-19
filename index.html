@@ -246,6 +246,8 @@
               <button onclick="applyTargetDelta(0.30)" class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 hover:bg-blue-500/25 font-semibold">Δ 0.30 (積極)</button>
               <button onclick="applyTargetDelta(0.50)" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 font-semibold">ATM 價平</button>
               <button onclick="applyTargetDelta(0.80)" class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30 hover:bg-purple-500/25 font-semibold">Δ 0.80 (深價內)</button>
+              <button onclick="applyRealMarketContract('csp')" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 font-bold">📥 載入真實市場 CSP</button>
+              <button onclick="applyRealMarketContract('cc')" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 font-bold">📥 載入真實市場 CC</button>
             </div>
 
             <!-- 現價 S / 基準行權價 K / 到期天數 DTE / 隱含波動率 IV / 口數 -->
@@ -510,6 +512,7 @@
               <option value="pe_desc">排序：本益比 P/E 由高到低</option>
               <option value="ivr_desc">排序：IV Rank 由高到低</option>
               <option value="ivr_asc">排序：IV Rank 由低到高</option>
+              <option value="csp_yield_desc">排序：30D CSP 年化殖利率由高到低</option>
             </select>
           </div>
         </div>
@@ -529,6 +532,9 @@
                 <th class="py-3 px-2.5">當前 IV (來源)</th>
                 <th class="py-3 px-2.5 w-36">IV Rank (位階)</th>
                 <th class="py-3 px-2.5">財報倒數警示</th>
+                <th class="py-3 px-2.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-bold border-x border-amber-500/20">
+                  💰 30D CSP 真實收租 (Δ~0.20)
+                </th>
                 <th class="py-3 px-2.5">推薦期權策略</th>
                 <th class="py-3 px-2.5 text-right">操作</th>
               </tr>
@@ -955,6 +961,8 @@
           pe: Number(s.pe) || 25.0,
           iv, ivLow, ivHigh, ivr,
           ivSource: s.ivSource || 'Option Chain',
+          bestCsp: s.bestCsp || null,
+          bestCc: s.bestCc || null,
           earningsDate: s.earningsDate || null,
           daysToEarnings: (s.daysToEarnings !== undefined && s.daysToEarnings !== null) ? Number(s.daysToEarnings) : null,
           updatedAt: s.updatedAt || ''
@@ -1419,6 +1427,37 @@
       updateGreeksModeButtons();
       onUnifiedStrategyChange();
     }
+
+    function applyRealMarketContract(side = 'csp') {
+      const stock = currentStock;
+      const contract = side === 'cc' ? stock?.bestCc : stock?.bestCsp;
+      if (!stock || !contract) {
+        alert(`目前 ${stock?.sym || '該標的'} 尚未取得真實期權鏈報價，請先點選 Top 50 標的並確認已執行最新排程更新。`);
+        return;
+      }
+
+      isSoxlBenchmarkMode = false;
+      const targetStrat = side === 'cc' ? 'cc' : 'csp';
+      document.getElementById('strategySelect').value = targetStrat;
+      document.getElementById('uSpot').value = stock.price.toFixed(2);
+      document.getElementById('uDte').value = contract.dte;
+      document.getElementById('uIv').value = contract.iv;
+      document.getElementById('uStrike').value = contract.strike;
+      customStrikeOverride = contract.strike;
+      customLegsOverride = null;
+
+      unifiedGreeksMode = 'auto';
+      updateGreeksModeButtons();
+      onUnifiedStrategyChange();
+
+      // 覆寫為真實市場 Bid/Ask 中間價權利金
+      document.getElementById('uNetPrem').value = Number(contract.prem).toFixed(2);
+      unifiedGreeksMode = 'manual';
+      updateGreeksModeButtons();
+      updateUnifiedSimulation();
+    }
+
+    
 
     function onManualOverride() {
       unifiedGreeksMode = 'manual';
@@ -1898,6 +1937,7 @@
       });
 
       list.sort((a, b) => {
+        if (sortBy === 'csp_yield_desc') return (b.bestCsp?.annYield || 0) - (a.bestCsp?.annYield || 0);
         if (sortBy === 'pe_asc') return a.pe - b.pe;
         if (sortBy === 'pe_desc') return b.pe - a.pe;
         if (sortBy === 'ivr_desc') return b.ivr - a.ivr;
@@ -1919,6 +1959,12 @@
         } else if (s.earningsDate) {
           earnHtml = `<span class="text-emerald-600 dark:text-emerald-400">✅ ${s.earningsDate}</span>`;
         }
+
+        const cspHtml = s.bestCsp
+          ? `<span class="font-bold text-amber-700 dark:text-amber-300">$${s.bestCsp.strike} Put</span>
+             <span class="text-emerald-600 dark:text-emerald-400 font-bold ml-1">+$${s.bestCsp.prem.toFixed(2)}</span>
+             <span class="block text-[10px] text-slate-500 dark:text-slate-400">${s.bestCsp.dte}D · 年化 <b>${s.bestCsp.annYield}%</b></span>`
+          : `<span class="text-slate-400">待排程同步</span>`;
 
         const stratBadge = s.ivr >= 50
           ? `<span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-400 font-semibold">🔥 賣方收租 (CSP / 鐵鷹)</span>`
@@ -1951,6 +1997,7 @@
               </div>
             </td>
             <td class="py-2.5 px-2.5 text-[11px]">${earnHtml}</td>
+            <td class="py-2.5 px-2.5 bg-amber-500/5 border-x border-amber-500/10 text-[11px]">${cspHtml}</td>
             <td class="py-2.5 px-2.5">${stratBadge}</td>
             <td class="py-2.5 px-2.5 text-right">
               <button onclick="selectFromTop50('${s.sym}')" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">

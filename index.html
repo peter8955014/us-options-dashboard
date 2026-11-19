@@ -111,6 +111,15 @@
           <span id="headerEarningsBadge" class="hidden px-2 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/30"></span>
         </div>
 
+        <!-- 全域幣別切換 (USD / TWD) 與即時匯率 -->
+        <div class="flex items-center gap-1 bg-slate-100 dark:bg-notionDark rounded-xl p-1 border border-slate-300 dark:border-notionBorder text-xs">
+          <button id="btnCurrUsd" onclick="setDisplayCurrency('USD')" class="px-2 py-0.5 rounded-lg bg-blue-600 text-white font-bold transition">USD</button>
+          <button id="btnCurrTwd" onclick="setDisplayCurrency('TWD')" class="px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 font-bold transition">TWD</button>
+          <span class="text-[11px] text-slate-400 pl-1">匯率</span>
+          <input id="usdTwdInput" type="number" step="0.05" value="32.50" onchange="onExchangeRateChange(this.value)"
+                 class="w-14 bg-transparent text-center font-mono font-bold text-slate-700 dark:text-slate-200 focus:outline-none" title="可手動微調美金兌台幣匯率" />
+        </div>
+
         <!-- 手動強制更新最新股價按鈕 -->
         <button id="refreshDataBtn" onclick="forceReloadStockData()" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 text-xs font-semibold transition">
           🔄 更新股價
@@ -668,6 +677,9 @@
           <!-- 4 格核心績效指標 -->
           <div id="ftCsvSummaryCards" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs"></div>
 
+          <!-- 台灣海外所得稅務門檻進度條 (最低稅負制試算參考) -->
+          <div id="ftCsvTaxCard" class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-3 text-xs"></div>
+          
           <!-- 左右雙欄：各標的損益統計 + 最近期權交易明細 -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div class="lg:col-span-5 p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
@@ -1042,13 +1054,62 @@
           bestCc: s.bestCc || null,
           earningsDate: s.earningsDate || null,
           daysToEarnings: (s.daysToEarnings !== undefined && s.daysToEarnings !== null) ? Number(s.daysToEarnings) : null,
-          updatedAt: s.updatedAt || ''
+          updatedAt: s.updatedAt || '',
+          usdTwd: Number(s.usdTwd) || 32.50
         };
       });
     }
 
     let TOP50_STOCKS = normalizeStockList(FALLBACK_STOCKS);
 
+    let displayCurrency = 'USD';
+    let usdTwdRate = 32.50;
+    let isCustomExchangeRate = false;
+
+    function formatDisplayMoney(usdAmount, showPlus = false, decimals = 0) {
+      const rate = displayCurrency === 'TWD' ? usdTwdRate : 1;
+      const val = usdAmount * rate;
+      const absStr = Math.abs(val).toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      const prefix = displayCurrency === 'TWD' ? 'NT$' : '$';
+      const sign = val < 0 ? '-' : (showPlus && val > 0 ? '+' : '');
+      return `${sign}${prefix}${absStr}`;
+    }
+
+    function setDisplayCurrency(curr) {
+      displayCurrency = curr;
+      const btnUsd = document.getElementById('btnCurrUsd');
+      const btnTwd = document.getElementById('btnCurrTwd');
+      if (btnUsd && btnTwd) {
+        btnUsd.className = curr === 'USD'
+          ? 'px-2 py-0.5 rounded-lg bg-blue-600 text-white font-bold transition'
+          : 'px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 font-bold transition';
+        btnTwd.className = curr === 'TWD'
+          ? 'px-2 py-0.5 rounded-lg bg-blue-600 text-white font-bold transition'
+          : 'px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 font-bold transition';
+      }
+      renderPortfolioAllocation();
+      updateCompoundChart();
+      if (typeof renderFirstradeCsvDashboard === 'function' && lastParsedCsvState) {
+        renderFirstradeCsvDashboard();
+      }
+    }
+
+    function onExchangeRateChange(val) {
+      const num = Number(val);
+      if (num > 15 && num < 60) {
+        usdTwdRate = num;
+        isCustomExchangeRate = true;
+        renderPortfolioAllocation();
+        updateCompoundChart();
+        if (typeof renderFirstradeCsvDashboard === 'function' && lastParsedCsvState) {
+          renderFirstradeCsvDashboard();
+        }
+      }
+    }
+    
     async function loadDynamicTop50() {
       localStorage.removeItem('DYNAMIC_TOP50_CACHE_V1');
       try {
@@ -1086,6 +1147,12 @@
       populateDatalist();
       renderTop50Table();
       const firstUpdated = TOP50_STOCKS.find(s => s.updatedAt);
+      const firstRate = TOP50_STOCKS.find(s => s.usdTwd && s.usdTwd > 15);
+      if (firstRate && !isCustomExchangeRate) {
+        usdTwdRate = firstRate.usdTwd;
+        const rateInput = document.getElementById('usdTwdInput');
+        if (rateInput) rateInput.value = usdTwdRate.toFixed(2);
+      }
       const badge = document.getElementById('dataUpdatedBadge');
       if (badge) {
         badge.textContent = firstUpdated ? firstUpdated.updatedAt : '已同步最新本機資料';
@@ -2403,6 +2470,17 @@
       return { isOption: false };
     }
 
+    let lastParsedCsvState = null;
+
+    function extractYearFromDateStr(str) {
+      if (!str) return null;
+      const iso = String(str).match(/\b(20\d{2})-\d{2}-\d{2}\b/);
+      if (iso) return Number(iso[1]);
+      const us = String(str).match(/\b\d{1,2}\/\d{1,2}\/(20\d{2})\b/);
+      if (us) return Number(us[1]);
+      return null;
+    }
+
     function analyzeFirstradeCsvText(csvText, fileName = 'Firstrade_History.csv') {
       const rows = parseCsvRows(csvText);
       if (rows.length < 2) {
@@ -2410,7 +2488,6 @@
         return;
       }
 
-      // 自動尋找表頭所在列（Firstrade 有時前幾行會有帳戶摘要文字）
       let headerIdx = 0;
       for (let i = 0; i < Math.min(10, rows.length); i++) {
         const lineLower = rows[i].map(c => c.toLowerCase());
@@ -2432,7 +2509,7 @@
       const idxPrice = findCol(['price', '價格']);
 
       const optionTrades = [];
-      const contractLedger = {}; // 依合約追蹤開平倉配對
+      const contractLedger = {};
 
       for (let r = headerIdx + 1; r < rows.length; r++) {
         const cols = rows[r];
@@ -2470,8 +2547,11 @@
           actionTag = 'ASN (履約指派)';
         }
 
-        const tradeRecord = {
+        const tradeYear = extractYearFromDateStr(rawDate) || extractYearFromDateStr(parsedOpt.expiry) || new Date().getFullYear();
+
+        optionTrades.push({
           date: rawDate,
+          year: tradeYear,
           actionTag,
           underlying: parsedOpt.underlying,
           optType: parsedOpt.optType,
@@ -2480,10 +2560,8 @@
           label: parsedOpt.label,
           qty: qtyVal,
           amount: amountVal
-        };
-        optionTrades.push(tradeRecord);
+        });
 
-        // 累計合約帳本以計算單筆輪次損益與未平倉部位
         if (!contractLedger[parsedOpt.contractKey]) {
           contractLedger[parsedOpt.contractKey] = {
             ...parsedOpt,
@@ -2491,12 +2569,14 @@
             openShortQty: 0,
             openLongQty: 0,
             totalCreditCollected: 0,
-            tradeCount: 0
+            tradeCount: 0,
+            realizedYear: tradeYear
           };
         }
         const entry = contractLedger[parsedOpt.contractKey];
         entry.netCashFlow += amountVal;
         entry.tradeCount += 1;
+        entry.realizedYear = Math.max(entry.realizedYear, tradeYear);
         if (amountVal > 0) entry.totalCreditCollected += amountVal;
 
         if (actionTag.startsWith('STO')) entry.openShortQty += qtyVal;
@@ -2510,13 +2590,13 @@
         return;
       }
 
-      // 統計總收付、勝率與各標的表現
       let totalNetCashFlow = 0;
       let grossProfit = 0;
       let grossLoss = 0;
       let closedCount = 0;
       let winCount = 0;
       const tickerStats = {};
+      const realizedByYear = {};
       detectedOpenShortPositions = [];
       const todayStr = new Date().toISOString().slice(0, 10);
 
@@ -2534,6 +2614,9 @@
         if (isClosed) {
           closedCount += 1;
           tickerStats[c.underlying].closed += 1;
+          const yr = c.realizedYear || extractYearFromDateStr(c.expiry) || new Date().getFullYear();
+          realizedByYear[yr] = (realizedByYear[yr] || 0) + c.netCashFlow;
+
           if (c.netCashFlow >= 0) {
             winCount += 1;
             grossProfit += c.netCashFlow;
@@ -2555,13 +2638,34 @@
         }
       });
 
-      const winRate = closedCount > 0 ? ((winCount / closedCount) * 100).toFixed(1) : '100.0';
-      const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : '∞';
+      const currentYear = new Date().getFullYear();
+      const availableYears = Object.keys(realizedByYear).map(Number).sort((a, b) => b - a);
+      const targetTaxYear = realizedByYear[currentYear] !== undefined ? currentYear : (availableYears[0] || currentYear);
+      const ytdRealizedUsd = realizedByYear[targetTaxYear] || 0;
 
-      // 顯示分析儀表板
+      lastParsedCsvState = {
+        fileName,
+        optionTrades,
+        tickerStats,
+        totalNetCashFlow,
+        winRate: closedCount > 0 ? ((winCount / closedCount) * 100).toFixed(1) : '100.0',
+        winCount,
+        closedCount,
+        profitFactor: grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : '∞',
+        targetTaxYear,
+        ytdRealizedUsd
+      };
+
+      renderFirstradeCsvDashboard();
+    }
+
+    function renderFirstradeCsvDashboard() {
+      if (!lastParsedCsvState) return;
+      const st = lastParsedCsvState;
+
       document.getElementById('ftCsvPlaceholder').classList.add('hidden');
       document.getElementById('ftCsvDashboard').classList.remove('hidden');
-      document.getElementById('ftCsvFileInfo').textContent = `📄 已解析檔案：${fileName}（共 ${optionTrades.length} 筆期權交易，涵蓋 ${Object.keys(tickerStats).length} 檔標的）`;
+      document.getElementById('ftCsvFileInfo').textContent = `📄 已解析檔案：${st.fileName}（共 ${st.optionTrades.length} 筆期權交易，涵蓋 ${Object.keys(st.tickerStats).length} 檔標的｜目前顯示幣別：${displayCurrency}）`;
 
       const syncBtn = document.getElementById('ftSyncOpenBtn');
       if (detectedOpenShortPositions.length > 0) {
@@ -2571,19 +2675,19 @@
         syncBtn.classList.add('hidden');
       }
 
-      const netColor = totalNetCashFlow >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+      const netColor = st.totalNetCashFlow >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
       document.getElementById('ftCsvSummaryCards').innerHTML = `
         <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
           <div class="text-slate-500 dark:text-slate-400">累積期權淨現金流</div>
-          <div class="text-base font-bold mt-0.5 ${netColor}">${totalNetCashFlow >= 0 ? '+$' : '-$'}${Math.abs(Math.round(totalNetCashFlow)).toLocaleString()} USD</div>
+          <div class="text-base font-bold mt-0.5 ${netColor}">${formatDisplayMoney(st.totalNetCashFlow, true, 0)}</div>
         </div>
         <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
           <div class="text-emerald-700 dark:text-emerald-400">已完結輪次勝率 (Win Rate)</div>
-          <div class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">${winRate}% <span class="text-xs font-normal">(${winCount}/${closedCount} 輪)</span></div>
+          <div class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">${st.winRate}% <span class="text-xs font-normal">(${st.winCount}/${st.closedCount} 輪)</span></div>
         </div>
         <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
           <div class="text-slate-500 dark:text-slate-400">獲利因子 (Profit Factor)</div>
-          <div class="text-base font-bold text-blue-600 dark:text-blue-400 mt-0.5">${profitFactor}</div>
+          <div class="text-base font-bold text-blue-600 dark:text-blue-400 mt-0.5">${st.profitFactor}</div>
         </div>
         <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
           <div class="text-slate-500 dark:text-slate-400">未平倉收租中部位</div>
@@ -2591,21 +2695,68 @@
         </div>
       `;
 
-      const sortedTickers = Object.values(tickerStats).sort((a, b) => b.netPnL - a.netPnL);
-      document.getElementById('ftCsvTickerTableBody').innerHTML = sortedTickers.map(st => {
-        const tWinRate = st.closed > 0 ? `${Math.round((st.wins / st.closed) * 100)}%` : '進行中';
-        const pCls = st.netPnL >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+      // 台灣海外所得稅務進度條 (固定以新台幣計算申報與免稅門檻)
+      const ytdTwd = Math.round(st.ytdRealizedUsd * usdTwdRate);
+      const posYtdTwd = Math.max(0, ytdTwd);
+      const pct100w = Math.min(100, (posYtdTwd / 1000000) * 100);
+      const pct750w = Math.min(100, (posYtdTwd / 7500000) * 100);
+      const remTo750w = Math.max(0, 7500000 - posYtdTwd);
+      const estTaxTwd = posYtdTwd > 7500000 ? Math.round((posYtdTwd - 7500000) * 0.20) : 0;
+
+      const taxStatusBadge = posYtdTwd >= 7500000
+        ? `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-700 dark:text-rose-300 font-bold">🚨 已達 750 萬基本稅額門檻（超出部分預估 20% 稅負 ≈ NT$${estTaxTwd.toLocaleString()}）</span>`
+        : (posYtdTwd >= 1000000
+          ? `<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 font-bold">📋 已達 100 萬申報門檻（需計入基本所得額，但仍在 750 萬免稅額內）</span>`
+          : `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">✅ 未達 100 萬申報門檻（免計入基本所得額）</span>`);
+
+      document.getElementById('ftCsvTaxCard').innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="font-bold text-sm text-amber-800 dark:text-amber-300">
+            🇹🇼 ${st.targetTaxYear} 年度已實現海外期權淨損益：<span class="font-mono text-base">${ytdTwd >= 0 ? 'NT$' : '-NT$'}${Math.abs(ytdTwd).toLocaleString()}</span>
+            <span class="text-[11px] font-normal text-slate-600 dark:text-slate-400">(${st.ytdRealizedUsd >= 0 ? '+$' : '-$'}${Math.abs(Math.round(st.ytdRealizedUsd)).toLocaleString()} USD @ ${usdTwdRate})</span>
+          </div>
+          ${taxStatusBadge}
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <div>
+            <div class="flex justify-between text-[11px] mb-1">
+              <span class="font-semibold">1️⃣ 海外所得申報門檻 (NT$100 萬)</span>
+              <span class="font-mono font-bold">${pct100w.toFixed(1)}%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div class="h-full ${posYtdTwd >= 1000000 ? 'bg-amber-500' : 'bg-emerald-500'}" style="width:${pct100w}%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px] mb-1">
+              <span class="font-semibold">2️⃣ 基本所得額免稅額參考 (NT$750 萬)</span>
+              <span class="font-mono font-bold">${pct750w.toFixed(1)}%（尚餘 NT$${remTo750w.toLocaleString()} 空間）</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div class="h-full ${posYtdTwd >= 7500000 ? 'bg-rose-500' : 'bg-blue-500'}" style="width:${pct750w}%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="text-[11px] text-slate-600 dark:text-slate-400">
+          ※ 依台灣《所得基本稅額條例》規定，申報戶全年海外所得合計達 <b>NT$100 萬</b>須全數計入基本所得額，基本所得額合計超過 <b>NT$750 萬</b>免稅額之部分按 20% 課徵基本稅額（實際仍須合併國內綜合所得淨額計算；年底前若有帳面虧損部位可評估是否提前平倉實現虧損以抵減當年度海外獲利）。
+        </div>
+      `;
+
+      const sortedTickers = Object.values(st.tickerStats).sort((a, b) => b.netPnL - a.netPnL);
+      document.getElementById('ftCsvTickerTableBody').innerHTML = sortedTickers.map(item => {
+        const tWinRate = item.closed > 0 ? `${Math.round((item.wins / item.closed) * 100)}%` : '進行中';
+        const pCls = item.netPnL >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
         return `
           <tr>
-            <td class="py-2 px-2 font-bold text-blue-600 dark:text-blue-400">${st.sym}</td>
-            <td class="py-2 px-2">${st.trades} 筆</td>
+            <td class="py-2 px-2 font-bold text-blue-600 dark:text-blue-400">${item.sym}</td>
+            <td class="py-2 px-2">${item.trades} 筆</td>
             <td class="py-2 px-2 font-semibold">${tWinRate}</td>
-            <td class="py-2 px-2 text-right font-bold ${pCls}">${st.netPnL >= 0 ? '+$' : '-$'}${Math.abs(Math.round(st.netPnL)).toLocaleString()}</td>
+            <td class="py-2 px-2 text-right font-bold ${pCls}">${formatDisplayMoney(item.netPnL, true, 0)}</td>
           </tr>
         `;
       }).join('');
 
-      document.getElementById('ftCsvTradesTableBody').innerHTML = optionTrades.slice(0, 30).map(tr => {
+      document.getElementById('ftCsvTradesTableBody').innerHTML = st.optionTrades.slice(0, 30).map(tr => {
         const amtCls = tr.amount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
         return `
           <tr>
@@ -2613,11 +2764,12 @@
             <td class="py-1.5 px-2 font-semibold">${tr.actionTag}</td>
             <td class="py-1.5 px-2 font-mono text-[11px]">${tr.label}</td>
             <td class="py-1.5 px-2">${tr.qty}</td>
-            <td class="py-1.5 px-2 text-right font-bold ${amtCls}">${tr.amount >= 0 ? '+$' : '-$'}${Math.abs(tr.amount).toFixed(2)}</td>
+            <td class="py-1.5 px-2 text-right font-bold ${amtCls}">${formatDisplayMoney(tr.amount, true, 2)}</td>
           </tr>
         `;
       }).join('');
     }
+
 
     function handleFirstradeCsvUpload(event) {
       const file = event.target.files?.[0];
@@ -2758,9 +2910,14 @@
       const aggRate = Number(document.getElementById('rngAgg').value);
       const stdRate = Number(document.getElementById('rngStd').value);
       const years = Number(document.getElementById('rngYears').value);
+      const rateMult = displayCurrency === 'TWD' ? usdTwdRate : 1;
 
-      document.getElementById('lblInitial').textContent = `$${initial.toLocaleString()}`;
-      document.getElementById('lblMonthly').textContent = `${monthly >= 0 ? '+' : ''}$${monthly.toLocaleString()}`;
+      document.getElementById('lblInitial').textContent = displayCurrency === 'TWD'
+        ? `$${initial.toLocaleString()} (約 NT$${Math.round(initial * usdTwdRate).toLocaleString()})`
+        : `$${initial.toLocaleString()}`;
+      document.getElementById('lblMonthly').textContent = displayCurrency === 'TWD'
+        ? `${monthly >= 0 ? '+' : ''}$${monthly.toLocaleString()} (約 ${monthly >= 0 ? '+' : '-'}NT$${Math.abs(Math.round(monthly * usdTwdRate)).toLocaleString()})`
+        : `${monthly >= 0 ? '+' : ''}$${monthly.toLocaleString()}`;
       document.getElementById('lblAgg').textContent = `${aggRate}%`;
       document.getElementById('lblStd').textContent = `${stdRate}%`;
       document.getElementById('lblYears').textContent = `${years} 年`;
@@ -2770,12 +2927,16 @@
       for (let y = 0; y <= years; y++) {
         labels.push(`第 ${y} 年`);
         const m = y * 12;
-        aggData.push(Math.round(Math.max(0, initial * Math.pow(1 + rAgg, m) + monthly * ((Math.pow(1 + rAgg, m) - 1) / rAgg))));
-        stdData.push(Math.round(Math.max(0, initial * Math.pow(1 + rStd, m) + monthly * ((Math.pow(1 + rStd, m) - 1) / rStd))));
+        const aggUsd = Math.max(0, initial * Math.pow(1 + rAgg, m) + monthly * ((Math.pow(1 + rAgg, m) - 1) / rAgg));
+        const stdUsd = Math.max(0, initial * Math.pow(1 + rStd, m) + monthly * ((Math.pow(1 + rStd, m) - 1) / rStd));
+        aggData.push(Math.round(aggUsd * rateMult));
+        stdData.push(Math.round(stdUsd * rateMult));
       }
-      document.getElementById('compPrincipal').textContent = `$${Math.max(0, initial + monthly * 12 * years).toLocaleString()}`;
-      document.getElementById('compSteady').textContent = `$${stdData[stdData.length - 1].toLocaleString()}`;
-      document.getElementById('compAggressive').textContent = `$${aggData[aggData.length - 1].toLocaleString()}`;
+
+      const endPrincipalUsd = Math.max(0, initial + monthly * 12 * years);
+      document.getElementById('compPrincipal').textContent = formatDisplayMoney(endPrincipalUsd, false, 0);
+      document.getElementById('compSteady').textContent = `${displayCurrency === 'TWD' ? 'NT$' : '$'}${stdData[stdData.length - 1].toLocaleString()}`;
+      document.getElementById('compAggressive').textContent = `${displayCurrency === 'TWD' ? 'NT$' : '$'}${aggData[aggData.length - 1].toLocaleString()}`;
 
       if (!compoundChartInstance) {
         const ctx = document.getElementById('compoundChart').getContext('2d');
@@ -2788,7 +2949,18 @@
               { label: '穩健收租配置', data: stdData, borderColor: '#10b981', borderDash: [5, 5], fill: false, tension: 0.35 }
             ]
           },
-          options: { responsive: true, maintainAspectRatio: false }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                ticks: {
+                  color: '#64748b',
+                  callback: v => (displayCurrency === 'TWD' ? 'NT$' : '$') + Number(v).toLocaleString()
+                }
+              }
+            }
+          }
         });
       } else {
         compoundChartInstance.data.labels = labels;

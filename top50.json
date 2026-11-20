@@ -32,7 +32,7 @@
     },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 1
   },
@@ -69,7 +69,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 2
   },
@@ -106,7 +106,7 @@
     },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 3
   },
@@ -143,7 +143,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 4
   },
@@ -180,7 +180,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 5
   },
@@ -189,35 +189,35 @@
     "name": "Meta Platforms (臉書)",
     "category": "Top50",
     "mcap": "1.48T",
-    "price": 596.22,
+    "price": 616.38,
     "pe": 20.3,
-    "iv": 45,
+    "iv": 43,
     "ivLow": 18,
     "ivHigh": 60,
     "ivSource": "Option Chain",
     "bestCsp": {
-      "strike": 540.0,
-      "prem": 9.7,
+      "strike": 560.0,
+      "prem": 14.78,
       "delta": -0.2,
-      "iv": 47,
-      "rocPct": 1.8,
-      "annYield": 23.4,
+      "iv": 46,
+      "rocPct": 2.64,
+      "annYield": 34.4,
       "exp": "2026-12-18",
       "dte": 28
     },
     "bestCc": {
-      "strike": 665.0,
-      "prem": 6.85,
+      "strike": 685.0,
+      "prem": 4.05,
       "delta": 0.2,
-      "iv": 42,
-      "rocPct": 1.15,
-      "annYield": 15.0,
+      "iv": 41,
+      "rocPct": 0.66,
+      "annYield": 8.6,
       "exp": "2026-12-18",
       "dte": 28
     },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 6
   },
@@ -254,7 +254,7 @@
     },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 7
   },
@@ -291,7 +291,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 8
   },
@@ -328,7 +328,7 @@
     },
     "earningsDate": "2026-12-09",
     "daysToEarnings": 19,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 9
   },
@@ -365,7 +365,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 10
   },
@@ -402,7 +402,7 @@
     },
     "earningsDate": "2027-01-14",
     "daysToEarnings": 55,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 11
   },
@@ -439,7 +439,7 @@
     },
     "earningsDate": "2026-11-19",
     "daysToEarnings": 0,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 12
   },
@@ -476,7 +476,7 @@
     },
     "earningsDate": "2027-01-26",
     "daysToEarnings": 67,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 13
   },
@@ -513,7 +513,7 @@
     },
     "earningsDate": "2027-01-29",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 14
   },
@@ -550,7 +550,7 @@
     },
     "earningsDate": "2027-01-12",
     "daysToEarnings": 53,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 15
   },
@@ -587,7 +587,7 @@
     },
     "earningsDate": "2026-12-14",
     "daysToEarnings": 24,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 16
   },
@@ -624,7 +624,7 @@
     },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 17
   },
@@ -661,7 +661,7 @@
     },
     "earningsDate": "2026-12-10",
     "daysToEarnings": 20,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 18
   },
@@ -698,7 +698,7 @@
     },
     "earningsDate": "2027-01-21",
     "daysToEarnings": 62,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 19
   },
@@ -735,7 +735,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 20
   },
@@ -772,7 +772,7 @@
     },
     "earningsDate": "2027-01-19",
     "daysToEarnings": 60,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 21
   },
@@ -809,7 +809,7 @@
     },
     "earningsDate": "2027-01-26",
     "daysToEarnings": 67,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 22
   },
@@ -846,7 +846,7 @@
     },
     "earningsDate": "2027-01-15",
     "daysToEarnings": 56,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 23
   },
@@ -883,7 +883,7 @@
     },
     "earningsDate": "2026-12-02",
     "daysToEarnings": 12,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 24
   },
@@ -892,7 +892,7 @@
     "name": "AbbVie Inc. (艾伯維)",
     "category": "Top50",
     "mcap": "310B",
-    "price": 283.54,
+    "price": 286.01,
     "pe": 48.7,
     "iv": 29,
     "ivLow": 12,
@@ -901,7 +901,7 @@
     "bestCsp": {
       "strike": 270.0,
       "prem": 3.68,
-      "delta": -0.25,
+      "delta": -0.22,
       "iv": 30,
       "rocPct": 1.36,
       "annYield": 17.8,
@@ -911,16 +911,16 @@
     "bestCc": {
       "strike": 310.0,
       "prem": 1.26,
-      "delta": 0.15,
+      "delta": 0.17,
       "iv": 29,
       "rocPct": 0.44,
-      "annYield": 5.8,
+      "annYield": 5.7,
       "exp": "2026-12-18",
       "dte": 28
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 25
   },
@@ -957,7 +957,7 @@
     },
     "earningsDate": "2027-01-29",
     "daysToEarnings": 70,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 26
   },
@@ -994,7 +994,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 27
   },
@@ -1031,7 +1031,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 28
   },
@@ -1068,7 +1068,7 @@
     },
     "earningsDate": "2027-01-14",
     "daysToEarnings": 55,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 29
   },
@@ -1105,7 +1105,7 @@
     },
     "earningsDate": "2027-02-10",
     "daysToEarnings": 82,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 30
   },
@@ -1142,7 +1142,7 @@
     },
     "earningsDate": "2027-02-02",
     "daysToEarnings": 74,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 31
   },
@@ -1179,7 +1179,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 32
   },
@@ -1188,35 +1188,35 @@
     "name": "ServiceNow",
     "category": "Top50",
     "mcap": "220B",
-    "price": 88.87,
+    "price": 90.59,
     "pe": 63.9,
-    "iv": 55,
+    "iv": 54,
     "ivLow": 27,
     "ivHigh": 119,
     "ivSource": "Option Chain",
     "bestCsp": {
-      "strike": 78.0,
-      "prem": 1.71,
-      "delta": -0.18,
-      "iv": 59,
-      "rocPct": 2.19,
-      "annYield": 28.6,
+      "strike": 80.0,
+      "prem": 2.16,
+      "delta": -0.19,
+      "iv": 58,
+      "rocPct": 2.7,
+      "annYield": 35.2,
       "exp": "2026-12-18",
       "dte": 28
     },
     "bestCc": {
-      "strike": 102.0,
-      "prem": 1.34,
+      "strike": 104.0,
+      "prem": 1.04,
       "delta": 0.2,
-      "iv": 53,
-      "rocPct": 1.51,
-      "annYield": 19.7,
+      "iv": 52,
+      "rocPct": 1.15,
+      "annYield": 15.0,
       "exp": "2026-12-18",
       "dte": 28
     },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 33
   },
@@ -1253,7 +1253,7 @@
     },
     "earningsDate": "2026-12-09",
     "daysToEarnings": 19,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 34
   },
@@ -1290,7 +1290,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 35
   },
@@ -1327,7 +1327,7 @@
     },
     "earningsDate": "2027-02-01",
     "daysToEarnings": 73,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 36
   },
@@ -1364,7 +1364,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 37
   },
@@ -1401,7 +1401,7 @@
     },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 38
   },
@@ -1438,7 +1438,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 39
   },
@@ -1475,7 +1475,7 @@
     },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 40
   },
@@ -1512,7 +1512,7 @@
     },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 41
   },
@@ -1549,7 +1549,7 @@
     },
     "earningsDate": "2027-01-21",
     "daysToEarnings": 62,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 42
   },
@@ -1586,7 +1586,7 @@
     },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 43
   },
@@ -1623,7 +1623,7 @@
     },
     "earningsDate": "2027-01-21",
     "daysToEarnings": 62,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 44
   },
@@ -1660,7 +1660,7 @@
     },
     "earningsDate": "2026-11-19",
     "daysToEarnings": 0,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 45
   },
@@ -1697,7 +1697,7 @@
     },
     "earningsDate": "2027-01-26",
     "daysToEarnings": 67,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 46
   },
@@ -1734,7 +1734,7 @@
     },
     "earningsDate": "2027-02-03",
     "daysToEarnings": 75,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 47
   },
@@ -1771,7 +1771,7 @@
     },
     "earningsDate": "2027-01-28",
     "daysToEarnings": 69,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 48
   },
@@ -1808,7 +1808,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 49
   },
@@ -1845,7 +1845,7 @@
     },
     "earningsDate": "2027-01-27",
     "daysToEarnings": 68,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97,
     "rank": 50
   },
@@ -1883,7 +1883,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -1920,7 +1920,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -1957,7 +1957,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -1994,7 +1994,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -2031,7 +2031,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -2068,7 +2068,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -2105,7 +2105,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -2114,35 +2114,35 @@
     "name": "Palantir Technologies",
     "category": "ETF / 熱門期權",
     "mcap": "Watchlist",
-    "price": 153.68,
+    "price": 156.67,
     "pe": 108.2,
-    "iv": 59,
+    "iv": 57,
     "ivLow": 24,
     "ivHigh": 108,
     "ivSource": "Option Chain",
     "bestCsp": {
-      "strike": 135.0,
-      "prem": 3.52,
-      "delta": -0.2,
-      "iv": 63,
-      "rocPct": 2.61,
-      "annYield": 34.0,
+      "strike": 140.0,
+      "prem": 4.72,
+      "delta": -0.22,
+      "iv": 61,
+      "rocPct": 3.37,
+      "annYield": 43.9,
       "exp": "2026-12-18",
       "dte": 28
     },
     "bestCc": {
-      "strike": 175.0,
-      "prem": 2.81,
-      "delta": 0.22,
-      "iv": 55,
-      "rocPct": 1.83,
-      "annYield": 23.8,
+      "strike": 180.0,
+      "prem": 1.95,
+      "delta": 0.2,
+      "iv": 54,
+      "rocPct": 1.24,
+      "annYield": 16.2,
       "exp": "2026-12-18",
       "dte": 28
     },
     "earningsDate": "2027-02-01",
     "daysToEarnings": 73,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -2151,16 +2151,16 @@
     "name": "Coinbase Global",
     "category": "ETF / 熱門期權",
     "mcap": "Watchlist",
-    "price": 108.87,
+    "price": 110.51,
     "pe": 44.3,
-    "iv": 76,
+    "iv": 73,
     "ivLow": 38,
     "ivHigh": 123,
     "ivSource": "Option Chain",
     "bestCsp": {
       "strike": 95.0,
       "prem": 3.62,
-      "delta": -0.22,
+      "delta": -0.2,
       "iv": 78,
       "rocPct": 3.81,
       "annYield": 49.7,
@@ -2168,18 +2168,18 @@
       "dte": 28
     },
     "bestCc": {
-      "strike": 130.0,
-      "prem": 2.4,
-      "delta": 0.21,
-      "iv": 71,
-      "rocPct": 2.2,
-      "annYield": 28.7,
+      "strike": 135.0,
+      "prem": 1.65,
+      "delta": 0.18,
+      "iv": 70,
+      "rocPct": 1.49,
+      "annYield": 19.5,
       "exp": "2026-12-18",
       "dte": 28
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   },
   {
@@ -2216,7 +2216,7 @@
     },
     "earningsDate": null,
     "daysToEarnings": null,
-    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 08:39)",
+    "updatedAt": "2026-11-19 美股收盤 (同步於 2026-11-20 10:53)",
     "usdTwd": 32.97
   }
 ]

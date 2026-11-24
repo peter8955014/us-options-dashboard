@@ -1,50 +1,39 @@
-name: Auto Update US Top 50 Stocks
+name: Update US Top 50 Options Data
 
 on:
   schedule:
-    # 每個美股交易日（週一至週五）UTC 22:00 執行
-    # 對應時間：美東冬令 17:00 / 夏令 18:00（收盤後約 1~2 小時，確保 Yahoo Finance 數據結算完成）
-    # 對應台灣時間：週二至週六 06:00
-    - cron: '0 22 * * 1-5'
+    # 台灣時間週二～週六 05:30（UTC 週一～週五 21:30）
+    # 美股冬令收盤為 UTC 21:00（台 05:00）、夏令為 UTC 20:00（台 04:00）
+    # 選在 UTC 21:30 可確保全年冬夏令皆已收盤，且留 30 分鐘讓 Yahoo 結算收盤價與期權鏈
+    - cron: '30 21 * * 1-5'
+  workflow_dispatch: # 允許隨時到 GitHub Actions 頁面手動點「Run workflow」立即更新
 
-  # 允許在 GitHub Actions 頁面手動點擊「Run workflow」立即測試更新
-  workflow_dispatch:
-
-# 賦予 GitHub Actions 寫入儲存庫的權限，才能將更新後的 top50.json 推回 GitHub
 permissions:
   contents: write
 
 jobs:
-  update-stock-data:
+  update-data:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 1. 檢出儲存庫程式碼 (Checkout)
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 2. 設定 Python 環境
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
-      - name: 3. 安裝 Python 相依套件
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 4. 執行股價與本益比爬蟲腳本
-        run: |
-          python update_top50.py
+      - name: Run update_top50.py
+        run: python update_top50.py
 
-      - name: 5. 檢查變更並自動 Commit & Push 更新 top50.json
+      - name: Commit and push updated top50.json
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add top50.json
-          if git diff --staged --quiet; then
-            echo "top50.json 數值無變動，略過此次提交。"
-          else
-            git commit -m "chore: update top50.json stock prices ($(date -u +'%Y-%m-%d %H:%M UTC'))"
-            git push
-          fi
+          git diff --staged --quiet || (git commit -m "chore: update top50.json after US market close" && git push)

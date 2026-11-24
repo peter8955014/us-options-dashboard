@@ -285,19 +285,28 @@ def fetch_earnings_info(tk, info_dict):
 
 
 def fetch_usd_twd_rate(default_rate=32.50):
-    """從 Yahoo Finance 抓取最新 USD/TWD 匯率"""
+    """優先從即時匯率 API 抓取 USD/TWD，失敗時退回 Yahoo Finance"""
     try:
-        tk = yf.Ticker("USDTWD=X")
-        hist = tk.history(period="5d")
-        if hist is not None and not hist.empty and "Close" in hist.columns:
-            closes = hist["Close"].dropna()
-            if len(closes) > 0:
-                rate = round(float(closes.iloc[-1]), 2)
-                if 20.0 <= rate <= 45.0:
-                    print(f"成功取得最新 USD/TWD 匯率: {rate}")
-                    return rate
+        resp = requests.get("https://open.er-api.com/v6/latest/USD", timeout=10)
+        resp.raise_for_status()
+        rate = round(float(resp.json()["rates"]["TWD"]), 2)
+        if 20.0 <= rate <= 45.0:
+            print(f"成功從 ER-API 取得最新 USD/TWD 匯率: {rate}")
+            return rate
     except Exception as e:
-        print(f"USD/TWD 匯率讀取失敗 ({e})，沿用匯率 {default_rate}")
+        print(f"ER-API 匯率讀取失敗 ({e})，改用 Yahoo Finance")
+
+    for ticker in ("TWD=X", "USDTWD=X"):
+        try:
+            tk = yf.Ticker(ticker)
+            last_p = safe_float(tk.fast_info.get("last_price"))
+            if 20.0 <= last_p <= 45.0:
+                rate = round(last_p, 2)
+                print(f"成功從 Yahoo ({ticker}) 取得最新 USD/TWD 匯率: {rate}")
+                return rate
+        except Exception:
+            continue
+
     return default_rate
 
 
@@ -354,6 +363,9 @@ def generate_top50_json():
         try:
             tk = yf.Ticker(sym)
             f_info = tk.fast_info
+            live_price = safe_float(f_info.get("last_price"))
+            if live_price > 0:
+                price = round(live_price, 2)
             mcap_val = float(f_info.get("market_cap") or 0)
 
             info = tk.info or {}

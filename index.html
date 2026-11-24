@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>美股期權 v4.0 - 策略模擬 · Top50雷達 · 實戰工具箱 · L1–L4百科</title>
+  <title>美股期權 v4.1 - 策略模擬 · Top50雷達 · 實戰工具箱 · L1–L4百科</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -81,7 +81,7 @@
   <header class="sticky top-0 z-40 bg-white/95 dark:bg-notionCard/95 backdrop-blur border-b border-slate-200 dark:border-notionBorder px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v4.0</span>
+        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v4.1</span>
         <div>
           <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 13 大策略 & Greeks 整合系統</h1>
           <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5">
@@ -122,6 +122,11 @@
           <input id="usdTwdInput" type="number" step="0.05" value="32.50" onchange="onExchangeRateChange(this.value)"
                  class="w-14 bg-transparent text-center font-mono font-bold text-slate-700 dark:text-slate-200 focus:outline-none" title="可手動微調美金兌台幣匯率" />
         </div>
+
+        <!-- 手動強制更新最新股價按鈕 -->
+        <button id="refreshDataBtn" onclick="forceReloadStockData()" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 text-xs font-semibold transition">
+          🔄 更新股價
+        </button>
 
         <!-- 本頁說明與深淺色切換 -->
         <button onclick="togglePageGuide()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 text-xs font-semibold transition">
@@ -613,8 +618,11 @@
           </div>
         </div>
 
+        <!-- 總凍結擔保金 & 資金使用率警示條（與第 4 頁總本金同步） -->
+        <div id="posCollateralBanner" class="p-4 rounded-2xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-3 text-xs"></div>
+
         <!-- 新增倉位表單 -->
-        <div class="grid grid-cols-2 sm:grid-cols-8 gap-2.5 p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs items-end">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-2.5 p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder text-xs items-end">
           <div>
             <label class="text-[11px] text-slate-500 dark:text-slate-400">標的代號</label>
             <input id="posSym" type="text" placeholder="如 BAC" class="w-full mt-1 p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold uppercase" />
@@ -652,6 +660,15 @@
             <input id="posCostBasis" type="number" step="0.5" placeholder="選填" class="w-full mt-1 p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold" />
           </div>
           <div>
+            <label class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              擔保金 USD
+              <span class="has-tooltip text-[9px] px-1 rounded-full bg-slate-300 dark:bg-slate-700">?
+                <span class="tooltip-box">留空時系統會自動計算（CSP 依 履約價×100−權利金；價差／PMCC 可填入實際凍結保證金覆寫）。</span>
+              </span>
+            </label>
+            <input id="posCollateral" type="number" step="10" min="0" placeholder="留空自動算" class="w-full mt-1 p-2 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-bold text-amber-600 dark:text-amber-400" />
+          </div>
+          <div class="col-span-2 sm:col-span-1">
             <button onclick="addTrackedPosition()" class="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold transition">
               ＋ 新增部位
             </button>
@@ -684,6 +701,7 @@
                 <th class="py-2.5 px-2.5">履約價 / 降本價</th>
                 <th class="py-2.5 px-2.5">到期日 / 剩餘 DTE</th>
                 <th class="py-2.5 px-2.5">口數</th>
+                <th class="py-2.5 px-2.5">凍結擔保金 / 佔比</th>
                 <th class="py-2.5 px-2.5">收取權利金 / 50%平倉目標</th>
                 <th class="py-2.5 px-2.5">狀態與風控提醒</th>
                 <th class="py-2.5 px-2.5 text-right">快捷管理</th>
@@ -1541,7 +1559,7 @@ async function fetchLiveUsdTwdRate() {
       },
       tools: {
         title: '📖 本頁功能說明：Rollover 展期、21 DTE 追蹤本 & Firstrade CSV（3 子頁精簡版）',
-        content: '拆分為 3 個獨立子分頁聚焦操作：<b>21 DTE 倉位追蹤（含 50% 目標價、結案記帳與一鍵送展期）</b>、<b>Rollover 展期與除息檢測</b>、<b>Firstrade CSV 績效與海外所得試算</b>。'
+        content: '拆分為 3 個獨立子分頁聚焦操作：<b>21 DTE 倉位追蹤（含總凍結擔保金與 80% 資金使用率警示條、50% 目標價與結案記帳）</b>、<b>Rollover 展期與除息檢測</b>、<b>Firstrade CSV 績效與海外所得試算</b>。'
       },
       portfolio: {
         title: '📖 本頁功能說明：動態風險配置藍圖 & 長期複利模擬器（全自動雙向同步）',
@@ -2486,6 +2504,7 @@ async function fetchLiveUsdTwdRate() {
       const expiry = new Date(Date.now() + dte * 86400000).toISOString().slice(0, 10);
       const creditVal = Number(Math.abs(netPrem).toFixed(2));
 
+      const marginInfo = computeStrategyMarginInfo(stratKey, S, legs, netPrem, qty);
       const list = getTrackedPositions();
       list.unshift({
         id: Date.now(),
@@ -2496,6 +2515,7 @@ async function fetchLiveUsdTwdRate() {
         qty,
         credit: creditVal,
         costBasis: stratKey === 'cc' ? Number(S.toFixed(2)) : Number(shortLeg.strike),
+        collateral: Math.round(marginInfo.capital),
         status: 'open',
         closePrice: null
       });
@@ -2735,10 +2755,50 @@ async function fetchLiveUsdTwdRate() {
       }
     }
 
-    // 21 DTE 倉位追蹤本（支援 50% 目標價、結案損益統計與一鍵送展期）
+    // 21 DTE 倉位追蹤本（支援總凍結擔保金警示條、50% 目標價、結案損益統計與一鍵送展期）
     const POS_STORAGE_KEY = 'US_OPTIONS_POSITIONS_V1';
     let trackerFilterMode = 'open';
     let closingPositionId = null;
+
+    function getAccountCapitalUsd() {
+      const topInput = document.getElementById('portfolioCapitalInput');
+      const val = Number(topInput?.value);
+      return val >= 1000 ? val : 12000;
+    }
+
+    function calcPositionCollateralInfo(p) {
+      const qty = Math.max(1, Number(p.qty) || 1);
+      const strike = Number(p.strike) || 0;
+      const credit = Number(p.credit) || 0;
+      const costBasis = Number(p.costBasis) || strike;
+
+      if (p.collateral !== undefined && p.collateral !== null && p.collateral !== '' && Number(p.collateral) >= 0) {
+        return { usd: Math.round(Number(p.collateral)), note: '指定擔保金' };
+      }
+
+      const st = String(p.strat || '').toUpperCase();
+      if (st === 'CSP' || st.includes('CASH-SECURED')) {
+        return { usd: Math.max(0, Math.round((strike - credit) * 100 * qty)), note: '淨現金擔保' };
+      }
+      if (st.includes('COVERED CALL') || st === 'CC') {
+        return { usd: Math.max(0, Math.round((costBasis - credit) * 100 * qty)), note: '持股淨占用' };
+      }
+      if (st.includes('SPREAD') || st.includes('IRON CONDOR') || st.includes('IRON BUTTERFLY')) {
+        const estWidth = strike < 60 ? 2.5 : 5;
+        return { usd: Math.max(50, Math.round((estWidth - credit) * 100 * qty)), note: `價差估計 ($${estWidth}寬)` };
+      }
+      if (st.includes('NAKED')) {
+        return { usd: Math.max(0, Math.round(strike * 100 * qty * 0.20)), note: '20% 融資估計' };
+      }
+      if (st.includes('PMCC')) {
+        const estLeaps = (costBasis && costBasis !== strike) ? costBasis : (strike * 0.28);
+        return { usd: Math.max(0, Math.round(estLeaps * 100 * qty)), note: 'LEAPS 成本估計' };
+      }
+      if (st.includes('LONG') || st.includes('STRADDLE') || st.includes('BUTTERFLY') || st.includes('CONDOR')) {
+        return { usd: Math.max(0, Math.round(credit * 100 * qty)), note: '買方權利金' };
+      }
+      return { usd: Math.max(0, Math.round((strike - credit) * 100 * qty)), note: '預估擔保金' };
+    }
 
     function getTrackedPositions() {
       try {
@@ -2746,13 +2806,13 @@ async function fetchLiveUsdTwdRate() {
         if (raw) {
           const arr = JSON.parse(raw);
           if (Array.isArray(arr)) {
-            return arr.map(p => ({ status: 'open', closePrice: null, ...p }));
+            return arr.map(p => ({ status: 'open', closePrice: null, collateral: null, ...p }));
           }
         }
       } catch (_) {}
       const d37 = new Date(Date.now() + 37 * 86400000).toISOString().slice(0, 10);
       return [
-        { id: 1, sym: 'BAC', strat: 'CSP', strike: 45, expiry: d37, qty: 1, credit: 0.70, costBasis: 45, status: 'open', closePrice: null }
+        { id: 1, sym: 'BAC', strat: 'CSP', strike: 45, expiry: d37, qty: 1, credit: 0.70, costBasis: 45, collateral: null, status: 'open', closePrice: null }
       ];
     }
 
@@ -2780,16 +2840,19 @@ async function fetchLiveUsdTwdRate() {
       const qty = Math.max(1, Number(document.getElementById('posQty').value) || 1);
       const credit = Number(document.getElementById('posCredit').value) || 0;
       const costBasis = Number(document.getElementById('posCostBasis').value) || strike;
+      const rawCollat = document.getElementById('posCollateral')?.value;
+      const collateral = (rawCollat !== undefined && rawCollat !== '') ? Math.max(0, Math.round(Number(rawCollat))) : null;
 
       if (!sym || !strike || !expiry) {
         showToast('⚠️ 請完整填寫標的代號、履約價與到期日！');
         return;
       }
       const list = getTrackedPositions();
-      list.unshift({ id: Date.now(), sym, strat, strike, expiry, qty, credit, costBasis, status: 'open', closePrice: null });
+      list.unshift({ id: Date.now(), sym, strat, strike, expiry, qty, credit, costBasis, collateral, status: 'open', closePrice: null });
       saveTrackedPositions(list);
       document.getElementById('posSym').value = '';
       document.getElementById('posCredit').value = '';
+      if (document.getElementById('posCollateral')) document.getElementById('posCollateral').value = '';
       setTrackerFilter('open');
       showToast(`✅ 已新增 ${sym} $${strike} ${strat} 追蹤部位！`);
     }
@@ -2819,7 +2882,7 @@ async function fetchLiveUsdTwdRate() {
       saveTrackedPositions(list);
       cancelClosePosition();
       renderTrackedPositions();
-      showToast('✅ 部位已平倉結案，已更新歷史損益與勝率！');
+      showToast('✅ 部位已平倉結案，已釋放凍結擔保金並更新勝率！');
     }
 
     function sendPositionToRollover(id) {
@@ -2845,12 +2908,94 @@ async function fetchLiveUsdTwdRate() {
       renderTrackedPositions();
     }
 
+    function renderCollateralBanner(totalFrozenUsd, openBySym) {
+      const banner = document.getElementById('posCollateralBanner');
+      if (!banner) return;
+      const totalCapUsd = getAccountCapitalUsd();
+      const utilPct = (totalFrozenUsd / Math.max(1, totalCapUsd)) * 100;
+      const barWidth = Math.min(100, Math.max(0, utilPct));
+      const freeCashUsd = totalCapUsd - totalFrozenUsd;
+      const freeCashPct = (freeCashUsd / Math.max(1, totalCapUsd)) * 100;
+
+      let cardBorder, barColor, statusBadge, adviceTxt;
+      if (utilPct > 100) {
+        cardBorder = 'bg-rose-500/10 border-rose-500/45';
+        barColor = 'bg-rose-600';
+        statusBadge = `<span class="px-2.5 py-0.5 rounded-lg bg-rose-600 text-white font-bold">🚨 超額擔保 ${utilPct.toFixed(1)}%（已動用融資）</span>`;
+        adviceTxt = `🚨 <b>超額占用警示：</b>凍結擔保金已超過總本金 ${formatDisplayMoney(Math.abs(freeCashUsd), false, 0)}，若遇大盤急跌恐觸發融資追繳，請立即減倉或轉成價差單！`;
+      } else if (utilPct > 80) {
+        cardBorder = 'bg-rose-500/10 border-rose-500/35';
+        barColor = 'bg-rose-500';
+        statusBadge = `<span class="px-2.5 py-0.5 rounded-lg bg-rose-500/20 text-rose-700 dark:text-rose-300 font-bold">🔴 高警戒 ${utilPct.toFixed(1)}%（突破 80% 紅線）</span>`;
+        adviceTxt = `⚠️ <b>緩衝資金不足：</b>剩餘安全現金僅 <b>${formatDisplayMoney(freeCashUsd, false, 0)} (${freeCashPct.toFixed(1)}%)</b>，低於建議的 20% 永久緩衝，建議暫緩再開新倉並等部分部位獲利平倉。`;
+      } else if (utilPct > 60) {
+        cardBorder = 'bg-amber-500/10 border-amber-500/35';
+        barColor = 'bg-amber-500';
+        statusBadge = `<span class="px-2.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-800 dark:text-amber-300 font-bold">🟡 警戒適中 ${utilPct.toFixed(1)}%（接近 80% 上限）</span>`;
+        adviceTxt = `⚡ <b>接近動用上限：</b>目前尚有 <b>${formatDisplayMoney(freeCashUsd, false, 0)} (${freeCashPct.toFixed(1)}%)</b> 可用現金，建議保留至少 20%（${formatDisplayMoney(totalCapUsd * 0.20, false, 0)}）作轉倉與急跌防禦緩衝。`;
+      } else {
+        cardBorder = 'bg-emerald-500/5 border-emerald-500/30';
+        barColor = 'bg-emerald-500';
+        statusBadge = `<span class="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">🟢 安全充裕 ${utilPct.toFixed(1)}%</span>`;
+        adviceTxt = `✅ <b>資金水位健康：</b>剩餘可用現金 <b>${formatDisplayMoney(freeCashUsd, false, 0)} (${freeCashPct.toFixed(1)}%)</b>，距離 80% 建議動用上限還有 <b>${formatDisplayMoney(Math.max(0, totalCapUsd * 0.80 - totalFrozenUsd), false, 0)}</b> 空間。`;
+      }
+
+      const symChips = Object.entries(openBySym)
+        .sort((a, b) => b[1] - a[1])
+        .map(([sym, usd]) => {
+          const pct = ((usd / Math.max(1, totalCapUsd)) * 100).toFixed(1);
+          return `<span class="px-2 py-0.5 rounded-lg bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder font-mono text-[11px]">
+            <b class="text-blue-600 dark:text-blue-400">${sym}</b> ${formatDisplayMoney(usd, false, 0)} (${pct}%)
+          </span>`;
+        }).join('');
+
+      banner.className = `p-4 rounded-2xl border space-y-3 text-xs transition ${cardBorder}`;
+      banner.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">🛡️ 進行中總凍結擔保金：</span>
+            <span class="font-mono font-bold text-base text-amber-600 dark:text-amber-400">${formatDisplayMoney(totalFrozenUsd, false, 0)}</span>
+            <span class="text-slate-400">/</span>
+            <label class="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
+              <span>總本金 (USD)</span>
+              <input id="trackerCapInput" type="number" step="1000" min="1000" value="${totalCapUsd}"
+                     onchange="onPortfolioCapitalChange(this.value)"
+                     class="w-24 px-2 py-0.5 rounded-lg bg-white dark:bg-notionCard border border-slate-300 dark:border-notionBorder font-mono font-bold text-slate-800 dark:text-slate-100 text-center" />
+            </label>
+          </div>
+          ${statusBadge}
+        </div>
+
+        <!-- 含 80% 安全線標記的資金使用率進度條 -->
+        <div class="space-y-1">
+          <div class="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div class="${barColor} h-full rounded-full transition-all duration-300" style="width:${barWidth.toFixed(1)}%"></div>
+            <div class="absolute top-0 bottom-0 w-0.5 bg-rose-600/80 dark:bg-rose-400" style="left:80%" title="建議資金使用率 80% 警戒線"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+            <span>0%</span>
+            <span class="text-emerald-600 dark:text-emerald-400">60% 安全區</span>
+            <span class="text-rose-600 dark:text-rose-400 font-bold">▲ 80% 建議動用紅線 (留 20% 現金)</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+          <div class="text-slate-700 dark:text-slate-200 leading-relaxed">${adviceTxt}</div>
+          ${symChips ? `<div class="flex flex-wrap items-center gap-1.5"><span class="text-[11px] text-slate-400">各股占用：</span>${symChips}</div>` : ''}
+        </div>
+      `;
+    }
+
     function renderTrackedPositions() {
       const allList = getTrackedPositions();
+      const totalCapUsd = getAccountCapitalUsd();
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       let openCount = 0, openRentUsd = 0, alertCount = 0;
+      let totalFrozenUsd = 0;
+      const openBySym = {};
       let closedCount = 0, closedWins = 0, realizedPnLUsd = 0;
 
       allList.forEach(p => {
@@ -2862,10 +3007,15 @@ async function fetchLiveUsdTwdRate() {
         } else {
           openCount++;
           openRentUsd += (p.credit || 0) * 100 * p.qty;
+          const colInfo = calcPositionCollateralInfo(p);
+          totalFrozenUsd += colInfo.usd;
+          openBySym[p.sym] = (openBySym[p.sym] || 0) + colInfo.usd;
           const remDte = Math.ceil((new Date(p.expiry + 'T00:00:00') - today) / 86400000);
           if (remDte > 0 && remDte <= 21) alertCount++;
         }
       });
+
+      renderCollateralBanner(totalFrozenUsd, openBySym);
 
       const filtered = allList.filter(p => {
         if (trackerFilterMode === 'open') return p.status !== 'closed';
@@ -2881,6 +3031,8 @@ async function fetchLiveUsdTwdRate() {
         const target50 = ((p.credit || 0) * 0.5).toFixed(2);
         const isClosed = p.status === 'closed';
         const realizedNet = Math.round(((p.credit || 0) - (p.closePrice || 0)) * 100 * p.qty);
+        const colInfo = calcPositionCollateralInfo(p);
+        const colPct = ((colInfo.usd / Math.max(1, totalCapUsd)) * 100).toFixed(1);
 
         let statusBadge;
         if (isClosed) {
@@ -2893,6 +3045,11 @@ async function fetchLiveUsdTwdRate() {
         } else {
           statusBadge = `<span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-semibold">✅ 收租進行中</span>`;
         }
+
+        const colCell = isClosed
+          ? `<span class="text-slate-400 text-[11px]">已釋放</span>`
+          : `<div class="font-bold text-amber-600 dark:text-amber-400">${formatDisplayMoney(colInfo.usd, false, 0)} <span class="text-[10px] text-slate-500">(${colPct}%)</span></div>
+             <div class="text-[10px] text-slate-400">${colInfo.note}</div>`;
 
         const premCell = isClosed
           ? `<div class="font-bold text-slate-700 dark:text-slate-200">開 $${(p.credit || 0).toFixed(2)} → 平 $${(p.closePrice || 0).toFixed(2)}</div>
@@ -2923,6 +3080,7 @@ async function fetchLiveUsdTwdRate() {
               <div class="text-[10px] font-bold ${!isClosed && remDte <= 21 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400'}">${isClosed ? `結案日 ${p.closedAt || '—'}` : `剩餘 ${remDte} DTE`}</div>
             </td>
             <td class="py-2.5 px-2.5 font-semibold">${p.qty} 口</td>
+            <td class="py-2.5 px-2.5">${colCell}</td>
             <td class="py-2.5 px-2.5">${premCell}</td>
             <td class="py-2.5 px-2.5">${statusBadge}</td>
             <td class="py-2.5 px-2.5 text-right whitespace-nowrap">${actionBtns}</td>
@@ -2930,7 +3088,7 @@ async function fetchLiveUsdTwdRate() {
         `;
       }).join('');
 
-      document.getElementById('posTrackerTableBody').innerHTML = rowsHtml || `<tr><td colspan="7" class="py-5 text-center text-slate-400">此分類尚無部位紀錄，可由上方新增或從第 1 頁模擬器一鍵寫入</td></tr>`;
+      document.getElementById('posTrackerTableBody').innerHTML = rowsHtml || `<tr><td colspan="8" class="py-5 text-center text-slate-400">此分類尚無部位紀錄，可由上方新增或從第 1 頁模擬器一鍵寫入</td></tr>`;
 
       const winRateTxt = closedCount > 0 ? `${Math.round((closedWins / closedCount) * 100)}% (${closedWins}/${closedCount})` : '尚無結案';
       const realizedCls = realizedPnLUsd >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
@@ -3501,12 +3659,14 @@ async function fetchLiveUsdTwdRate() {
       syncCapitalControls(val);
       renderPortfolioAllocation();
       updateCompoundChart();
+      renderTrackedPositions();
     }
 
     function onCompoundInitialChange(val) {
       syncCapitalControls(val);
       renderPortfolioAllocation();
       updateCompoundChart();
+      renderTrackedPositions();
     }
 
     function selectPortfolioMode(m, skipSave = false) {

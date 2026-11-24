@@ -78,7 +78,7 @@
   <header class="sticky top-0 z-40 bg-white/95 dark:bg-notionCard/95 backdrop-blur border-b border-slate-200 dark:border-notionBorder px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v3.5</span>
+        <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs tracking-wider">FIRSTRADE v3.6</span>
         <div>
           <h1 class="text-base sm:text-lg font-bold leading-tight">美股期權 10 大策略 & Greeks 整合系統</h1>
           <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5">
@@ -918,102 +918,398 @@
 
     <!-- ==================== 分頁 5：選擇權全攻略教學百科 ==================== -->
     <section id="panel-academy" class="hidden space-y-6">
-      <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-blue-500/30 space-y-4 shadow-sm">
-        <div>
-          <h2 class="font-bold text-base sm:text-lg text-blue-600 dark:text-blue-400">🧭 互動式期權策略決策導航（不知道該選哪個策略？點選你的看法）</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">根據你對「股價方向」與「隱含波動率位階 (IV Rank)」的判斷，自動配對最佳策略：</p>
+
+      <!-- 頁內章節快捷導覽列 -->
+      <div class="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder shadow-sm text-xs">
+        <span class="font-bold text-slate-500 dark:text-slate-400 px-1">📑 教學快速導覽：</span>
+        <a href="#acad-navigator" class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-300 hover:bg-blue-500/20 font-semibold transition">🧭 策略決策導航</a>
+        <a href="#acad-logic" class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-700 dark:text-purple-300 hover:bg-purple-500/20 font-semibold transition">🧠 底層邏輯與 Greeks 聯動</a>
+        <a href="#acad-sop" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 font-semibold transition">🎯 各策略 Firstrade 下單 SOP</a>
+        <a href="#acad-rescue" class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-300 hover:bg-rose-500/20 font-semibold transition">🚨 看錯方向與大跌急救箱</a>
+        <a href="#acad-basics" class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 font-semibold transition">📘 基礎核心與速查公式</a>
+      </div>
+
+      <!-- 模組 1：進階互動式期權策略決策導航 (支援權限等級 L2/L3 + 方向 + IV 位階) -->
+      <div id="acad-navigator" class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-blue-500/30 space-y-4 shadow-sm scroll-mt-24">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="font-bold text-base sm:text-lg text-blue-600 dark:text-blue-400">🧭 一、互動式期權策略決策導航（依權限 · 方向 · 波動率自動配對）</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">不知道當下盤勢該用哪招？選擇你的 Firstrade 權限等級、方向預期與 IV Rank，系統自動推演最佳策略與底層邏輯：</p>
+          </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
           <div>
-            <label class="text-slate-500 dark:text-slate-400 font-medium">1. 你對未來 30 天股價方向的看法：</label>
+            <label class="text-slate-500 dark:text-slate-400 font-semibold">1. Firstrade 帳戶期權權限等級：</label>
+            <select id="finderLevel" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold">
+              <option value="L2">🛡️ L1 / L2 基礎權限（僅限 CSP / Covered Call）</option>
+              <option value="L3" selected>🚀 L3+ 進階權限（開放價差 / PMCC / 鐵兀鷹 / 跨式）</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-500 dark:text-slate-400 font-semibold">2. 未來 30 天股價方向預期：</label>
             <select id="finderDir" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold">
-              <option value="bull">📈 看漲 / 偏多 (Bullish)</option>
-              <option value="neutral">↔️ 橫盤震盪 / 不大跌即可 (Neutral)</option>
-              <option value="volatile">💥 即將大噴發但不確定方向 (Volatile)</option>
+              <option value="bull_mild">🌤️ 溫和看漲 / 盤整不跌（想收租或低接）</option>
+              <option value="bull_strong">📈 強烈看漲 / 預期突破大波段</option>
+              <option value="neutral">↔️ 橫盤區間震盪（上有壓、下有撐）</option>
+              <option value="bear">📉 看跌 / 進入明顯下跌趨勢</option>
+              <option value="volatile">💥 重大事件雙向大波動（不確定方向）</option>
             </select>
           </div>
           <div>
-            <label class="text-slate-500 dark:text-slate-400 font-medium">2. 目前該股票的 IV Rank (權利金貴不貴)：</label>
+            <label class="text-slate-500 dark:text-slate-400 font-semibold">3. 目前標的 IV Rank（權利金貴不貴）：</label>
             <select id="finderIvr" onchange="runStrategyFinder()" class="w-full mt-1 p-2.5 rounded-xl bg-slate-100 dark:bg-notionDark border border-slate-300 dark:border-notionBorder font-bold">
-              <option value="high">🔥 高 IV Rank (≥50% 權利金昂貴)</option>
-              <option value="low">💎 低 IV Rank (&lt;30% 權利金便宜)</option>
+              <option value="high">🔥 高 IV Rank（≥50% 保費昂貴，有利賣方）</option>
+              <option value="mid">⚖️ 中立 IV Rank（30%~49% 波動溫和）</option>
+              <option value="low">💎 低 IV Rank（&lt;30% 保費便宜，有利買方）</option>
             </select>
           </div>
-          <div id="finderResultCard" class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col justify-center"></div>
+        </div>
+
+        <div id="finderResultCard" class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2 text-xs"></div>
+      </div>
+
+      <!-- 模組 2：底層邏輯與 Greeks 聯動全解析 -->
+      <div id="acad-logic" class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-5 shadow-sm scroll-mt-24">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-notionBorder pb-3">
+          <div>
+            <h2 class="font-bold text-base sm:text-lg text-purple-600 dark:text-purple-400">🧠 二、期權底層邏輯與 Greeks 聯動關係全解析</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">所有期權策略都不是憑感覺猜漲跌，而是「方向 (Delta) × 波動率 (Vega) × 時間 (Theta)」的三維度取捨</p>
+          </div>
+          <span class="px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-700 dark:text-purple-300 text-xs font-bold">交易心法核心</span>
+        </div>
+
+        <!-- 2.1 三大底層邏輯 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/25 space-y-1.5">
+            <div class="font-bold text-sm text-blue-600 dark:text-blue-400">1️⃣ 方向預期（Delta 邏輯）</div>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+              只有預期股價<b>「大漲或大跌」</b>時才適合當純買方；只要預期是<b>「溫和漲跌或盤整」</b>，賣方（CSP/CC）或價差策略（Spread）的勝率遠高於單純買權。
+            </p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/25 space-y-1.5">
+            <div class="font-bold text-sm text-amber-600 dark:text-amber-400">2️⃣ 波動率高低（Vega 邏輯）</div>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+              期權本質是<b>「交易波動率」</b>。<b>IV 高位（IVR ≥ 50%）</b>保費昂貴，適合當賣方賺波動率回落；<b>IV 低位（IVR &lt; 30%）</b>保費便宜，才適合當買方或買進 LEAPS 長腿。
+            </p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/25 space-y-1.5">
+            <div class="font-bold text-sm text-emerald-600 dark:text-emerald-400">3️⃣ 時間站哪邊（Theta 邏輯）</div>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+              時間是買方的敵人、賣方的朋友。預期行情<b>「立刻爆發」</b>可當買方；若行情需要時間慢慢發酵或磨盤，務必當賣方或用價差單（Spread）抵銷時間損耗。
+            </p>
+          </div>
+        </div>
+
+        <!-- 2.2 Greeks 開車比喻聯動模型 -->
+        <div class="space-y-2.5">
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">🚗 用「開車」秒懂四大 Greeks 的聯動關聯</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-blue-600 dark:text-blue-400 text-sm">Delta (Δ) ＝ 時速</span>
+                <span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 font-mono text-[10px]">方向速度</span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                代表股價每漲跌 $1，合約價格跳動幾毛。實戰中 <code>|Delta|</code> 可直接視為<b>到期變價內（被穿價）的近似機率</b>（如賣 Put 選 Δ -0.25 ≈ 75% 勝率）。
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-cyan-600 dark:text-cyan-400 text-sm">Gamma (Γ) ＝ 油門</span>
+                <span class="px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 font-mono text-[10px]">Δ 的加速度</span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                <b>與 Delta 綁定</b>：股價越靠近履約價 (ATM) 且越接近到期日，油門踩越深，Delta 會突然暴衝！買方愛高 Gamma 爆發，賣方最怕到期前被 Gamma 反殺。
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-rose-600 dark:text-rose-400 text-sm">Theta (Θ) ＝ 漏油</span>
+                <span class="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 font-mono text-[10px]">時間流逝</span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                <b>與 Gamma 是天平兩端</b>：到期前 30~45 天漏油加速（賣方收租甜區），但越靠近到期日，高 Theta 必然伴隨高 Gamma 風險，因此賣方常在 <b>21 DTE</b> 平倉。
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-amber-600 dark:text-amber-400 text-sm">Vega (ν) ＝ 天氣路況</span>
+                <span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 font-mono text-[10px]">恐慌波動</span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                市場大跌恐慌時 IV 暴衝，賣 Put 會遭受<b>「Delta 跌價 ＋ Vega 保費變貴」雙重打擊</b>；反之財報公布後 IV 驟降 (IV Crush)，買方常看對方向卻賠錢。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.3 履約價 (Strike) 與到期日 (DTE) 挑選矩陣 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+            <div class="font-bold text-slate-800 dark:text-slate-100">🎯 履約價 (Strike Price) × Greeks 挑選法則</div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400">
+                    <th class="py-1.5 pr-2">狀態</th>
+                    <th class="py-1.5 pr-2">Delta</th>
+                    <th class="py-1.5 pr-2">Gamma / Theta</th>
+                    <th class="py-1.5">實戰選法與目的</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200/60 dark:divide-notionBorder text-slate-600 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2 pr-2 font-bold text-purple-600 dark:text-purple-400">價內 (ITM)</td>
+                    <td class="py-2 pr-2 font-mono">0.70~0.90+</td>
+                    <td class="py-2 pr-2">雙低，時間價值少</td>
+                    <td class="py-2">買方穩健跟漲、PMCC 長腿替代現股。</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 pr-2 font-bold text-blue-600 dark:text-blue-400">價平 (ATM)</td>
+                    <td class="py-2 pr-2 font-mono">約 0.50</td>
+                    <td class="py-2 pr-2 font-bold text-rose-500">皆達最高峰</td>
+                    <td class="py-2">買方短線爆發、交易波動率（Straddle）。</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 pr-2 font-bold text-emerald-600 dark:text-emerald-400">價外 (OTM)</td>
+                    <td class="py-2 pr-2 font-mono">0.15~0.30</td>
+                    <td class="py-2 pr-2">全為純時間價值</td>
+                    <td class="py-2">賣方高勝率收租（CSP / CC / 鐵兀鷹主力）。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+            <div class="font-bold text-slate-800 dark:text-slate-100">⏳ 到期日 (DTE) × Greeks 挑選法則</div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400">
+                    <th class="py-1.5 pr-2">天期</th>
+                    <th class="py-1.5 pr-2">Theta</th>
+                    <th class="py-1.5 pr-2">Gamma / Vega</th>
+                    <th class="py-1.5">實戰選法與目的</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200/60 dark:divide-notionBorder text-slate-600 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2 pr-2 font-bold text-rose-600 dark:text-rose-400">0 ~ 14 DTE</td>
+                    <td class="py-2 pr-2">極快</td>
+                    <td class="py-2 pr-2">Gamma 極高 / Vega 低</td>
+                    <td class="py-2">賭短線事件；賣方易遇尾盤穿價風險。</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 pr-2 font-bold text-emerald-600 dark:text-emerald-400">30 ~ 45 DTE</td>
+                    <td class="py-2 pr-2 font-bold">黃金甜區</td>
+                    <td class="py-2 pr-2">皆適中可控</td>
+                    <td class="py-2">賣方標準開倉週期（21 DTE 平倉避險）。</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 pr-2 font-bold text-blue-600 dark:text-blue-400">90~365+ DTE</td>
+                    <td class="py-2 pr-2">極慢</td>
+                    <td class="py-2 pr-2">Gamma 低 / Vega 極高</td>
+                    <td class="py-2">買方波段或 LEAPS 長腿，大幅降低時間損耗。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.4 不同策略該盯緊哪幾個 Greeks 對照表 -->
+        <div class="space-y-2">
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">🔍 不同策略進場與持有時「該盯緊哪幾個 Greeks」？</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b-2 border-slate-200 dark:border-notionBorder text-slate-500 dark:text-slate-400">
+                  <th class="py-2 px-3">策略類型</th>
+                  <th class="py-2 px-3">核心賺錢引擎（希望發生）</th>
+                  <th class="py-2 px-3">最大天敵（最怕發生）</th>
+                  <th class="py-2 px-3">實戰盯盤與風控重點</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200/60 dark:divide-notionBorder text-slate-600 dark:text-slate-300">
+                <tr class="hover:bg-blue-500/5">
+                  <td class="py-2.5 px-3 font-bold text-blue-600 dark:text-blue-400">Cash-Secured Put / Covered Call</td>
+                  <td class="py-2.5 px-3"><span class="text-emerald-600 dark:text-emerald-400 font-semibold">+Theta</span> (收租)、<span class="text-emerald-600 dark:text-emerald-400 font-semibold">-Vega</span> (IV回落)</td>
+                  <td class="py-2.5 px-3 text-rose-600 dark:text-rose-400">Gamma 暴衝（逼近履約價）＋ IV 暴漲</td>
+                  <td class="py-2.5 px-3">開倉挑 <b>|Δ| 0.20~0.30</b>；盯緊每日 Theta 進帳；獲利 50% 或剩 21 DTE 處理。</td>
+                </tr>
+                <tr class="hover:bg-blue-500/5">
+                  <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">Bull Call / Bear Put Spread</td>
+                  <td class="py-2.5 px-3"><span class="text-blue-600 dark:text-blue-400 font-semibold">淨 Delta</span>（看對單邊趨勢）</td>
+                  <td class="py-2.5 px-3 text-rose-600 dark:text-rose-400">時間拖太久橫盤不動</td>
+                  <td class="py-2.5 px-3">一買一賣已抵銷大半 Theta 與 Vega，操作最純粹：只需判斷方向與目標價位。</td>
+                </tr>
+                <tr class="hover:bg-blue-500/5">
+                  <td class="py-2.5 px-3 font-bold text-purple-600 dark:text-purple-400">PMCC (窮人版掩護性買權)</td>
+                  <td class="py-2.5 px-3"><span class="text-blue-600 dark:text-blue-400 font-semibold">+Delta</span> (長腿上漲) ＋ <span class="text-emerald-600 dark:text-emerald-400 font-semibold">+淨 Theta</span></td>
+                  <td class="py-2.5 px-3 text-rose-600 dark:text-rose-400">大跌使長腿跌出深價內（Delta 縮水）</td>
+                  <td class="py-2.5 px-3">確保 <b>長腿 Δ ≥ 0.80</b>、<b>短腿 Δ ≤ 0.30</b>，且 <b>寬度 &gt; 建倉淨支出 (Net Debit)</b> 防倒虧。</td>
+                </tr>
+                <tr class="hover:bg-blue-500/5">
+                  <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">Iron Condor (鐵兀鷹)</td>
+                  <td class="py-2.5 px-3"><span class="text-emerald-600 dark:text-emerald-400 font-semibold">雙倍 +Theta</span> ＋ <span class="text-emerald-600 dark:text-emerald-400 font-semibold">-Vega</span></td>
+                  <td class="py-2.5 px-3 text-rose-600 dark:text-rose-400">單邊劇烈突破穿價（Gamma 風險）</td>
+                  <td class="py-2.5 px-3">開倉維持整體 <b>Delta ≈ 0</b>；任一邊賣腿 <b>|Δ| 飆破 0.35</b> 時啟動調整安全側。</td>
+                </tr>
+                <tr class="hover:bg-blue-500/5">
+                  <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">Long Straddle (跨式買方)</td>
+                  <td class="py-2.5 px-3"><span class="text-cyan-600 dark:text-cyan-400 font-semibold">高 +Gamma</span> ＋ <span class="text-amber-600 dark:text-amber-400 font-semibold">+Vega</span></td>
+                  <td class="py-2.5 px-3 text-rose-600 dark:text-rose-400">雙倍 -Theta 流失 ＋ 財報後 IV Crush</td>
+                  <td class="py-2.5 px-3">僅在 IV 尚未飆高前建倉；預期單邊波動幅度必須大於兩邊權利金總和。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+      <!-- 模組 3：不同策略的 Firstrade 實戰下單步驟 SOP (互動式頁籤) -->
+      <div id="acad-sop" class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-emerald-500/30 space-y-4 shadow-sm scroll-mt-24">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-notionBorder pb-3">
+          <div>
+            <h2 class="font-bold text-base sm:text-lg text-emerald-600 dark:text-emerald-400">🎯 三、不同策略 Firstrade 實戰下單步驟 SOP（含防呆核對表）</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">點選下方策略切換完整下單步驟、合約挑選條件、Firstrade 下單欄位設定與獲利平倉紀律</p>
+          </div>
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-bold">直接照表下單</span>
+        </div>
+
+        <!-- 6 大策略頁籤按鈕 -->
+        <div id="sopTabButtons" class="flex flex-wrap gap-2 text-xs">
+          <button onclick="renderOrderSop('csp')" id="sop-btn-csp" class="px-3 py-1.5 rounded-xl font-bold transition bg-emerald-600 text-white">🛡️ L2 · Cash-Secured Put</button>
+          <button onclick="renderOrderSop('cc')" id="sop-btn-cc" class="px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 dark:bg-notionDark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-notionBorder">🛡️ L2 · Covered Call</button>
+          <button onclick="renderOrderSop('wheel')" id="sop-btn-wheel" class="px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 dark:bg-notionDark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-notionBorder">🔄 L2 · The Wheel 輪動循環</button>
+          <button onclick="renderOrderSop('spread')" id="sop-btn-spread" class="px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 dark:bg-notionDark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-notionBorder">🚀 L3 · Vertical Spreads 垂直價差</button>
+          <button onclick="renderOrderSop('pmcc')" id="sop-btn-pmcc" class="px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 dark:bg-notionDark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-notionBorder">🚀 L3 · PMCC 窮人版掩護買權</button>
+          <button onclick="renderOrderSop('iron_condor')" id="sop-btn-iron_condor" class="px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 dark:bg-notionDark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-notionBorder">🚀 L3 · Iron Condor 鐵兀鷹</button>
+        </div>
+
+        <!-- 動態渲染的策略下單步驟內容容器 -->
+        <div id="sopContentContainer" class="space-y-4"></div>
+      </div>
+
+      <!-- 模組 4：看錯方向與遇到大漲大跌「五大危機補救急救箱」 -->
+      <div id="acad-rescue" class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-rose-500/30 space-y-4 shadow-sm scroll-mt-24">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-notionBorder pb-3">
+          <div>
+            <h2 class="font-bold text-base sm:text-lg text-rose-600 dark:text-rose-400">🚨 四、看錯方向與大漲大跌「五大危機補救急救箱」</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">核心心法：<b>賣方遇難靠「時間與空間（Roll 往後延、往外推）」化解；買方遇難靠「紀律砍單（保住殘值）」自救</b></p>
+          </div>
+          <button onclick="switchTab('tools')" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">
+            🛠️ 前往第 3 頁 Rollover 試算器
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <!-- 狀況 1 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+            <div class="font-bold text-sm text-rose-600 dark:text-rose-400">狀況 1：賣 Put (CSP) 遇股價大跌逼近／跌破履約價</div>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 leading-relaxed list-disc pl-4">
+              <li><b>招式 A（首選）Roll Out &amp; Down：</b>買回原快跌破的 Put (BTC)，同時賣出下個月到期、履約價更低的新 Put (STO)，務必維持 <b>Net Credit（淨收錢）</b>，用時間換取更低地板價。</li>
+              <li><b>招式 B（優質股）順勢接股啟動 Wheel：</b>若僅隨大盤回檔、基本面沒壞，讓它到期接 100 股，隔週一立刻賣出高於真實成本的 Covered Call 收租回血。</li>
+              <li><b>招式 C（暴雷止血）果斷認賠停損：</b>若公司爆出重大利空或財報崩壞，虧損達當初收取權利金 <b>2 倍</b>時直接 BTC 砍單，絕不逆勢接刀。</li>
+            </ul>
+          </div>
+
+          <!-- 狀況 2 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+            <div class="font-bold text-sm text-blue-600 dark:text-blue-400">狀況 2：賣 Call (Covered Call) 遇暴漲衝破履約價</div>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 leading-relaxed list-disc pl-4">
+              <li><b>招式 A（保股）Roll Out &amp; Up：</b>在剩餘 14~21 DTE 時，買回近月低履約價 Call (BTC)，並賣出往後 30~60 天、更高履約價的新 Call (STO)，堅持 <b>Net Credit ≥ $0</b> 把天花板往上抬高。</li>
+              <li><b>招式 B（獲利達標）微笑放飛：</b>原本賣在持股成本上方，被行權本身就是「賺滿價差＋賺滿權利金」，可領回現金等回檔再開下一輪 CSP。</li>
+              <li><b>除息日前警報：</b>除息日前 2 天若 <code>Call 剩餘時間價值 &lt; 每股股息</code>，務必提早 Roll Out，否則會被買方提前行權搶走股息。</li>
+            </ul>
+          </div>
+
+          <!-- 狀況 3 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+            <div class="font-bold text-sm text-purple-600 dark:text-purple-400">狀況 3：垂直價差 / Iron Condor 遇單邊暴衝穿價</div>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 leading-relaxed list-disc pl-4">
+              <li><b>招式 A（鐵兀鷹專屬）Roll Untested Side：</b>若股價大漲逼近上方 Call Spread，但下方 Put Spread 已賺 80%，直接把安全側平倉並往上重開一組新 Put Spread，多擠一筆權利金縮小上方虧損。</li>
+              <li><b>招式 B（價差通用）切忌盤中恐慌亂砍：</b>價差單進場瞬間<b>最大虧損已完全鎖死</b>，暴衝當下買賣價差極寬，亂用市價平倉最吃虧，應冷靜等股價回檔或 IV 回落再處理。</li>
+            </ul>
+          </div>
+
+          <!-- 狀況 4 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-2">
+            <div class="font-bold text-sm text-amber-600 dark:text-amber-400">狀況 4：買方 (Long Call/Put) 看錯方向 或 遇重大事件 (FOMC / 財報)</div>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 leading-relaxed list-disc pl-4">
+              <li><b>買方嚴守「雙停損線」：</b>買方沒有轉倉收租武器，一旦虧損達 <b>40%~50%</b> 或剩餘天數跌破 <b>21 DTE</b>（Theta 斷崖暴跌），必須無條件平倉保住剩餘殘值。</li>
+              <li><b>遇 FOMC 利率決議／財報週三對策：</b>① <b>事件前一天提前平倉</b>空手避開跳空（最穩妥）；② 挑選<b>事件前到期</b>的短天期合約；③ 確認履約價緩衝 ≥ 6% 且真的願意低價接股才跨過事件。</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 絕對不能轉倉的紅線警告 -->
+        <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/35 text-xs text-rose-800 dark:text-rose-200 leading-relaxed">
+          <div class="font-bold text-rose-700 dark:text-rose-300 mb-1">⛔ 絕對「不能轉倉 (Roll)」的 3 大危險紅燈（遇到請直接平倉認賠）</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div>1. <b>基本面永久惡化：</b>財報暴雷、假帳、重大訴訟或產業衰退，轉倉只會越陷越深。</div>
+            <div>2. <b>必須倒貼現金 (Net Debit)：</b>如果往後延時間還要自己掏錢補貼才能轉倉，代表這筆救援已經無效。</div>
+            <div>3. <b>資金卡死過久（超過 90 天）：</b>為了硬凹損益兩平把合約展到半年後，會嚴重犧牲資金機會成本。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 模組 5：基礎核心、理論最大虧損與實戰速查公式 -->
+      <div id="acad-basics" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm scroll-mt-24">
         <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-blue-600 dark:text-blue-400">📘 一、期權本質、價值拆解與價內外 (ITM/ATM/OTM)</h3>
+            <h3 class="font-bold text-base text-blue-600 dark:text-blue-400">📘 一、期權本質、100 股乘數與「理論最大虧損」真相</h3>
             <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 text-xs font-bold">基礎核心</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
-            <p>• <b>1 口合約 = 100 股正股</b>：報價顯示 $2.50 時，實際收付金額為 <code>$2.50 × 100 = $250 美元</code>。</p>
-            <p>• <b>Call (買權) vs Put (賣權)</b>：Call 代表「在到期日前以履約價買進股票的權利」；Put 代表「以履約價賣出股票的權利」。</p>
-            <p>• <b>權利金總價 ＝ 內含價值 (Intrinsic) ＋ 時間價值 (Extrinsic)</b>：內含價值為立即行權能賺到的價差；時間價值為未來波動溢價，隨到期日逼近加速歸零。</p>
+            <p>• <b>1 口合約 = 100 股正股</b>：報價 $0.70 時，實際權利金收付為 <code>$0.70 × 100 = $70 美元</code>（不會額外發租金，「收租」指的就是把這 $70 透過時間流逝慢慢賺走）。</p>
+            <p>• <b>賣 Put (CSP) 是「看不跌」，不是看跌</b>：你的對手是買 Put 的人；只要到期股價不跌破履約價，權利金全賺。</p>
+            <p>• <b>為何下單顯示「最大虧損 $4,430」？</b> 這是券商假設公司明天倒閉股價變 $0 的極端公式（<code>$45 × 100 - $70</code>）。實戰風險等同於用 $44.30 折價買進 100 股現股，因此<b>只選跌了也敢長期持有的大公司</b>。</p>
           </div>
         </div>
 
         <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-emerald-600 dark:text-emerald-400">📗 二、Firstrade 四大期權指令與配對鐵律</h3>
+            <h3 class="font-bold text-base text-emerald-600 dark:text-emerald-400">📗 二、Firstrade 四大指令與流動性避坑法則</h3>
             <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold">必考操作</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
-            <p>• <b>買方流派</b>：<b>Buy to Open (BTO 買進開倉)</b> 付出權利金建立買方部位；<b>Sell to Close (STC 賣出平倉)</b> 獲利了結或停損。</p>
-            <p>• <b>賣方包租公流派</b>：<b>Sell to Open (STO 賣出開倉)</b> 先收權利金現金；當權利金跌掉 50%~70% 時用 <b>Buy to Close (BTC 買進平倉)</b> 鎖利釋放保證金。</p>
+            <p>• <b>賣方收租流派</b>：<b>Sell to Open (STO 賣出開倉)</b> 先收現金（持倉顯示 <code>-1</code>）；獲利達 50% 時用 <b>Buy to Close (BTC 買進平倉)</b> 提早落袋並釋放擔保金。</p>
+            <p>• <b>買方進攻流派</b>：<b>Buy to Open (BTO 買進開倉)</b> 付權利金；用 <b>Sell to Close (STC 賣出平倉)</b> 獲利或停損。</p>
+            <p>• <b>流動性與掛單鐵律</b>：盤前 Volume 常偏低，應看 <b>Open Interest ≥ 500</b> 與 <b>Bid-Ask 價差 ≤ $0.05</b>（優先選每月第 3 個週五「月期權」）。開盤後 15 分鐘（台灣時間 22:45 後）再掛 <b>Limit 中間價</b>，絕不用市價單！</p>
           </div>
         </div>
 
         <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-purple-600 dark:text-purple-400">🔬 三、五大希臘字母 (Greeks) 實戰速查指南</h3>
-            <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-400 text-xs font-bold">精算核心</span>
-          </div>
-          <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
-            <p>• <b>Delta (Δ)</b>：股價每漲 $1 權利金的變動量，實戰中 <code>|Delta|</code> 近似到期進入價內的機率。</p>
-            <p>• <b>Gamma (Γ)</b>：到期前最後 7 天價平 Gamma 會暴增，賣方務必在 <b>21 DTE</b> 前後平倉或展期。</p>
-            <p>• <b>Theta (Θ)</b>：到期前 30~45 天時間價值進入加速衰減黃金期，為賣方最佳開倉週期。</p>
-            <p>• <b>Vega (ν)</b>：財報公布瞬間 IV 會暴跌（IV Crush），買方易受損而賣方受益。</p>
-          </div>
-        </div>
-
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
-          <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-amber-600 dark:text-amber-400">📊 四、隱含波動率 (IV) 與 IV Rank 選股鐵律</h3>
+            <h3 class="font-bold text-base text-amber-600 dark:text-amber-400">📊 三、IV 波動率換算單日波動 &amp; IV Rank 鐵律</h3>
             <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold">勝率關鍵</span>
           </div>
           <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+            <p>• <b>IV 換算單日預期波動</b>：<code>單日波動 ≈ IV ÷ √252 (約 15.87)</code>。例如 IV 34% 約每日 ±2.15%（溫和）；IV 200% 約每日 ±12.6%（極端高風險，易發生財報後 IV Crush 雙殺買方）。</p>
             <p>• <b>IV Rank 公式</b>：<code>(當前 IV - 52週最低 IV) ÷ (52週最高 IV - 52週最低 IV) × 100%</code>。</p>
-            <p>• <b>黃金分水嶺</b>：<b>IV Rank ≥ 50%</b> 適合做賣方（CSP、Covered Call、Iron Condor）；<b>IV Rank &lt; 30%</b> 適合做買方（PMCC 長腿、Bull Call Spread）。</p>
+            <p>• <b>黃金分水嶺</b>：<b>IV Rank ≥ 50%</b> 適合做賣方（CSP、Covered Call、Iron Condor）；<b>IV Rank &lt; 30%</b> 適合買進長約（PMCC 長腿、Bull Call Spread）。</p>
           </div>
         </div>
 
-        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 md:col-span-2 shadow-sm">
+        <div class="bg-white dark:bg-notionCard rounded-2xl p-5 border border-slate-200 dark:border-notionBorder space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-200 dark:border-notionBorder pb-2">
-            <h3 class="font-bold text-base text-rose-600 dark:text-rose-400">🔄 五、Rollover (展期) 永久保住正股 SOP 與除息日防提前行權公式</h3>
-            <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 text-xs font-bold">進階風控</span>
+            <h3 class="font-bold text-base text-purple-600 dark:text-purple-400">💰 四、小資金控管與年化報酬 (APY) 計算原則</h3>
+            <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-400 text-xs font-bold">資金配置</span>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-              <div class="font-bold text-blue-600 dark:text-blue-400 mb-1">1. Covered Call 被漲破：Roll Up & Out</div>
-              在 14~21 DTE 時買回近月 Call (BTC) ＋ 賣出往後 30~60 天更高履約價的 Call (STO)，確保整筆為 Net Credit 淨收錢並拉高賣出天花板。
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-              <div class="font-bold text-emerald-600 dark:text-emerald-400 mb-1">2. CSP 被跌破：Roll Down & Out</div>
-              買回近月 Put (BTC) ＋ 賣出下個月更低履約價的 Put (STO)，降低接刀成本並持續收取額外權利金。
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder">
-              <div class="font-bold text-amber-600 dark:text-amber-400 mb-1">3. 除息日防提前行權 (Early Assignment)</div>
-              除息日前 2 天若 <code>Call 剩餘時間價值 &lt; 每股股息</code>，對手會提前行權搶股息，務必提早 Roll Out 補厚時間價值。
-            </div>
+          <div class="space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+            <p>• <b>切勿單壓滿倉</b>：例如 $12,000 本金做 L2 輪動，建議拆成 2 個不同產業部位（每筆 $4,000~$5,500，鎖定股價 $15~$60 標的），永久保留 <b>15%~20% 現金緩衝</b>應對轉倉或急跌。</p>
+            <p>• <b>L3 升級第一鐵律</b>：價差單保證金雖低（常僅 $500），但單筆最大虧損仍須嚴控在<b>總資金 2%~5% 以內</b>，避免過度開倉。</p>
+            <p>• <b>提早 50% 平倉拉高年化</b>：用 1/3 時間賺走 50% 權利金立刻換下一單，周轉率與年化報酬率往往高於死抱到期，同時完全避開到期週 Gamma 與指派費風險。</p>
           </div>
         </div>
       </div>
     </section>
-
   </main>
 
   <script>
@@ -1198,8 +1494,8 @@ async function fetchLiveUsdTwdRate() {
         content: '提供年化 40% 進攻型、20% 穩健雙引擎與 50% 買方架構三種配置，並可拖動下方複利滑桿模擬每月提領生活費或 1~15 年資產成長軌跡。'
       },
       academy: {
-        title: '📖 本頁功能說明：選擇權全攻略教學百科（從基礎、Greeks 到 Rollover 展期）',
-        content: '完整收錄選擇權交易必備的 5 大核心知識體系，上方附有「互動式期權策略決策導航」，自動推薦最適合當下盤勢與 IV 位階的策略。'
+        title: '📖 本頁功能說明：選擇權全攻略教學百科（底層邏輯 · 策略推薦 · Firstrade 下單 SOP · 危機急救箱）',
+        content: '1. <b>互動式策略導航</b>：依照你的 Firstrade 權限等級 (L2/L3)、方向預期與 IV 位階，自動推薦最佳策略並可一鍵跳轉至下單 SOP 或第 1 頁模擬器。<br>2. <b>Greeks 聯動與危機補救</b>：完整收錄 Greeks 開車聯動模型、6 大策略 Firstrade 下單防呆步驟，以及看錯方向或遇重大事件時的標準補救 SOP。'
       }
     };
 
@@ -2988,42 +3284,303 @@ async function fetchLiveUsdTwdRate() {
       }
     }
 
-    // ==================== 10. 第5頁：教學百科互動決策導航 ====================
+    // ==================== 10. 第5頁：教學百科互動決策導航 & 各策略下單 SOP ====================
+    const ORDER_SOPS = {
+      csp: {
+        title: 'Cash-Secured Put（現金擔保賣權）— L2 穩健收租 / 折價低接',
+        levelBadge: 'Firstrade L1 / L2 可用',
+        simKey: 'csp',
+        prereq: [
+          '帳戶「可用純現金」必須 ≥ 履約價 × 100（例如履約價 $45 需備妥 $4,500 現金，不可用融資）。',
+          '挑選「跌破也樂意長期持有」的高流動性大型股或 ETF（$12,000 本金建議鎖定股價 $15~$60 標的）。',
+          '避開財報日與重大 FOMC 決議週；確認 Open Interest ≥ 500、Bid-Ask 價差 ≤ $0.05。'
+        ],
+        fields: [
+          ['1. 選擇期權類型', '切換至 Put（賣權）欄位', '⚠️ 雙欄看右側、單欄切至 Put；千萬別誤看左側 Call（Call 的高履約價 Δ 小，Put 相反）！'],
+          ['2. 到期日與履約價', '30~45 DTE ＋ 現價下方 Δ -0.20 ~ -0.30', '優先選每月第 3 個週五「月期權」；安全緩衝約距現價 5%~8%。'],
+          ['3. 交易動作 (Action)', 'Sell to Open（賣出開倉）', '絕對不可選成 Buy to Open！送出前核對合約名稱結尾必須是 P（Put）。'],
+          ['4. 訂單類型與價格', 'Limit（限價單）掛 Bid / Ask 中間價', '美股開盤 15 分鐘後（台灣 22:45 後）下單；絕不用市價單，也勿填低於 Bid 賤賣。'],
+          ['5. 有效期與核對', 'Day（當日有效）｜預估總額顯示 Credit', '確認購買力凍結 ＝ 履約價×100 − 權利金；若 10 分鐘沒成交每次往下微調 $0.01。']
+        ],
+        ruleTitle: '🛡️ 成交後管理與退場 SOP',
+        ruleBody: '成交後持倉數量會顯示 <b>-1</b>（賣方）。① <b>獲利達 50%</b>（例如 $0.70 跌到 $0.35）即可掛 <b>Buy to Close</b> 提早獲利了結並釋放資金；② 若接近 <b>21 DTE</b> 或重大事件前一天可主動平倉避險；③ 若到期跌破履約價接到 100 股，真實成本為「履約價 − 已收權利金」，隔週一立刻無縫轉賣 Covered Call。'
+      },
+      cc: {
+        title: 'Covered Call（掩護性買權）— L2 持股收租降成本',
+        levelBadge: 'Firstrade L1 / L2 可用',
+        simKey: 'cc',
+        prereq: [
+          '帳戶內必須已經持有至少 100 股該標的現股（每 100 股對應賣出 1 口 Call，絕不可超賣成裸 Call）。',
+          '確認你的「真實持股成本價」，新賣出的 Call 履約價必須大於或等於持股成本。',
+          '檢查下一次除息日（Ex-Dividend Date）與財報日，避免除息前時間價值過低被提前行權。'
+        ],
+        fields: [
+          ['1. 選擇期權類型', '切換至 Call（買權）欄位', '雙欄模式看左側 Call；確認合約結尾為 C（Call）。'],
+          ['2. 到期日與履約價', '30~45 DTE ＋ 現價上方 Δ +0.20 ~ +0.30', '履約價務必 ≥ 你的持股成本價，確保被買走時「價差＋權利金」雙賺。'],
+          ['3. 交易動作 (Action)', 'Sell to Open（賣出開倉）', '系統會自動偵測帳戶內的 100 股現股作為擔保，不額外凍結現金。'],
+          ['4. 訂單類型與價格', 'Limit（限價單）掛 Bid / Ask 中間價', '掛中間價等待造市商撮合，避免市價單滑價。'],
+          ['5. 有效期與核對', 'Day（當日有效）｜預估總額顯示 Credit', '核對口數 ≤ 持股股數 ÷ 100。']
+        ],
+        ruleTitle: '⚠️ Covered Call 兩大鐵律',
+        ruleBody: '① <b>絕不賣低於成本價的 Call</b>：若成本 $45 但股價跌到 $38，切勿貪圖權利金賣 $40 Call，否則股價反彈突破 $40 會被迫在虧損狀態下賣出鎖死虧損；② <b>想保留股票時用 Roll Up &amp; Out</b>：若股價大漲逼近履約價，於 14~21 DTE 買回舊 Call 並賣出下個月更高履約價 Call。'
+      },
+      wheel: {
+        title: 'The Wheel Strategy（輪動策略）— L2 現金與股票無限收租閉環',
+        levelBadge: 'Firstrade L1 / L2 完整閉環',
+        simKey: 'csp',
+        prereq: [
+          '將資金拆成 2~3 個不同產業部位（如金融＋科技/ETF），並永久保留 15%~20% 現金緩衝。',
+          '只針對你願意長期持有的大型龍頭股操作，把波動轉化為源源不絕的現金流。',
+          '搭配第 3 頁「21 DTE 與 Wheel 降本追蹤本」，記錄每輪收到的權利金以追蹤真實持股成本。'
+        ],
+        fields: [
+          ['階段 1：純現金起手', '執行 Cash-Secured Put (STO Put)', '選 30~45 DTE、Δ -0.25 價外 Put 收租；沒跌破就獲利 50% 平倉或放到歸零，重複階段 1。'],
+          ['階段 2：跌破履約價', '順勢被行權接下 100 股現股', '真實成本 ＝ 履約價 − 過去累積收到的所有 Put 權利金（大幅低於當初市價）。'],
+          ['階段 3：持股收租', '轉執行 Covered Call (STO Call)', '針對這 100 股賣出 30~45 DTE、Δ +0.25 且履約價 ≥ 真實成本的 Call，沒漲破就持續收租降成本。'],
+          ['階段 4：漲破賣出', '股票被高價買走，變回純現金', '賺走「現股價差 ＋ 所有輪次權利金」，現金回籠後立刻回到階段 1 重新賣 Put！'],
+          ['風控停損紅線', '基本面改變時中斷輪動', '輪動策略唯一怕公司倒閉或長期腰斬；一旦基本面崩壞應果斷停損換股。']
+        ],
+        ruleTitle: '🔄 輪動策略核心優勢',
+        ruleBody: '無論市場橫盤、緩漲或小跌，你始終站在 <b>正 Theta（每天收時間價值）</b> 的順風向。就算接到股票，成本也因為累積的權利金不斷往下壓低，是小資金最紮實的實戰引擎。'
+      },
+      spread: {
+        title: 'Vertical Spreads（垂直價差：信用價差 Credit / 借方價差 Debit）— L3 風險封頂',
+        levelBadge: '需升級 Firstrade L3 權限',
+        simKey: 'spread',
+        prereq: [
+          '已升級至 Firstrade Level 3，下單時選擇「Spread（垂直價差）」多腿單一委託單（切勿拆開分兩筆下以免滑價或保證金不足）。',
+          '高 IV (IVR ≥ 50%) 用信用價差（Bull Put / Bear Call Spread 收租）；低中 IV 看方向用借方價差（Bull Call / Bear Put Spread）。',
+          '單筆最大虧損嚴格控制在總資金的 2%~5% 以內（例如 $12,000 帳戶單筆最大虧損 ≤ $500）。'
+        ],
+        fields: [
+          ['1. 選擇策略模板', 'Firstrade 期權頁面點選「Spread」', '系統提供兩條腿同時設定，並自動計算淨收付（Net Credit / Net Debit）。'],
+          ['2. 信用價差設腿法', 'STO 價外 Δ 0.20~0.30 ＋ BTO 更價外保護腿', '同到期日（30~45 DTE）；例如 SPY 賣 $580 Put ＋ 買 $575 Put，保證金僅凍結 $500 減去權利金。'],
+          ['3. 借方價差設腿法', 'BTO 價內/價平 Δ 0.60 ＋ STO 價外 Δ 0.30', '同到期日（45~60 DTE）；用賣出遠端合約補貼買方成本，大幅降低 Theta 與 IV Crush 傷害。'],
+          ['4. 訂單類型與價格', 'Limit（限價單）掛整組的中間價 (Net Mid)', '確認整組下單標籤為 Net Credit（收租）或 Net Debit（買方），絕不用市價單。'],
+          ['5. 出場紀律', '信用價差賺 50% 平倉；借方價差賺 50%~80% 平倉', '切忌放到到期日最後一小時，避免「釘住風險 (Pin Risk)」造成其中一腿單獨被行權！']
+        ],
+        ruleTitle: '💡 為什麼 L3 必學垂直價差？',
+        ruleBody: '它讓你用 <b>$300~$500 美元</b>就能安全操作 SPY、QQQ、NVDA 等高價標的，進場那刻最大虧損就完全鎖死，且完全不需要擔心跌破後被迫買進 100 股高價現股。'
+      },
+      pmcc: {
+        title: 'Poor Man\'s Covered Call（PMCC 窮人版掩護性買權）— L3 替代現股 3 倍資金效率',
+        levelBadge: '需升級 Firstrade L3 權限',
+        simKey: 'pmcc',
+        prereq: [
+          '挑選基本面強勁、無配息或極低股息的成長龍頭股或 QQQ（避開高息股以防除息前短腿被提前行權）。',
+          '進場前務必在低至中 IV 環境建倉長腿 LEAPS，避免買貴時間價值。',
+          '嚴守不倒虧鐵律：兩腿履約價寬度（短腿 K − 長腿 K）必須嚴格大於建倉淨支出（Net Debit）！'
+        ],
+        fields: [
+          ['1. 長腿（虛擬現股）', 'BTO 180~365+ DTE、深價內 Δ ≥ 0.80 Call', '時間價值佔比越低越好（建議 &lt; 15%），用來以現股 30%~40% 資金模擬持有 100 股。'],
+          ['2. 短腿（收租引擎）', 'STO 30~45 DTE、價外 Δ +0.20 ~ +0.30 Call', '短腿履約價必須高於「長腿履約價 ＋ 淨支出」，確保股價大漲時保底獲利。'],
+          ['3. 下單方式', '選擇 Diagonal / Custom 兩腿單，或先買長腿再賣短腿', '先確保長腿成交後再賣短腿，避免系統判定裸賣 Call 擋單。'],
+          ['4. 訂單類型與價格', 'Limit（限價單）掛中間價', '長天期 LEAPS 買賣價差通常較寬，務必耐心掛中間價微調，絕不用市價單。'],
+          ['5. 短腿管理', '短腿獲利 50% 平倉續開下一月', '若股價大漲穿過短腿，於到期前「整組平倉獲利」或「Roll Out &amp; Up」，切勿讓短腿被行權！']
+        ],
+        ruleTitle: '📐 絕對不倒虧數學驗算公式',
+        ruleBody: '假設買進 $80 長腿花 $22、賣出 $105 短腿收 $2.50 → <b>淨支出 Net Debit ＝ $19.50</b>，而<b>兩腿寬度 ＝ $105 − $80 ＝ $25.00</b>。因為 <code>$25.00 &gt; $19.50</code>，就算明天股價暴衝上天，你同時平倉兩腿依然保底賺進 <b>+$550 美元</b>，絕不會看對方向反而倒虧！'
+      },
+      iron_condor: {
+        title: 'Iron Condor（鐵兀鷹策略）— L3 橫盤震盪雙向收租',
+        levelBadge: '需升級 Firstrade L3 權限',
+        simKey: 'iron_condor',
+        prereq: [
+          '最適用時機：大盤 ETF（SPY / IWM / QQQ）或權值股處於箱型震盪，且 IV Rank ≥ 50%。',
+          '在 Firstrade 直接使用「Iron Condor」四腿標準委託單，系統僅會凍結單邊最大寬度減去總權利金作為保證金。',
+          '盡量避開公司財報週，以免單日跳空直接貫穿其中一側保護翼。'
+        ],
+        fields: [
+          ['1. 下方 Put 價差', 'STO 價外 Δ -0.16 ~ -0.20 Put ＋ BTO 更低保護 Put', '例如現價 $100：賣 $90 Put ＋ 買 $85 Put（寬度 $5），設定下方地板護城河。'],
+          ['2. 上方 Call 價差', 'STO 價外 Δ +0.16 ~ +0.20 Call ＋ BTO 更高保護 Call', '例如賣 $110 Call ＋ 買 $115 Call（寬度 $5），設定上方天花板護城河。'],
+          ['3. 到期日挑選', '四條腿統一 30~45 DTE（月期權）', '讓上下兩邊同時進入 Theta 加速衰減甜區，雙倍收割時間價值。'],
+          ['4. 價格與報酬目標', 'Limit 掛 Net Credit 中間價', '理想總權利金目標約為單邊寬度的 25%~33%（如寬度 $5 目標收 $1.25~$1.65）。'],
+          ['5. 提早結案與調整', '獲利達 50% 或剩 21 DTE 整組平倉', '若單邊賣腿 |Δ| 逼近 0.35，可將沒事的那一側平倉往內靠攏（Roll Untested Side）增加緩衝。']
+        ],
+        ruleTitle: '🦅 鐵兀鷹高勝率秘訣',
+        ruleBody: '鐵兀鷹的優勢是「不用猜方向」，只要到期股價留在寬闊的區間內就全勝。切記<b>不要貪心收滿最後 20% 利潤而死抱到到期日</b>，獲利 50% 提前出場可避開 90% 的尾盤爆雷意外。'
+      }
+    };
+
+    function renderOrderSop(sopKey) {
+      const data = ORDER_SOPS[sopKey] || ORDER_SOPS.csp;
+      Object.keys(ORDER_SOPS).forEach(k => {
+        const btn = document.getElementById(`sop-btn-${k}`);
+        if (!btn) return;
+        btn.className = k === sopKey
+          ? 'px-3 py-1.5 rounded-xl font-bold transition bg-emerald-600 text-white shadow-sm'
+          : 'px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 dark:bg-notionDark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-notionBorder hover:border-emerald-400';
+      });
+
+      const prereqHtml = data.prereq.map(item => `<li>${item}</li>`).join('');
+      const rowsHtml = data.fields.map(row => `
+        <tr class="hover:bg-emerald-500/5">
+          <td class="py-2 px-3 font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">${row[0]}</td>
+          <td class="py-2 px-3 font-bold text-blue-600 dark:text-blue-400">${row[1]}</td>
+          <td class="py-2 px-3 text-slate-600 dark:text-slate-300">${row[2]}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('sopContentContainer').innerHTML = `
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-notionDark border border-slate-200 dark:border-notionBorder space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">${data.title}</h3>
+              <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-700 dark:text-blue-300 text-[11px] font-bold">${data.levelBadge}</span>
+            </div>
+            <button onclick="document.getElementById('strategySelect').value='${data.simKey}'; resetCustomLegs(); switchTab('simulator'); window.scrollTo({top:0, behavior:'smooth'});"
+                    class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">
+              🎯 帶入第 1 頁模擬器試算
+            </button>
+          </div>
+
+          <div class="p-3 rounded-xl bg-white dark:bg-notionCard border border-slate-200 dark:border-notionBorder text-xs space-y-1">
+            <div class="font-bold text-slate-700 dark:text-slate-200">✅ 開倉前 30 秒必做檢查清單：</div>
+            <ul class="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300 leading-relaxed">${prereqHtml}</ul>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-notionBorder bg-white dark:bg-notionCard">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-notionBorder bg-slate-100/70 dark:bg-notionDark text-slate-500 dark:text-slate-400">
+                  <th class="py-2 px-3">下單步驟 / 欄位</th>
+                  <th class="py-2 px-3">標準設定參數</th>
+                  <th class="py-2 px-3">實戰防呆與注意事項</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200/60 dark:divide-notionBorder">${rowsHtml}</tbody>
+            </table>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+            <div class="font-bold text-emerald-700 dark:text-emerald-300 mb-1">${data.ruleTitle}</div>
+            <div>${data.ruleBody}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function jumpToOrderSop(sopKey) {
+      renderOrderSop(sopKey);
+      const el = document.getElementById('acad-sop');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function runStrategyFinder() {
+      const level = document.getElementById('finderLevel')?.value || 'L3';
       const dir = document.getElementById('finderDir').value;
       const ivr = document.getElementById('finderIvr').value;
       const card = document.getElementById('finderResultCard');
 
-      let recKey = 'csp', title = '', desc = '';
-      if (dir === 'bull' && ivr === 'high') {
-        recKey = 'csp';
-        title = '推薦：8. Cash-Secured Put (CSP) 或 9. Covered Call';
-        desc = '看漲且權利金昂貴，賣出價外 Put 收租勝率高達 80%，兼賺時間價值與波動率回落！';
-      } else if (dir === 'bull' && ivr === 'low') {
-        recKey = 'pmcc';
-        title = '推薦：10. PMCC (窮人掩護性買權) 或 2. Bull Call Spread';
-        desc = '權利金便宜，適合買進 Deep ITM Call 替代現貨，或用垂直價差以小博大！';
-      } else if (dir === 'neutral' && ivr === 'high') {
-        recKey = 'iron_condor';
-        title = '推薦：7. Iron Condor (鐵鷹價差) 或 5. Iron Butterfly';
-        desc = '橫盤且高 IV，上下雙向賣出價外價差單，躺在區間內每天收雙份租金！';
-      } else if (dir === 'neutral' && ivr === 'low') {
-        recKey = 'butterfly';
-        title = '推薦：4. Butterfly (蝶式價差) 或 6. Condor (禿鷹)';
-        desc = '低成本鎖定目標整理區間，風險完全封頂且賠率極佳。';
+      let recKey = 'csp', sopKey = 'csp', title = '', logic = '', desc = '', isCashWait = false;
+
+      if (level === 'L2') {
+        if (dir === 'bear' || dir === 'volatile') {
+          isCashWait = true;
+          sopKey = 'wheel';
+          title = '🛑 L2 權限建議：空手保留現金（或僅針對既有持股賣 Covered Call 防禦）';
+          logic = '底層邏輯：L2 無法買進保護腿鎖死最大虧損，在大空頭或重大跳空事件前賣 Put 等於逆勢接刀。';
+          desc = '在只有 CSP / CC 權限下，「空手保留現金」本身就是最強策略；等跌勢止穩或事件過後、IV 衝高時再以更甜的價格開 CSP！';
+        } else if (dir === 'bull_mild' || dir === 'neutral') {
+          recKey = 'csp';
+          sopKey = 'csp';
+          title = '✅ L2 最佳推薦：8. Cash-Secured Put (CSP) / 9. Covered Call 輪動';
+          logic = ivr === 'high'
+            ? '底層邏輯：高 IV 保費肥厚 ＋ 正 Theta 每天收租 ＋ 負 Vega 賺波動率回落，三引擎全開！'
+            : '底層邏輯：溫和盤整靠正 Theta 收租；因 IV 偏低，建議挑股價支撐明確處且不貪多，嚴守獲利 50% 平倉。';
+          desc = '選 30~45 DTE、Delta -0.20 ~ -0.30 的價外 Put（手上有 100 股則賣高於成本的 Call），穩定收租或打折低接。';
+        } else {
+          recKey = 'csp';
+          sopKey = 'wheel';
+          title = '✅ L2 偏多推薦：積極型 Cash-Secured Put (Delta -0.30) 或 直接買進現股＋不急賣 Call';
+          logic = '底層邏輯：強烈看漲時賣出 Covered Call 會鎖住上方利潤（賣飛）；用貼近現價的 Put 可收較高權利金或直接接股。';
+          desc = '若預期大噴出且想參與完整漲幅，不建議用 L2 賣方封頂獲利，可保留現股或未來升級 L3 使用 PMCC / Bull Call Spread。';
+        }
       } else {
-        recKey = 'straddle';
-        title = '推薦：3. Straddle (跨式買方)';
-        desc = '同時買進同價 Call 與 Put，只要單邊大噴出即可倍數獲利！';
+        // L3+ 全策略模式
+        if (dir === 'bull_mild' && (ivr === 'high' || ivr === 'mid')) {
+          recKey = 'csp';
+          sopKey = 'spread';
+          title = '🔥 L3 最佳推薦：Bull Put Credit Spread (牛市看跌信用價差) 或 Cash-Secured Put';
+          logic = '底層邏輯：高／中 IV 當賣方賺 +Theta 與 -Vega；用價差買進保護 Put 鎖死最大虧損，小資金即可操作 SPY/NVDA 等高價股。';
+          desc = '賣出 30~45 DTE、Δ -0.25 Put 並買進下方保護 Put；若本金足夠且想低接現股則可直接做 CSP。';
+        } else if (dir === 'bull_mild' && ivr === 'low') {
+          recKey = 'pmcc';
+          sopKey = 'pmcc';
+          title = '💎 L3 最佳推薦：10. PMCC (窮人版掩護性買權) 或 2. Bull Call Spread';
+          logic = '底層邏輯：低 IV 時長天期 LEAPS 時間價值極便宜（低 Vega 成本），搭配每月賣短 Call 創造 +淨 Theta 現金流。';
+          desc = '買進 180~365 DTE (Δ ≥ 0.80) 長腿 ＋ 賣出 30~45 DTE (Δ 0.25) 短腿，務必確認兩腿寬度 &gt; 淨支出！';
+        } else if (dir === 'bull_strong') {
+          recKey = ivr === 'low' ? 'single' : 'spread';
+          sopKey = 'spread';
+          title = ivr === 'low'
+            ? '🚀 L3 最佳推薦：1. Long Call (60~90 DTE 深價內) 或 10. PMCC'
+            : '🚀 L3 最佳推薦：2. Bull Call Spread (牛市看漲垂直價差)';
+          logic = ivr === 'low'
+            ? '底層邏輯：低 IV 保費便宜，直接做多 +Delta 與 +Vega，選長天期壓低 Theta 損耗以換取無限上檔空間。'
+            : '底層邏輯：高 IV 單純買 Call 權利金太貴且怕 IV Crush；賣出高履約價 Call 組成價差，可抵銷高 IV 與時間損耗！';
+          desc = ivr === 'low'
+            ? '挑選 60~90 DTE、Δ 0.65~0.80 的合約，嚴守虧損 40%~50% 或 21 DTE 停損紀律。'
+            : '買進價平/微價內 Call ＋ 賣出目標壓力位 Call，降低損益兩平點且最大風險完全封頂。';
+        } else if (dir === 'neutral' && (ivr === 'high' || ivr === 'mid')) {
+          recKey = 'iron_condor';
+          sopKey = 'iron_condor';
+          title = '🦅 L3 最佳推薦：7. Iron Condor (鐵兀鷹) 或 5. Iron Butterfly (鐵蝴蝶)';
+          logic = '底層邏輯：整體 Delta ≈ 0（不賭方向），同時吃上下雙倍 +Theta 時間價值與 -Vega 波動率回落。';
+          desc = '在現價上下各 Δ 0.16~0.20 處建立賣方價差護城河，獲利達 50% 或剩 21 DTE 提早落袋。';
+        } else if (dir === 'neutral' && ivr === 'low') {
+          recKey = 'butterfly';
+          sopKey = 'iron_condor';
+          title = '🦋 L3 最佳推薦：4. Butterfly (蝶式價差) 或 6. Condor (禿鷹價差)';
+          logic = '底層邏輯：低 IV 時賣雙邊信用價差收不到好保費，改用極低成本的借方蝶式／禿鷹鎖定橫盤目標區間，賠率極佳。';
+          desc = '以極小淨支出鎖定最大風險，若到期股價落在中心平台可獲得數倍報酬。';
+        } else if (dir === 'bear') {
+          recKey = 'spread';
+          sopKey = 'spread';
+          title = ivr === 'high'
+            ? '🐻 L3 最佳推薦：Bear Call Credit Spread (熊市看漲信用價差，看不漲收租)'
+            : '🐻 L3 最佳推薦：Bear Put Spread (熊市看跌垂直價差，低成本做空)';
+          logic = ivr === 'high'
+            ? '底層邏輯：空頭下跌時 IV 通常飆高，在壓力位上方賣 Call Spread 既順勢看跌又吃高 IV 溢價與正 Theta！'
+            : '底層邏輯：低 IV 時買高履約價 Put ＋ 賣低履約價 Put，以有限成本獲取下跌段利潤並減緩時間損耗。';
+          desc = '切記空頭市場反彈又急又猛，務必用價差單鎖死最大虧損，單筆風險控在總資金 2%~5% 內。';
+        } else {
+          recKey = 'straddle';
+          sopKey = 'spread';
+          title = ivr === 'high'
+            ? '⚠️ 高 IV 重大事件警告：切勿追高買 Straddle！改用小倉位 Iron Condor 或觀望'
+            : '💥 L3 最佳推薦：3. Long Straddle (跨式買方，賭雙向大噴發)';
+          logic = ivr === 'high'
+            ? '底層邏輯：IV 已經暴衝時買進跨式，事件公布瞬間 IV Crush 會直接雙殺 Call 與 Put，極易兩頭虧。'
+            : '底層邏輯：IV 尚未飆升前同時買進 ATM Call ＋ Put，純做多 +Gamma 與 +Vega，大漲大跌都賺。';
+          desc = ivr === 'high'
+            ? '若一定要押方向，請改用垂直價差 (Spread) 抵銷高昂的波動率溢價，或等事件落地再順勢進場。'
+            : '單邊波動幅度必須大於兩邊權利金總和才會獲利，事件結束務必立刻平倉避免雙倍 Theta 耗損。';
+        }
       }
 
+      const simBtnHtml = !isCashWait
+        ? `<button onclick="document.getElementById('strategySelect').value='${recKey}'; resetCustomLegs(); switchTab('simulator'); window.scrollTo({top:0, behavior:'smooth'});" 
+                   class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
+             ⚡ 載入此策略至第 1 頁模擬器
+           </button>`
+        : '';
+
+      card.className = isCashWait
+        ? 'p-4 rounded-xl bg-amber-500/10 border border-amber-500/35 space-y-2 text-xs'
+        : 'p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2 text-xs';
+
       card.innerHTML = `
-        <div class="font-bold text-emerald-700 dark:text-emerald-400">${title}</div>
-        <div class="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">${desc}</div>
-        <button onclick="document.getElementById('strategySelect').value='${recKey}'; resetCustomLegs(); switchTab('simulator');" 
-                class="mt-1.5 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] self-start">
-          ⚡ 立即載入此策略至第1頁模擬器
-        </button>
+        <div class="font-bold text-sm ${isCashWait ? 'text-amber-700 dark:text-amber-300' : 'text-emerald-700 dark:text-emerald-400'}">${title}</div>
+        <div class="text-slate-700 dark:text-slate-200 font-medium">${logic}</div>
+        <div class="text-slate-600 dark:text-slate-300 leading-relaxed">${desc}</div>
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          ${simBtnHtml}
+          <button onclick="jumpToOrderSop('${sopKey}')" 
+                  class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition">
+            📋 查看此策略 Firstrade 下單 SOP
+          </button>
+        </div>
       `;
     }
 
@@ -3050,7 +3607,7 @@ async function fetchLiveUsdTwdRate() {
       if (tabKey === 'top50') renderTop50Table();
       if (tabKey === 'tools') { calcRolloverTool(); calcDividendRisk(); renderTrackedPositions(); }
       if (tabKey === 'portfolio') { renderPortfolioAllocation(); updateCompoundChart(); }
-      if (tabKey === 'academy') runStrategyFinder();
+      if (tabKey === 'academy') { runStrategyFinder(); if (!document.getElementById('sopContentContainer').innerHTML.trim()) renderOrderSop('csp'); }
     }
 
     document.getElementById('themeBtn').addEventListener('click', () => {
@@ -3065,6 +3622,7 @@ async function fetchLiveUsdTwdRate() {
       await loadDynamicTop50();
       renderStrategyTable();
       runStrategyFinder();
+      renderOrderSop('csp');
       calcRolloverTool();
       calcDividendRisk();
       renderTrackedPositions();

@@ -1110,6 +1110,23 @@
       }
     }
     
+async function fetchLiveUsdTwdRate() {
+      if (isCustomExchangeRate) return;
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const liveRate = Number(data?.rates?.TWD);
+        if (liveRate > 15 && liveRate < 60) {
+          usdTwdRate = Number(liveRate.toFixed(2));
+          const rateInput = document.getElementById('usdTwdInput');
+          if (rateInput) rateInput.value = usdTwdRate.toFixed(2);
+        }
+      } catch (err) {
+        console.warn('即時匯率抓取失敗，沿用 top50.json 匯率:', err.message);
+      }
+    }
+
     async function loadDynamicTop50() {
       localStorage.removeItem('DYNAMIC_TOP50_CACHE_V1');
       try {
@@ -1124,6 +1141,7 @@
         TOP50_STOCKS = normalizeStockList(FALLBACK_STOCKS);
       }
       refreshAllStockUI();
+      await fetchLiveUsdTwdRate();
     }
 
     async function forceReloadStockData() {

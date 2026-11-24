@@ -2,11 +2,9 @@ name: Update US Top 50 Options Data
 
 on:
   schedule:
-    # 台灣時間週二～週六 05:30（UTC 週一～週五 21:30）
-    # 美股冬令收盤為 UTC 21:00（台 05:00）、夏令為 UTC 20:00（台 04:00）
-    # 選在 UTC 21:30 可確保全年冬夏令皆已收盤，且留 30 分鐘讓 Yahoo 結算收盤價與期權鏈
+    # 台灣時間週二～週六 05:30（美股收盤後 30 分鐘）自動更新
     - cron: '30 21 * * 1-5'
-  workflow_dispatch: # 允許隨時到 GitHub Actions 頁面手動點「Run workflow」立即更新
+  workflow_dispatch:
 
 permissions:
   contents: write

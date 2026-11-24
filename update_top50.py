@@ -362,13 +362,26 @@ def generate_top50_json():
 
         try:
             tk = yf.Ticker(sym)
-            f_info = tk.fast_info
-            live_price = safe_float(f_info.get("last_price"))
+            info = tk.info or {}
+
+            # 1. 優先從 info 取得最新市場價 / 收盤價，其次才用 fast_info
+            live_price = (
+                safe_float(info.get("regularMarketPrice"))
+                or safe_float(info.get("currentPrice"))
+                or safe_float(info.get("previousClose"))
+            )
+            if live_price <= 0:
+                f_info = tk.fast_info
+                live_price = safe_float(getattr(f_info, "last_price", 0)) or safe_float(f_info.get("lastPrice"))
             if live_price > 0:
                 price = round(live_price, 2)
-            mcap_val = float(f_info.get("market_cap") or 0)
 
-            info = tk.info or {}
+            # 2. 優先從 info 取得最新市值
+            mcap_val = safe_float(info.get("marketCap"))
+            if mcap_val <= 0:
+                f_info = tk.fast_info
+                mcap_val = safe_float(getattr(f_info, "market_cap", 0)) or safe_float(f_info.get("marketCap"))
+
             raw_pe = info.get("trailingPE") or info.get("forwardPE")
             if raw_pe and 0 < float(raw_pe) < 1000:
                 pe_val = round(float(raw_pe), 1)
